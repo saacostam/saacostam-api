@@ -1,6 +1,6 @@
 import { CategoryUseCasesService } from "../../app/use-cases";
-import { CategoryRepositoryImplInMemory } from "../repositories";
+import { InMemoryCategoryRepositoryImpl } from "../repositories";
 
 export const categoryUseCasesService = new CategoryUseCasesService(
-    new CategoryRepositoryImplInMemory(),
+    new InMemoryCategoryRepositoryImpl(),
 )

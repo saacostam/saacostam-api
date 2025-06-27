@@ -3,7 +3,7 @@ import { CategoryRepository } from "../../domain/repositories";
 
 const CATEGORIES: Category[] = []
 
-export class CategoryRepositoryImplInMemory implements CategoryRepository {
+export class InMemoryCategoryRepositoryImpl implements CategoryRepository {
     create(category: Category): Promise<Category> {
         CATEGORIES.push(category);
 
