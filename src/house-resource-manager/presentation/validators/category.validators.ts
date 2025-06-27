@@ -6,5 +6,5 @@ const createValidator = z.object({
 });
 
 export const CategoryValidator = {
-    createValidator,
+  createValidator,
 }

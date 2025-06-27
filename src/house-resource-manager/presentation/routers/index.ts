@@ -1,1 +1,1 @@
-export * from "./category.router";
+export { houseResourceManager } from "./house-resource-manager.router";
