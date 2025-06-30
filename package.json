@@ -20,6 +20,7 @@
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/server.ts"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.4",
@@ -35,6 +36,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "uuid": "^11.1.0",
     "yarn": "^1.22.22",

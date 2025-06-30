@@ -6,3 +6,12 @@ export class User {
         public lastName: string
     ) {}
 }
+
+export class Credentials {
+    constructor(
+        public readonly username: string,
+        public readonly firstName: string,
+        public readonly lastName: string,
+        public readonly passwordHash: string,
+    ){}
+}
