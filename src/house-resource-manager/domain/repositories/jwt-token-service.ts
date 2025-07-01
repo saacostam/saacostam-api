@@ -1,6 +1,6 @@
+export interface TokenPayload { userId: string; }
+
 export interface JwtTokenService {
-    getToken(tokenPayload: {
-        userId: string,
-    }): string,
-    validateToken(token: string): boolean;
+    getToken(tokenPayload: TokenPayload): string,
+    validateToken(token: string): TokenPayload | undefined;
 }

@@ -8,9 +8,9 @@ import { authMiddleware, errorHandlerMiddleware } from "../middlewares";
 
 const houseResourceManager = Router();
 
+houseResourceManager.use("/auth", authRouter);
 houseResourceManager.use(authMiddleware);
 
-houseResourceManager.use("/auth", authRouter);
 houseResourceManager.use("/category", categoryRouter);
 houseResourceManager.use("/user", userRouter);
 

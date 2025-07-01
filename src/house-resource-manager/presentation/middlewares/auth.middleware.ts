@@ -1,27 +1,24 @@
-// import jwt from 'jsonwebtoken';
+import { JwtTokenServiceImpl } from '../../infra/repositories';
 import { Request, Response, NextFunction } from 'express';
+import { UnauthorizedError } from '../errors';
 
-// const secret = process.env.JWT_SECRET!;
+const jwtTokenService = new JwtTokenServiceImpl();
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  // @ts-ignore;
-  req.userId = "default-user";
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new UnauthorizedError();
+  }
 
+  const token = authHeader.split(' ')[1];
+
+  const payload = jwtTokenService.validateToken(token);
+    
+  if (payload === undefined) throw new UnauthorizedError();
+
+  // @ts-ignore
+  req.userId = 
+    payload.userId
+  
   next();
-
-  // const authHeader = req.headers.authorization;
-
-  // if (!authHeader || !authHeader.startsWith('Bearer ')) {
-  //   return res.status(401).json({ message: 'Missing or invalid token' });
-  // }
-
-  // const token = authHeader.split(' ')[1];
-
-  // try {
-  //   const payload = jwt.verify(token, secret) as { userId: string };
-  //   req.userId = payload.userId; // Attach decoded ID to request
-  //   next();
-  // } catch (err) {
-  //   return res.status(403).json({ message: 'Invalid or expired token' });
-  // }
 }
