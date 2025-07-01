@@ -1,7 +1,8 @@
-import { User } from "../entities";
+import { User, UserWithHash } from "../entities";
 
 export interface UserRepository {
-    create(user: User): Promise<User>;
+    create(user: UserWithHash): Promise<User>;
     getAll(): Promise<User[]>
     getById(id: string): Promise<User | undefined>
+    filterByUsername(username: string): Promise<User[]>;
 }

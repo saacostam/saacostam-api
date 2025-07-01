@@ -1,20 +1,26 @@
-import { User } from "../../domain/entities";
+import { User, UserWithHash } from "../../domain/entities";
 import { UserRepository } from "../../domain/repositories";
 
-const USERS: User[] = [
-    new User(
+const USERS: UserWithHash[] = [
+    new UserWithHash(
         "default-user",
         "saacostam",
         "Santiago",
         "Acosta meza",
+        "something",
     )
 ]
 
 export class InMemoryUserRepositoryImpl implements UserRepository {
-    create(user: User): Promise<User> {
+    create(user: UserWithHash): Promise<User> {
         USERS.push(user);
 
-        return new Promise((res) => res(user));
+        return new Promise((res) => res(new User(
+            user.id,
+            user.username,
+            user.firstName,
+            user.lastName,
+        )));
     }
 
     getAll(): Promise<User[]> {
@@ -25,5 +31,9 @@ export class InMemoryUserRepositoryImpl implements UserRepository {
         const user = USERS.find(u => u.id === id);
 
         return new Promise((res) => res(user));
+    }
+
+    filterByUsername(username: string): Promise<User[]> {
+        return new Promise((res) => res(USERS.filter(u => u.username === username)));
     }
 }
