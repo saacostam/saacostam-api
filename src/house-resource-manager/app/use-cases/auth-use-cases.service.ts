@@ -1,13 +1,14 @@
 import { generateId } from "@/core.utils";
 import { UserWithHash } from "../../domain/entities";
-import { UserWithUsernameAlreadyExistsError } from "../../domain/errors";
-import { PasswordHasher, UserRepository } from "../../domain/repositories";
-import { SignUpRequestDto, SignUpResponseDto } from "../dtos";
+import { InvalidLoginAttemptError, UserWithUsernameAlreadyExistsError } from "../../domain/errors";
+import { JwtTokenService, PasswordHasher, UserRepository } from "../../domain/repositories";
+import { LoginRequestDto, LoginResponseDto, SignUpRequestDto, SignUpResponseDto } from "../dtos";
 
 export class AuthUseCasesService {
     constructor(
         private userRepository: UserRepository,
         private passwordHasher: PasswordHasher,
+        private jwtTokenService: JwtTokenService,
     ){}
 
     async signUp({
@@ -36,6 +37,29 @@ export class AuthUseCasesService {
 
         return {
             username: user.username,
+        }
+    }
+
+    async logIn({
+        username,
+        password,
+    }: LoginRequestDto): Promise<LoginResponseDto> {
+        const existingUser = await this.userRepository.getUserWithHashByUsername(username);
+
+        if (!existingUser) {
+            throw new InvalidLoginAttemptError();
+        }
+
+        const isPasswordCorrect = await this.passwordHasher.compare(password, existingUser.passwordHash);
+
+        if (!isPasswordCorrect) {
+            throw new InvalidLoginAttemptError();
+        }
+
+        const token = this.jwtTokenService.getToken({ userId: existingUser.id });
+
+        return {
+            token,
         }
     }
 }

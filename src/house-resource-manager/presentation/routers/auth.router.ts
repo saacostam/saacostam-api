@@ -10,6 +10,13 @@ authRouter.post("/signup", async (req, res) => {
     const result = await authUseCasesService.signUp(payload);
     res.status(200).json(result);
 })
+
+authRouter.post("/login", async (req, res) => {
+    const payload = AuthValidator.loginValidator.parse(req.body);
+
+    const result = await authUseCasesService.logIn(payload);
+    res.status(200).json(result);
+})
  
 export {
     authRouter,

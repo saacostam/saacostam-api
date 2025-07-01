@@ -3,11 +3,11 @@ import { UserRepository } from "../../domain/repositories";
 
 const USERS: UserWithHash[] = [
     new UserWithHash(
-        "default-user",
+        "9227a66c-34ca-4339-a224-c2b1d71c3c26",
         "saacostam",
         "Santiago",
         "Acosta meza",
-        "something",
+        "$2b$10$r7mtcFnMtaGGfzXWRE05TO6rsjUilCPuvMLfbVWsRr90UriIR/yy.",
     )
 ]
 
@@ -29,6 +29,12 @@ export class InMemoryUserRepositoryImpl implements UserRepository {
 
     getById(id: string): Promise<User | undefined> {
         const user = USERS.find(u => u.id === id);
+
+        return new Promise((res) => res(user ? new User(user.id, user.username, user.firstName, user.lastName) : undefined));
+    }
+
+    getUserWithHashByUsername(username: string): Promise<UserWithHash | undefined> {
+        const user = USERS.find(u => u.username === username);
 
         return new Promise((res) => res(user));
     }

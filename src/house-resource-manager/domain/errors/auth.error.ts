@@ -8,3 +8,14 @@ export class UserWithUsernameAlreadyExistsError extends Error {
     }
   }
 }
+
+export class InvalidLoginAttemptError extends Error {
+  constructor() {
+    super("Invalid Login Credentials");
+    this.name = 'InvalidLoginAttemptError';
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, UserWithUsernameAlreadyExistsError);
+    }
+  }
+}
