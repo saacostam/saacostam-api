@@ -1,4 +1,4 @@
-import { generateId } from "@/core.utils";
+import { generateId } from "../../../core.utils";
 
 import { Category } from "../../domain/entities";
 import { CategoryRepository } from "../../domain/repositories";

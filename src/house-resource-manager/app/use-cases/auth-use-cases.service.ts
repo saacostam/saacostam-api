@@ -1,4 +1,4 @@
-import { generateId } from "@/core.utils";
+import { generateId } from "../../../core.utils";
 import { UserWithHash } from "../../domain/entities";
 import { InvalidLoginAttemptError, UserWithUsernameAlreadyExistsError } from "../../domain/errors";
 import { JwtTokenService, PasswordHasher, UserRepository } from "../../domain/repositories";
