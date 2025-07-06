@@ -13,4 +13,10 @@ app.use(cors({
 
 app.use("/hrm", houseResourceManager)
 
+app.get("/health", (_, res) => {
+    res.status(200).json({
+        ok: true,
+    });
+})
+
 export default app;
