@@ -1,4 +1,4 @@
-import { JwtTokenServiceImpl } from '../../infra/repositories';
+import { JwtTokenServiceImpl } from '../../infra/providers';
 import { Request, Response, NextFunction } from 'express';
 import { UnauthorizedError } from '../errors';
 
