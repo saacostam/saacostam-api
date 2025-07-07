@@ -3,6 +3,10 @@ export interface CreateCategoryRequestDto {
     description?: string | null;
 }
 
+export interface DeleteCategoryRequestDto {
+    id: string;
+}
+
 export interface UpdateCategoryRequestDto {
     id: string;
     name?: string;

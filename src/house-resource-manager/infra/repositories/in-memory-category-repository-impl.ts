@@ -10,6 +10,12 @@ export class InMemoryCategoryRepositoryImpl implements CategoryRepository {
         return new Promise<Category>((res) => res(category));
     }
 
+    deleteById(id: string): Promise<void> {
+        CATEGORIES = CATEGORIES.filter(cat => cat.id !== id);
+
+        return new Promise((res) => res());
+    }
+
     getAll(): Promise<Category[]> {
         return new Promise<Category[]>((res) => res(CATEGORIES));
     }

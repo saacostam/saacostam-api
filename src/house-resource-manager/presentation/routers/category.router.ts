@@ -5,7 +5,7 @@ import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 
 const categoryRouter = Router();
 
-categoryRouter.get("/", async (req, res) => {
+categoryRouter.get("/", async (_req, res) => {
     const result = await categoryUseCasesService.getResources();
     res.status(200).json(result);
 })
@@ -19,16 +19,7 @@ categoryRouter.post("/", async (req, res) => {
 categoryRouter.put("/:id", async (req, res) => {
     const id = req.params.id;
 
-    if (!id) throw new BaseDomainError(
-        DomainErrorType.BAD_REQUEST,
-        "Id field is required",
-        [
-            {
-                field: "id",
-                message: "REQUIRED",
-            }
-        ]
-    );
+    if (!id) throw idFieldNotFoundError;
 
     const input = CategoryValidator.updateValidator.parse(req.body);
     const result = await categoryUseCasesService.updateResource({
@@ -38,7 +29,27 @@ categoryRouter.put("/:id", async (req, res) => {
     })
     res.status(200).json(result);
 })
+
+categoryRouter.delete("/:id", async (req, res) => {
+    const id = req.params.id;
+
+    if (!id) throw idFieldNotFoundError;
+
+    await categoryUseCasesService.deleteResource({ id });
+    res.status(204).json();
+})
  
 export {
     categoryRouter,
 }
+
+const idFieldNotFoundError = new BaseDomainError(
+        DomainErrorType.BAD_REQUEST,
+        "Id field is required",
+        [
+            {
+                field: "id",
+                message: "REQUIRED",
+            }
+        ]
+    );

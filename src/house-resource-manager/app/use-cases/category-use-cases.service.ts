@@ -3,7 +3,7 @@ import { generateId } from "../../../core.utils";
 import { Category } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 
-import { CreateCategoryRequestDto, UpdateCategoryRequestDto } from "../dtos";
+import { CreateCategoryRequestDto, DeleteCategoryRequestDto, UpdateCategoryRequestDto } from "../dtos";
 import { CategoryRepository } from "../repositories";
 
 export class CategoryUseCasesService {
@@ -24,6 +24,13 @@ export class CategoryUseCasesService {
         return this.categoryRepository.create(category)
     }
 
+    async deleteResource({
+        id,
+    }: DeleteCategoryRequestDto): Promise<void> {
+        const existingCategory = await this._getExistingById(id);
+        return this.categoryRepository.deleteById(existingCategory.id);
+    }
+
     getResources() {
         return this.categoryRepository.getAll();
     }
@@ -33,12 +40,7 @@ export class CategoryUseCasesService {
         name,
         description,
     }: UpdateCategoryRequestDto): Promise<Category> {
-        const existingCategory = await this.categoryRepository.getById(id);
-
-        if (!existingCategory) throw new BaseDomainError(
-            DomainErrorType.NOT_FOUND,
-            `Resource with id ${id} not found`,
-        )
+        const existingCategory = await this._getExistingById(id);
 
         const newName = name === undefined ? existingCategory.name : name;
         const newDescription = description === undefined ? existingCategory.description : description;
@@ -50,5 +52,16 @@ export class CategoryUseCasesService {
         )
 
         return this.categoryRepository.updateById(id, updatedCategory);
+    }
+
+    async _getExistingById(id: string): Promise<Category> {
+        const existingCategory = await this.categoryRepository.getById(id);
+
+        if (!existingCategory) throw new BaseDomainError(
+            DomainErrorType.NOT_FOUND,
+            `Resource with id ${id} not found`,
+        )
+
+        return existingCategory
     }
 }
