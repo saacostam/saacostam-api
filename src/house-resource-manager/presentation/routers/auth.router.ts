@@ -7,7 +7,24 @@ const authRouter = Router();
 authRouter.post("/signup", async (req, res) => {
     const payload = AuthValidator.signUpValidator.parse(req.body);
 
-    const result = await authUseCasesService.signUp(payload);
+    const result = await authUseCasesService.signUp({
+        username: {
+            value: payload.username,
+            fieldName: "username",
+        },
+        firstName: {
+            value: payload.firstName,
+            fieldName: "firstName",
+        },
+        lastName: {
+            value: payload.lastName,
+            fieldName: "lastName",
+        },
+        password: {
+            value: payload.password,
+            fieldName: "password",
+        }
+    });
     res.status(200).json(result);
 })
 

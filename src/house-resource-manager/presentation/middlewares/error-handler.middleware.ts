@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import { FieldError, ValidationError } from '../errors';
-import { UserWithUsernameAlreadyExistsError } from '../../domain/errors';
+import { ErrorResponse, FieldError, mapDomainErrorTypeToStatusCode } from '../errors';
+import { BaseDomainError } from "../../domain/errors";
 
 export function errorHandlerMiddleware(err: unknown, req: Request, res: Response, next: NextFunction) {
   console.error(err);
@@ -35,17 +35,8 @@ export function errorHandlerMiddleware(err: unknown, req: Request, res: Response
     if (rootValidationMessages.length > 0) {
       message = `${message}: ${rootValidationMessages.join(', ')}`;
     }
-  } else if (err instanceof UserWithUsernameAlreadyExistsError) {
-    statusCode = 400;
-    message = err.message;
-    errors = [
-      {
-        field: "username",
-        message: err.message,
-      }
-    ]
-  } else if (err instanceof ValidationError) {
-    statusCode = err.status;
+  } else if (err instanceof BaseDomainError) {
+    statusCode = mapDomainErrorTypeToStatusCode[err.type];
     message = err.message;
     errors = err.errors;
   } else if (err instanceof Error) {
@@ -55,9 +46,11 @@ export function errorHandlerMiddleware(err: unknown, req: Request, res: Response
     message = err.message;
   }
 
-  res.status(statusCode).json({
-    success: false,
+  const errorResponse: ErrorResponse = {
     message: message,
-    ...(errors && { errors }),
-  });
+    status: statusCode,
+    errors: errors,
+  }
+
+  res.status(statusCode).json(errorResponse);
 }

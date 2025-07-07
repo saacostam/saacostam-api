@@ -1,8 +1,20 @@
 export interface SignUpRequestDto {
-    username: string;
-    firstName: string;
-    lastName: string;
-    password: string;
+    username: {
+        fieldName: string;
+        value: string;
+    };
+    firstName: {
+        fieldName: string;
+        value: string;
+    };
+    lastName: {
+        fieldName: string;
+        value: string;
+    };
+    password: {
+        fieldName: string;
+        value: string;
+    };
 }
 
 export interface SignUpResponseDto {

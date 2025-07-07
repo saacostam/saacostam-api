@@ -1,19 +1,14 @@
+import { DomainErrorType } from "../../domain/errors";
+
 export interface FieldError {
   field: string;
   message: string;
 }
 
-export class ValidationError extends Error {
-  public status: number;
-  public errors: FieldError[];
-
-  constructor(errors: FieldError[], message: string = "Validation failed", status: number = 400) {
-    super(message);
-    this.name = 'ValidationError';
-    this.status = status;
-    this.errors = errors;
-    Object.setPrototypeOf(this, ValidationError.prototype);
-  }
+export interface ErrorResponse {
+  message: string;
+  status: number;
+  errors?: FieldError[];
 }
 
 export class UnauthorizedError extends Error {
@@ -30,3 +25,9 @@ export class UnauthorizedError extends Error {
     }
   }
 }
+
+export const mapDomainErrorTypeToStatusCode: Record<DomainErrorType, number> = {
+  [DomainErrorType.BAD_REQUEST]: 400,
+  [DomainErrorType.NOT_FOUND]: 404,
+  [DomainErrorType.UNAUTHORIZED]: 401,
+} 

@@ -18,19 +18,19 @@ export class AuthUseCasesService {
         lastName,
         password,
     }: SignUpRequestDto): Promise<SignUpResponseDto> {
-        const isUnique = (await this.userRepository.filterByUsername(username)).length === 0;
+        const isUnique = (await this.userRepository.filterByUsername(username.value)).length === 0;
 
         if (!isUnique) {
-            throw new UserWithUsernameAlreadyExistsError(username);
+            throw new UserWithUsernameAlreadyExistsError(username.value, username.fieldName);
         }
 
-        const hashedPassword = await this.passwordHasher.hash(password);
+        const hashedPassword = await this.passwordHasher.hash(password.value);
 
         const newUser = new UserWithHash(
             generateId(),
-            username,
-            firstName,
-            lastName,
+            username.value,
+            firstName.value,
+            lastName.value,
             hashedPassword,
         );
 
