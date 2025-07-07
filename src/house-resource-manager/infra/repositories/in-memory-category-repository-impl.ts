@@ -1,7 +1,7 @@
 import { CategoryRepository } from "../../app/repositories";
 import { Category } from "../../domain/entities";
 
-const CATEGORIES: Category[] = []
+let CATEGORIES: Category[] = []
 
 export class InMemoryCategoryRepositoryImpl implements CategoryRepository {
     create(category: Category): Promise<Category> {
@@ -12,5 +12,17 @@ export class InMemoryCategoryRepositoryImpl implements CategoryRepository {
 
     getAll(): Promise<Category[]> {
         return new Promise<Category[]>((res) => res(CATEGORIES));
+    }
+
+    getById(id: string): Promise<Category | undefined> {
+        const category = CATEGORIES.find(cat => cat.id === id);
+
+        return new Promise<Category | undefined>((res) => res(category)); 
+    }
+
+    updateById(id: string, category: Category): Promise<Category> {
+        CATEGORIES = CATEGORIES.map(cat => cat.id === id ? category : cat);
+
+        return new Promise<Category>((res) => res(category));
     }
 }
