@@ -1,9 +1,9 @@
 import { generateId } from "../../../core.utils";
 
 import { Category } from "../../domain/entities";
-import { CategoryRepository } from "../../domain/repositories";
 
 import { CreateCategoryRequestDto } from "../dtos";
+import { CategoryRepository } from "../repositories";
 
 export class CategoryUseCasesService {
     constructor(

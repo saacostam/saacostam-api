@@ -1,5 +1,5 @@
 import { sign, verify } from "jsonwebtoken";
-import { JwtTokenService, TokenPayload } from "../../domain/repositories";
+import { JwtTokenService, TokenPayload } from "../../app/providers";
 
 const SECRET = "REPLACE_ME"
 

@@ -1,5 +1,5 @@
+import { UserRepository } from "../../app/repositories";
 import { User, UserWithHash } from "../../domain/entities";
-import { UserRepository } from "../../domain/repositories";
 
 const USERS: UserWithHash[] = [
     new UserWithHash(

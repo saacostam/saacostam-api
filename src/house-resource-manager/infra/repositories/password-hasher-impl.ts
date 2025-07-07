@@ -1,5 +1,5 @@
 import { hash, compare } from "bcrypt";
-import { PasswordHasher } from "../../domain/repositories";
+import { PasswordHasher } from "../../app/providers";
 
 export class PasswordHasherImpl implements PasswordHasher {
     hash(password: string) {

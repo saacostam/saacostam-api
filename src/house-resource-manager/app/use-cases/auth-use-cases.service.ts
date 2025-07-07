@@ -1,8 +1,9 @@
 import { generateId } from "../../../core.utils";
 import { UserWithHash } from "../../domain/entities";
 import { InvalidLoginAttemptError, UserWithUsernameAlreadyExistsError } from "../../domain/errors";
-import { JwtTokenService, PasswordHasher, UserRepository } from "../../domain/repositories";
 import { LoginRequestDto, LoginResponseDto, SignUpRequestDto, SignUpResponseDto } from "../dtos";
+import { JwtTokenService, PasswordHasher } from "../providers";
+import { UserRepository } from "../repositories";
 
 export class AuthUseCasesService {
     constructor(

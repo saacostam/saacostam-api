@@ -1,5 +1,5 @@
+import { CategoryRepository } from "../../app/repositories";
 import { Category } from "../../domain/entities";
-import { CategoryRepository } from "../../domain/repositories";
 
 const CATEGORIES: Category[] = []
 
