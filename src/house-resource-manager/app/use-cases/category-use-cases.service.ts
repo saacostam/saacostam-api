@@ -6,6 +6,7 @@ import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 import type {
 	CreateCategoryRequestDto,
 	DeleteCategoryRequestDto,
+	GetAllCategoriesRequestDto,
 	UpdateCategoryRequestDto,
 } from "../dtos";
 import type { CategoryRepository } from "../repositories";
@@ -16,45 +17,57 @@ export class CategoryUseCasesService {
 	createResource({
 		name,
 		description,
+		userId,
 	}: CreateCategoryRequestDto): Promise<Category> {
-		const category = new Category(generateId(), name, description ?? null);
+		const category = new Category(
+			generateId(),
+			name,
+			description ?? null,
+			userId,
+		);
 
 		return this.categoryRepository.create(category);
 	}
 
-	async deleteResource({ id }: DeleteCategoryRequestDto): Promise<void> {
-		const existingCategory = await this._getExistingById(id);
+	async deleteResource({
+		id,
+		userId,
+	}: DeleteCategoryRequestDto): Promise<void> {
+		const existingCategory = await this._getExistingById(id, userId);
 		return this.categoryRepository.deleteById(existingCategory.id);
 	}
 
-	getResources() {
-		return this.categoryRepository.getAll();
+	getResources({ userId }: GetAllCategoriesRequestDto) {
+		return this.categoryRepository.getAllByUserId(userId);
 	}
 
-	async updateResource({
+	async updateCategory({
 		id,
 		name,
 		description,
+		userId,
 	}: UpdateCategoryRequestDto): Promise<Category> {
-		const existingCategory = await this._getExistingById(id);
+		const existingCategory = await this._getExistingById(id, userId);
 
 		const newName = name === undefined ? existingCategory.name : name;
 		const newDescription =
 			description === undefined ? existingCategory.description : description;
 
-		const updatedCategory = new Category(id, newName, newDescription);
+		const updatedCategory = new Category(id, newName, newDescription, userId);
 
 		return this.categoryRepository.updateById(id, updatedCategory);
 	}
 
-	async _getExistingById(id: string): Promise<Category> {
+	async _getExistingById(id: string, userId: string): Promise<Category> {
 		const existingCategory = await this.categoryRepository.getById(id);
 
-		if (!existingCategory)
-			throw new BaseDomainError(
-				DomainErrorType.NOT_FOUND,
-				`Resource with id ${id} not found`,
-			);
+		const notFoundError = new BaseDomainError(
+			DomainErrorType.NOT_FOUND,
+			`Resource with id ${id} not found`,
+		);
+
+		if (!existingCategory) throw notFoundError;
+		if (existingCategory.userId !== userId) throw notFoundError;
 
 		return existingCategory;
 	}

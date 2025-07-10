@@ -16,8 +16,10 @@ export class InMemoryCategoryRepositoryImpl implements CategoryRepository {
 		return new Promise((res) => res());
 	}
 
-	getAll(): Promise<Category[]> {
-		return new Promise<Category[]>((res) => res(CATEGORIES));
+	getAllByUserId(userId: string): Promise<Category[]> {
+		const categoriesOfUser = CATEGORIES.filter((cat) => cat.userId === userId);
+
+		return new Promise<Category[]>((res) => res(categoriesOfUser));
 	}
 
 	getById(id: string): Promise<Category | undefined> {
