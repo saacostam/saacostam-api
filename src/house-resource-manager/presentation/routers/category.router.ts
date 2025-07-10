@@ -1,5 +1,5 @@
-import { getIdFromRequest } from "core.utils";
 import { Router } from "express";
+import { getIdFromRequest } from "../../../core.utils";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 import { categoryUseCasesService } from "../../infra/di";
 import { UnauthorizedError } from "../errors";
