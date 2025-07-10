@@ -1,34 +1,34 @@
-import { CategoryRepository } from "../../app/repositories";
-import { Category } from "../../domain/entities";
+import type { CategoryRepository } from "../../app/repositories";
+import type { Category } from "../../domain/entities";
 
-let CATEGORIES: Category[] = []
+let CATEGORIES: Category[] = [];
 
 export class InMemoryCategoryRepositoryImpl implements CategoryRepository {
-    create(category: Category): Promise<Category> {
-        CATEGORIES.push(category);
+	create(category: Category): Promise<Category> {
+		CATEGORIES.push(category);
 
-        return new Promise<Category>((res) => res(category));
-    }
+		return new Promise<Category>((res) => res(category));
+	}
 
-    deleteById(id: string): Promise<void> {
-        CATEGORIES = CATEGORIES.filter(cat => cat.id !== id);
+	deleteById(id: string): Promise<void> {
+		CATEGORIES = CATEGORIES.filter((cat) => cat.id !== id);
 
-        return new Promise((res) => res());
-    }
+		return new Promise((res) => res());
+	}
 
-    getAll(): Promise<Category[]> {
-        return new Promise<Category[]>((res) => res(CATEGORIES));
-    }
+	getAll(): Promise<Category[]> {
+		return new Promise<Category[]>((res) => res(CATEGORIES));
+	}
 
-    getById(id: string): Promise<Category | undefined> {
-        const category = CATEGORIES.find(cat => cat.id === id);
+	getById(id: string): Promise<Category | undefined> {
+		const category = CATEGORIES.find((cat) => cat.id === id);
 
-        return new Promise<Category | undefined>((res) => res(category)); 
-    }
+		return new Promise<Category | undefined>((res) => res(category));
+	}
 
-    updateById(id: string, category: Category): Promise<Category> {
-        CATEGORIES = CATEGORIES.map(cat => cat.id === id ? category : cat);
+	updateById(id: string, category: Category): Promise<Category> {
+		CATEGORIES = CATEGORIES.map((cat) => (cat.id === id ? category : cat));
 
-        return new Promise<Category>((res) => res(category));
-    }
+		return new Promise<Category>((res) => res(category));
+	}
 }

@@ -1,14 +1,14 @@
 export interface CreateCategoryRequestDto {
-    name: string;
-    description?: string | null;
+	name: string;
+	description?: string | null;
 }
 
 export interface DeleteCategoryRequestDto {
-    id: string;
+	id: string;
 }
 
 export interface UpdateCategoryRequestDto {
-    id: string;
-    name?: string;
-    description?: string | null;
+	id: string;
+	name?: string;
+	description?: string | null;
 }

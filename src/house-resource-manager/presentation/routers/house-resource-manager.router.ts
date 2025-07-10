@@ -1,10 +1,8 @@
 import { Router } from "express";
-
+import { authMiddleware, errorHandlerMiddleware } from "../middlewares";
 import { authRouter } from "./auth.router";
 import { categoryRouter } from "./category.router";
 import { userRouter } from "./user.router";
-
-import { authMiddleware, errorHandlerMiddleware } from "../middlewares";
 
 const houseResourceManager = Router();
 
@@ -16,6 +14,4 @@ houseResourceManager.use("/user", userRouter);
 
 houseResourceManager.use(errorHandlerMiddleware);
 
-export {
-    houseResourceManager,
-}
+export { houseResourceManager };

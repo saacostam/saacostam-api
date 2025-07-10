@@ -6,14 +6,12 @@ import { UnauthorizedError } from "../errors";
 const userRouter = Router();
 
 userRouter.get("/", async (req, res) => {
-    const id = getIdFromRequest(req);
+	const id = getIdFromRequest(req);
 
-    if (!id) throw new UnauthorizedError();
+	if (!id) throw new UnauthorizedError();
 
-    const result = await userUseCasesService.getMe({ id });
-    res.status(200).json(result);
-})
- 
-export {
-    userRouter,
-}
+	const result = await userUseCasesService.getMe({ id });
+	res.status(200).json(result);
+});
+
+export { userRouter };

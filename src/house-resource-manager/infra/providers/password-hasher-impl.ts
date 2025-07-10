@@ -1,12 +1,12 @@
-import { hash, compare } from "bcrypt";
-import { PasswordHasher } from "../../app/providers";
+import { compare, hash } from "bcrypt";
+import type { PasswordHasher } from "../../app/providers";
 
 export class PasswordHasherImpl implements PasswordHasher {
-    hash(password: string) {
-        return hash(password, 10);
-    }
+	hash(password: string) {
+		return hash(password, 10);
+	}
 
-    compare(plaintextPassword: string, passwordHash: string) {
-        return compare(plaintextPassword, passwordHash);
-    }
+	compare(plaintextPassword: string, passwordHash: string) {
+		return compare(plaintextPassword, passwordHash);
+	}
 }

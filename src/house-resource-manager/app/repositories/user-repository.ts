@@ -1,9 +1,9 @@
-import { User, UserWithHash } from "../../domain/entities";
+import type { User, UserWithHash } from "../../domain/entities";
 
 export interface UserRepository {
-    create(user: UserWithHash): Promise<User>;
-    getAll(): Promise<User[]>;
-    getById(id: string): Promise<User | undefined>;
-    getUserWithHashByUsername(id: string): Promise<UserWithHash | undefined>;
-    filterByUsername(username: string): Promise<User[]>;
+	create(user: UserWithHash): Promise<User>;
+	getAll(): Promise<User[]>;
+	getById(id: string): Promise<User | undefined>;
+	getUserWithHashByUsername(id: string): Promise<UserWithHash | undefined>;
+	filterByUsername(username: string): Promise<User[]>;
 }
