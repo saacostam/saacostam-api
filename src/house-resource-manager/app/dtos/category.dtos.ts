@@ -19,3 +19,8 @@ export interface UpdateCategoryRequestDto {
 export interface GetAllCategoriesRequestDto {
 	userId: string;
 }
+
+export interface GetCategoryByIdRequestDto {
+	id: string;
+	userId: string;
+}

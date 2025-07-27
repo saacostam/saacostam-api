@@ -11,7 +11,18 @@ categoryRouter.get("/", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result = await categoryUseCasesService.getResources({ userId });
+	const result = await categoryUseCasesService.getCategories({ userId });
+	res.status(200).json(result);
+});
+
+categoryRouter.get("/:id", async (req, res) => {
+	const id = req.params.id;
+	if (!id) throw idFieldNotFoundError;
+
+	const userId = getIdFromRequest(req);
+	if (!userId) throw new UnauthorizedError();
+
+	const result = await categoryUseCasesService.getCategoryById({ id, userId });
 	res.status(200).json(result);
 });
 
@@ -51,7 +62,7 @@ categoryRouter.delete("/:id", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	await categoryUseCasesService.deleteResource({ id, userId });
+	await categoryUseCasesService.deleteCategory({ id, userId });
 	res.status(204).json();
 });
 

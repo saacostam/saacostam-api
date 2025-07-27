@@ -7,6 +7,7 @@ import type {
 	CreateCategoryRequestDto,
 	DeleteCategoryRequestDto,
 	GetAllCategoriesRequestDto,
+	GetCategoryByIdRequestDto,
 	UpdateCategoryRequestDto,
 } from "../dtos";
 import type { CategoryRepository } from "../repositories";
@@ -29,7 +30,7 @@ export class CategoryUseCasesService {
 		return this.categoryRepository.create(category);
 	}
 
-	async deleteResource({
+	async deleteCategory({
 		id,
 		userId,
 	}: DeleteCategoryRequestDto): Promise<void> {
@@ -37,8 +38,12 @@ export class CategoryUseCasesService {
 		return this.categoryRepository.deleteById(existingCategory.id);
 	}
 
-	getResources({ userId }: GetAllCategoriesRequestDto) {
+	getCategories({ userId }: GetAllCategoriesRequestDto) {
 		return this.categoryRepository.getAllByUserId(userId);
+	}
+
+	getCategoryById({ id, userId }: GetCategoryByIdRequestDto) {
+		return this._getExistingById(id, userId);
 	}
 
 	async updateCategory({
