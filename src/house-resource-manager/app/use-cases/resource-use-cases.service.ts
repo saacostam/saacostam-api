@@ -1,6 +1,6 @@
 import { generateId } from "../../../core.utils";
 
-import { Resource } from "../../domain/entities";
+import { type Category, Resource } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 import type {
 	CreateResourceRequestDto,
@@ -9,18 +9,27 @@ import type {
 	GetResourceByIdRequestDto,
 	UpdateResourceRequestDto,
 } from "../dtos";
-import type { ResourceRepository } from "../repositories";
+import type { CategoryRepository, ResourceRepository } from "../repositories";
 
 export class ResourceUseCasesService {
-	constructor(private resourceRepository: ResourceRepository) {}
+	constructor(
+		private resourceRepository: ResourceRepository,
+		private categoryRepository: CategoryRepository,
+	) {}
 
-	createResource({
+	async createResource({
 		name,
 		description,
 		quantity,
 		categoryId,
 		userId,
 	}: CreateResourceRequestDto): Promise<Resource> {
+		const category = await this._getCategoryById(
+			categoryId,
+			userId,
+			"categoryId",
+		);
+
 		const resource = new Resource(
 			generateId(),
 			name,
@@ -28,7 +37,7 @@ export class ResourceUseCasesService {
 			"active",
 			new Date(),
 			new Date(),
-			categoryId,
+			category.id,
 			quantity,
 			userId,
 		);
@@ -62,6 +71,16 @@ export class ResourceUseCasesService {
 	}: UpdateResourceRequestDto) {
 		const existingResource = await this._getExistingById(id, userId);
 
+		// If new category is included in payload, we should validate existence and ownership.
+		if (categoryId !== undefined) {
+			const category = await this._getCategoryById(
+				categoryId,
+				userId,
+				"categoryId",
+			);
+			categoryId = category.id;
+		}
+
 		const updatedResource = new Resource(
 			existingResource.id,
 			name === undefined ? existingResource.name : name,
@@ -78,16 +97,40 @@ export class ResourceUseCasesService {
 	}
 
 	async _getExistingById(id: string, userId: string): Promise<Resource> {
-		const existingResource = await this.resourceRepository.getById(id);
-
 		const notFoundError = new BaseDomainError(
 			DomainErrorType.NOT_FOUND,
 			`Resource with id ${id} not found`,
 		);
 
+		const existingResource = await this.resourceRepository.getById(id);
+
 		if (!existingResource) throw notFoundError;
 		if (existingResource.userId !== userId) throw notFoundError;
 
 		return existingResource;
+	}
+
+	async _getCategoryById(
+		categoryId: string,
+		userId: string,
+		fieldName: string,
+	): Promise<Category> {
+		const categoryNotFound = new BaseDomainError(
+			DomainErrorType.NOT_FOUND,
+			`Category with id ${categoryId} not found`,
+			[
+				{
+					field: fieldName,
+					message: `Category not found`,
+				},
+			],
+		);
+
+		const category = await this.categoryRepository.getById(categoryId);
+
+		if (!category) throw categoryNotFound;
+		if (category.userId !== userId) throw categoryNotFound;
+
+		return category;
 	}
 }
