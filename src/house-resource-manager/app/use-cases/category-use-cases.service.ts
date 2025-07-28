@@ -15,7 +15,7 @@ import type { CategoryRepository } from "../repositories";
 export class CategoryUseCasesService {
 	constructor(private categoryRepository: CategoryRepository) {}
 
-	createResource({
+	createCategory({
 		name,
 		description,
 		userId,
@@ -68,7 +68,7 @@ export class CategoryUseCasesService {
 
 		const notFoundError = new BaseDomainError(
 			DomainErrorType.NOT_FOUND,
-			`Resource with id ${id} not found`,
+			`Category with id ${id} not found`,
 		);
 
 		if (!existingCategory) throw notFoundError;

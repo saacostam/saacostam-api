@@ -1,68 +1,67 @@
 import { Router } from "express";
 import { getIdFromRequest } from "../../../core.utils";
-import { categoryUseCasesService } from "../../infra/di";
+import { resourceUseCasesService } from "../../infra/di";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
-import { CategoryValidator } from "../validators";
+import { ResourceValidator } from "../validators";
 
-const categoryRouter = Router();
+const resourceRouter = Router();
 
-categoryRouter.get("/", async (req, res) => {
+resourceRouter.get("/", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result = await categoryUseCasesService.getCategories({ userId });
+	const result = await resourceUseCasesService.getResources({ userId });
 	res.status(200).json(result);
 });
 
-categoryRouter.get("/:id", async (req, res) => {
+resourceRouter.get("/:id", async (req, res) => {
 	const id = req.params.id;
 	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
 
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result = await categoryUseCasesService.getCategoryById({ id, userId });
+	const result = await resourceUseCasesService.getResourceById({ id, userId });
 	res.status(200).json(result);
 });
 
-categoryRouter.post("/", async (req, res) => {
+resourceRouter.post("/", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const input = CategoryValidator.createValidator.parse(req.body);
-	const result = await categoryUseCasesService.createCategory({
+	const input = ResourceValidator.createValidator.parse(req.body);
+	const result = await resourceUseCasesService.createResource({
 		...input,
 		userId,
 	});
 	res.status(201).json(result);
 });
 
-categoryRouter.put("/:id", async (req, res) => {
+resourceRouter.put("/:id", async (req, res) => {
 	const id = req.params.id;
 	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
 
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const input = CategoryValidator.updateValidator.parse(req.body);
-	const result = await categoryUseCasesService.updateCategory({
+	const input = ResourceValidator.updateValidator.parse(req.body);
+	const result = await resourceUseCasesService.updateResource({
 		id,
-		name: input.name,
-		description: input.description,
+		...input,
 		userId,
 	});
 	res.status(200).json(result);
 });
 
-categoryRouter.delete("/:id", async (req, res) => {
+resourceRouter.delete("/:id", async (req, res) => {
 	const id = req.params.id;
 	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
 
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	await categoryUseCasesService.deleteCategory({ id, userId });
+	await resourceUseCasesService.deleteResource({ id, userId });
 	res.status(204).json();
 });
 
-export { categoryRouter };
+export { resourceRouter };

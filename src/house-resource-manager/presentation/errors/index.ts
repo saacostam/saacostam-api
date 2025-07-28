@@ -1,4 +1,4 @@
-import { DomainErrorType } from "../../domain/errors";
+import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 
 export interface FieldError {
 	field: string;
@@ -31,3 +31,14 @@ export const mapDomainErrorTypeToStatusCode: Record<DomainErrorType, number> = {
 	[DomainErrorType.NOT_FOUND]: 404,
 	[DomainErrorType.UNAUTHORIZED]: 401,
 };
+
+export const ID_FIELD_NOT_FOUND_ERROR = new BaseDomainError(
+	DomainErrorType.BAD_REQUEST,
+	"Id field is required",
+	[
+		{
+			field: "id",
+			message: "REQUIRED",
+		},
+	],
+);
