@@ -11,11 +11,11 @@ export interface ErrorResponse {
 	errors?: FieldError[];
 }
 
-export class UnauthorizedError extends Error {
+export class UnauthorizedError extends BaseDomainError {
 	public statusCode: number;
 
-	constructor(message = "Unauthorized") {
-		super(message);
+	constructor() {
+		super(DomainErrorType.UNAUTHORIZED, "Unauthorized");
 		this.name = "UnauthorizedError";
 		this.statusCode = 401;
 
