@@ -3,7 +3,7 @@ import { z } from "zod";
 const nameField = z.string().min(1).max(24);
 const descriptionField = z.string().max(255).nullable();
 const quantityField = z.number();
-const categoryId = z.string().min(1).nullable();
+const categoryId = z.string().nullable();
 
 const createValidator = z.object({
 	name: nameField,
