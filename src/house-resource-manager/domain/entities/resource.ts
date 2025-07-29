@@ -9,7 +9,7 @@ export class Resource {
 		public status: "active" | "archived",
 		public readonly creationDate: Date,
 		public updateDate: Date,
-		public categoryId: Category["id"],
+		public categoryId: Category["id"] | null,
 		public quantity: number,
 		public readonly userId: User["id"],
 	) {}

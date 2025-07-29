@@ -24,11 +24,11 @@ export class ResourceUseCasesService {
 		categoryId,
 		userId,
 	}: CreateResourceRequestDto): Promise<Resource> {
-		const category = await this._getCategoryById(
-			categoryId,
-			userId,
-			"categoryId",
-		);
+		let category: Category | null = null;
+
+		if (categoryId) {
+			category = await this._getCategoryById(categoryId, userId, "categoryId");
+		}
 
 		const resource = new Resource(
 			generateId(),
@@ -37,7 +37,7 @@ export class ResourceUseCasesService {
 			"active",
 			new Date(),
 			new Date(),
-			category.id,
+			category ? category.id : null,
 			quantity,
 			userId,
 		);
@@ -53,12 +53,37 @@ export class ResourceUseCasesService {
 		return this.resourceRepository.deleteById(existingResource.id);
 	}
 
-	getResources({ userId }: GetAllResourcesRequestDto) {
-		return this.resourceRepository.getAllByUserId(userId);
+	async getResources({ userId }: GetAllResourcesRequestDto) {
+		const [resources, categories] = await Promise.all([
+			this.resourceRepository.getAllByUserId(userId),
+			this.categoryRepository.getAllByUserId(userId),
+		]);
+
+		return resources.map((r) => {
+			const linkedCategory = categories.find((c) => c.id === r.categoryId);
+
+			return {
+				...r,
+				category: linkedCategory ?? null,
+			};
+		});
 	}
 
-	getResourceById({ id, userId }: GetResourceByIdRequestDto) {
-		return this._getExistingById(id, userId);
+	async getResourceById({ id, userId }: GetResourceByIdRequestDto) {
+		const resource = await this._getExistingById(id, userId);
+
+		let category: Category | null = null;
+		if (resource.categoryId) {
+			const queriedCategory = await this.categoryRepository.getById(
+				resource.categoryId,
+			);
+			category = queriedCategory ?? null;
+		}
+
+		return {
+			...resource,
+			category,
+		};
 	}
 
 	async updateResource({
@@ -72,7 +97,7 @@ export class ResourceUseCasesService {
 		const existingResource = await this._getExistingById(id, userId);
 
 		// If new category is included in payload, we should validate existence and ownership.
-		if (categoryId !== undefined) {
+		if (categoryId !== undefined && categoryId !== null) {
 			const category = await this._getCategoryById(
 				categoryId,
 				userId,

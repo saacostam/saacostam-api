@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { getIdFromRequest } from "../../../core.utils";
 import { resourceUseCasesService } from "../../infra/di";
+import type {
+	TGetAllResourcsResponse,
+	TGetResourceByIdResponse,
+} from "../dtos";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
 import { ResourceValidator } from "../validators";
 
@@ -10,7 +14,8 @@ resourceRouter.get("/", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result = await resourceUseCasesService.getResources({ userId });
+	const result: TGetAllResourcsResponse =
+		await resourceUseCasesService.getResources({ userId });
 	res.status(200).json(result);
 });
 
@@ -21,7 +26,8 @@ resourceRouter.get("/:id", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result = await resourceUseCasesService.getResourceById({ id, userId });
+	const result: TGetResourceByIdResponse =
+		await resourceUseCasesService.getResourceById({ id, userId });
 	res.status(200).json(result);
 });
 

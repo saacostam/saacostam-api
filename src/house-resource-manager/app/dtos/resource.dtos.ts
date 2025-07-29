@@ -1,8 +1,8 @@
 export interface CreateResourceRequestDto {
 	name: string;
-	description?: string | null;
+	description: string | null;
 	quantity: number;
-	categoryId: string;
+	categoryId: string | null;
 	userId: string;
 }
 
@@ -16,7 +16,7 @@ export interface UpdateResourceRequestDto {
 	name?: string;
 	description?: string | null;
 	quantity?: number;
-	categoryId?: string;
+	categoryId?: string | null;
 	userId: string;
 }
 
