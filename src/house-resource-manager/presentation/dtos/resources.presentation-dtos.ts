@@ -5,3 +5,6 @@ export type TGetResourceByIdResponse = Resource & {
 };
 
 export type TGetAllResourcesResponse = TGetResourceByIdResponse[];
+
+export type TCreateResourceResponse = Pick<Resource, "id">;
+export type TUpdateResourceResponse = Pick<Resource, "id">;

@@ -23,7 +23,7 @@ export class ResourceUseCasesService {
 		quantity,
 		categoryId,
 		userId,
-	}: CreateResourceRequestDto): Promise<Resource> {
+	}: CreateResourceRequestDto) {
 		let category: Category | null = null;
 
 		if (categoryId) {
@@ -42,7 +42,11 @@ export class ResourceUseCasesService {
 			userId,
 		);
 
-		return this.resourceRepository.create(resource);
+		const newResource = await this.resourceRepository.create(resource);
+
+		return {
+			id: newResource.id,
+		};
 	}
 
 	async deleteResource({
@@ -118,7 +122,14 @@ export class ResourceUseCasesService {
 			userId,
 		);
 
-		return this.resourceRepository.updateById(id, updatedResource);
+		const newResourceEntry = await this.resourceRepository.updateById(
+			id,
+			updatedResource,
+		);
+
+		return {
+			id: newResourceEntry.id,
+		};
 	}
 
 	async _getExistingById(id: string, userId: string): Promise<Resource> {

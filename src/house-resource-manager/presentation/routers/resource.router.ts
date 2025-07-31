@@ -2,8 +2,10 @@ import { Router } from "express";
 import { getIdFromRequest } from "../../../core.utils";
 import { resourceUseCasesService } from "../../infra/di";
 import type {
+	TCreateResourceResponse,
 	TGetAllResourcesResponse,
 	TGetResourceByIdResponse,
+	TUpdateResourceResponse,
 } from "../dtos";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
 import { ResourceValidator } from "../validators";
@@ -36,10 +38,11 @@ resourceRouter.post("/", async (req, res) => {
 	if (!userId) throw new UnauthorizedError();
 
 	const input = ResourceValidator.createValidator.parse(req.body);
-	const result = await resourceUseCasesService.createResource({
-		...input,
-		userId,
-	});
+	const result: TCreateResourceResponse =
+		await resourceUseCasesService.createResource({
+			...input,
+			userId,
+		});
 	res.status(201).json(result);
 });
 
@@ -51,11 +54,12 @@ resourceRouter.put("/:id", async (req, res) => {
 	if (!userId) throw new UnauthorizedError();
 
 	const input = ResourceValidator.updateValidator.parse(req.body);
-	const result = await resourceUseCasesService.updateResource({
-		id,
-		...input,
-		userId,
-	});
+	const result: TUpdateResourceResponse =
+		await resourceUseCasesService.updateResource({
+			id,
+			...input,
+			userId,
+		});
 	res.status(200).json(result);
 });
 
