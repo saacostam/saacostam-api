@@ -25,6 +25,12 @@ export class InMemoryResourceRepositoryImpl implements ResourceRepository {
 		return new Promise((res) => res(resourcesOfUser));
 	}
 
+	getAllByIdList(ids: string[]): Promise<Resource[]> {
+		const resoucesByIdList = RESOURCES.filter((r) => ids.includes(r.id));
+
+		return new Promise((res) => res(resoucesByIdList));
+	}
+
 	getById(id: string): Promise<Resource | undefined> {
 		const resource = RESOURCES.find(
 			(r) => r.id === id && r.status === "active",

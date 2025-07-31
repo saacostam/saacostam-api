@@ -4,4 +4,4 @@ export type TGetResourceByIdResponse = Resource & {
 	category: Category | null;
 };
 
-export type TGetAllResourcsResponse = TGetResourceByIdResponse[];
+export type TGetAllResourcesResponse = TGetResourceByIdResponse[];
