@@ -27,7 +27,6 @@ const cadenceMonthlyByWeekday = z.object({
 
 const cadenceYearlyByDay = z.object({
 	type: z.literal("yearly-by-day"),
-	dayOfTheYear: z.number().int().min(1).max(366),
 });
 
 const cadenceTimeBased = z.object({

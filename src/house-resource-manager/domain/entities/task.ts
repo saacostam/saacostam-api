@@ -38,7 +38,6 @@ export type Cadence =
 	  }
 	| {
 			type: "yearly-by-day";
-			dayOfTheYear: number;
 	  }
 	| {
 			type: "time-based-recurrence";
