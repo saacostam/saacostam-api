@@ -204,7 +204,7 @@ export class TaskUseCasesService {
 		const existingTask = await this.taskRepository.getById(id);
 
 		if (!existingTask) throw notFoundError;
-		if (existingTask.userId === userId) throw notFoundError;
+		if (existingTask.userId !== userId) throw notFoundError;
 
 		return existingTask;
 	}
