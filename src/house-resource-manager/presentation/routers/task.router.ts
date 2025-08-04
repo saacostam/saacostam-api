@@ -5,6 +5,7 @@ import type {
 	TCreateTaskResponse,
 	TGetAllTasksResponse,
 	TGetTaskByIdResponse,
+	TUpdateTaskResponse,
 } from "../dtos";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
 import { TaskValidator } from "../validators";
@@ -47,21 +48,21 @@ taskRouter.post("/", async (req, res) => {
 	res.status(201).json(result);
 });
 
-// taskRouter.put("/:id", async (req, res) => {
-//   const id = req.params.id;
-// 	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
+taskRouter.put("/:id", async (req, res) => {
+	const id = req.params.id;
+	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
 
-// 	const userId = getIdFromRequest(req);
-// 	if (!userId) throw new UnauthorizedError();
+	const userId = getIdFromRequest(req);
+	if (!userId) throw new UnauthorizedError();
 
-//   const input = TaskValidator.updateValidator.parse(req.body);
-//   const result: TUpdateTaskResponse = await taskUseCasesService.updateTask({
-//     id,
-//     ...input,
-//     userId,
-//   })
-//  res.status(201).json(result);
-// })
+	const input = TaskValidator.updateValidator.parse(req.body);
+	const result: TUpdateTaskResponse = await taskUseCasesService.updateTask({
+		id,
+		...input,
+		userId,
+	});
+	res.status(201).json(result);
+});
 
 taskRouter.delete("/:id", async (req, res) => {
 	const id = req.params.id;

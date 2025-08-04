@@ -8,6 +8,7 @@ import type {
 	DeleteTaskRequestDto,
 	GetAllTasksRequestDto,
 	GetTaskByIdRequestDto,
+	UpdateTaskRequestDto,
 } from "../dtos";
 import type {
 	CategoryRepository,
@@ -133,6 +134,75 @@ export class TaskUseCasesService {
 			anchorDate: task.anchorDate.getISO8601String(),
 			category: queriedCategory ?? null,
 			resources: queriedResources ?? null,
+		};
+	}
+
+	async updateTask({
+		id,
+		name,
+		description,
+		resourcesIds,
+		categoryId,
+		cadence,
+		anchorDate: rawAnchorDateIsoString,
+		userId,
+	}: UpdateTaskRequestDto) {
+		const existingTask = await this._getExistingById(id, userId);
+
+		let anchorDateToUse: CalendarDate = existingTask.anchorDate;
+		if (rawAnchorDateIsoString !== undefined) {
+			try {
+				anchorDateToUse = CalendarDate.fromISO8601(rawAnchorDateIsoString);
+			} catch {
+				throw new BaseDomainError(
+					DomainErrorType.BAD_REQUEST,
+					"Invalid Date Format",
+					[
+						{
+							field: "anchorDate",
+							message: "Invalid Date Format",
+						},
+					],
+				);
+			}
+		}
+
+		const categoryPromise = categoryId
+			? this._getCategoryById(categoryId, userId, "categoryId")
+			: Promise.resolve(undefined);
+		const resourcesPromise =
+			resourcesIds && resourcesIds.length > 0
+				? this._getAllResourcesByIdList(resourcesIds, userId, "resourcesIds")
+				: Promise.resolve(undefined);
+
+		const [queriedCategory, queriedResources] = await Promise.all([
+			categoryPromise,
+			resourcesPromise,
+		]);
+
+		const updatedTask = new Task(
+			existingTask.id,
+			name === undefined ? existingTask.name : name,
+			description === undefined ? existingTask.description : description,
+			resourcesIds === undefined
+				? existingTask.resourcesIds
+				: resourcesIds === null
+					? null
+					: (queriedResources ?? []).map((r) => r.id),
+			categoryId === undefined
+				? existingTask.categoryId
+				: categoryId === null
+					? null
+					: (queriedCategory?.id ?? null),
+			cadence === undefined ? existingTask.cadence : cadence,
+			userId,
+			anchorDateToUse,
+		);
+
+		const newTaskEntry = await this.taskRepository.updateById(id, updatedTask);
+
+		return {
+			id: newTaskEntry.id,
 		};
 	}
 

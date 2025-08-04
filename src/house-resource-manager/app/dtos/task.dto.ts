@@ -22,7 +22,7 @@ export interface UpdateTaskRequestDto {
 	resourcesIds?: string[] | null;
 	categoryId?: string | null;
 	cadence?: Cadence;
-	userId?: string;
+	userId: string;
 	anchorDate?: string;
 }
 
