@@ -48,10 +48,6 @@ export class TaskInstanceUseCases {
 		);
 
 		// GET LAST-COMPLETION FOR THE TASK
-		// Initialize lastCompletion to the day before the task's anchor date.
-		// This ensures that if no completions exist, the anchor date itself can be the first calculated instance.
-		let lastCompletion: CalendarDate = task.anchorDate.add({ days: -1 });
-
 		// Check if there are any recorded completions for this task and use the latest one
 		const latestTaskCompletionDate = taskCompletions.reduce(
 			(latest: CalendarDate | undefined, tc) => {
@@ -62,6 +58,45 @@ export class TaskInstanceUseCases {
 			},
 			undefined,
 		);
+
+		// EARLY RETURN FOR TIME-BASED-RECURRENCE
+		// Handled differently because it's computed from the last occurrence,
+		// and doesn't require finding a day that matches a specific condition.
+		if (task.cadence.type === "time-based-recurrence") {
+			// For invalid dates (e.g., Feb 29 on a non-leap year),
+			// it's assumed CalendarDate's add method will handle rollovers correctly.
+
+			const amount = task.cadence.amount;
+
+			let addPayload: Parameters<CalendarDate["add"]>[0];
+			switch (task.cadence.timeFrame) {
+				case "day":
+					addPayload = { days: amount };
+					break;
+				case "month":
+					addPayload = { months: amount };
+					break;
+				case "week":
+					addPayload = { weeks: amount };
+					break;
+			}
+
+			// The next instance is the last completion date plus the recurrence interval.
+			// If no completion date exists, return the anchor date.
+			const expectedDate = latestTaskCompletionDate
+				? latestTaskCompletionDate.add(addPayload)
+				: task.anchorDate;
+
+			return {
+				task,
+				date: expectedDate,
+			};
+		}
+
+		// HANDLE OTHER TYPES - COMPUTE LAST COMPLETION
+		// Initialize lastCompletion to the day before the task's anchor date.
+		// This ensures that if no completions exist, the anchor date itself can be the first calculated instance.
+		let lastCompletion: CalendarDate = task.anchorDate.add({ days: -1 });
 
 		// If a latest completion exists AND it is more recent than our initial lastCompletion (anchorDate - 1 day),
 		// then use the actual latest completion date as the reference point.
@@ -216,40 +251,6 @@ export class TaskInstanceUseCases {
 						break;
 					}
 				}
-
-				return {
-					task,
-					date: expectedDate,
-				};
-			}
-			case "time-based-recurrence": {
-				// This is wrong.
-				// There is an issue
-				//  with setting the
-				//  lastCompletion to -1
-				//  days. It
-				//  should handled separately.
-
-				// For invalid dates (e.g., Feb 29 on a non-leap year),
-				// it's assumed CalendarDate's add method will handle rollovers correctly.
-
-				const amount = task.cadence.amount;
-
-				let addPayload: Parameters<CalendarDate["add"]>[0];
-				switch (task.cadence.timeFrame) {
-					case "day":
-						addPayload = { days: amount };
-						break;
-					case "month":
-						addPayload = { months: amount };
-						break;
-					case "week":
-						addPayload = { weeks: amount };
-						break;
-				}
-
-				// The next instance is simply the last completion date plus the recurrence interval.
-				const expectedDate = lastCompletion.add(addPayload);
 
 				return {
 					task,
