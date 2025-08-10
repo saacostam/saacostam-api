@@ -9,7 +9,6 @@ import type { TaskCompletionRepository, TaskRepository } from "../repositories";
 
 const DAYS_IN_A_WEEK = 7;
 const DAYS_IN_A_YEAR = 365;
-const MIN_DAYS_IN_A_MONTH = 28;
 const MAX_DAYS_IN_A_MONTH = 31;
 
 export class TaskInstanceUseCases {
@@ -42,18 +41,19 @@ export class TaskInstanceUseCases {
 		task: Task;
 		taskCompletions: TaskCompletion[];
 	}): TaskInstance | null {
-		// SANITIZE INPUT
+		// SANITIZE INPUT: Filter completions to only those relevant to the current task
 		const { task, taskCompletions: _taskCompletions } = args;
 		const taskCompletions = _taskCompletions.filter(
 			(tc) => tc.taskId === task.id,
 		);
 
 		// GET LAST-COMPLETION FOR THE TASK
-		// Assume the previous date for the anchor-date
+		// Initialize lastCompletion to the day before the task's anchor date.
+		// This ensures that if no completions exist, the anchor date itself can be the first calculated instance.
 		let lastCompletion: CalendarDate = task.anchorDate.add({ days: -1 });
 
-		// Check that a task completion EXIST and is in the FUTURE
-		const lastCompletionBasedOnPreviousTaskCompletions = taskCompletions.reduce(
+		// Check if there are any recorded completions for this task and use the latest one
+		const latestTaskCompletionDate = taskCompletions.reduce(
 			(latest: CalendarDate | undefined, tc) => {
 				if (!latest || tc.date.moreThan(latest)) {
 					return tc.date;
@@ -62,21 +62,23 @@ export class TaskInstanceUseCases {
 			},
 			undefined,
 		);
-		if (
-			lastCompletionBasedOnPreviousTaskCompletions &&
-			lastCompletionBasedOnPreviousTaskCompletions.moreThan(lastCompletion)
-		) {
-			lastCompletion = lastCompletionBasedOnPreviousTaskCompletions;
+
+		// If a latest completion exists AND it is more recent than our initial lastCompletion (anchorDate - 1 day),
+		// then use the actual latest completion date as the reference point.
+		if (latestTaskCompletionDate?.moreThan(lastCompletion)) {
+			lastCompletion = latestTaskCompletionDate;
 		}
 
-		// GET ANCHOR DATES
+		// GET ANCHOR DATES (e.g., today's date)
 		const { today } = CalendarDate.anchorDates();
 
-		// COMPUTE THE NEXT OCURRENCE
+		// COMPUTE THE NEXT OCCURRENCE based on the task's cadence type
 		switch (task.cadence.type) {
 			case "one-time": {
 				const expectedDate = task.anchorDate;
 
+				// If the last completion date matches the expected one-time date,
+				// it means the task has already been completed, so return null.
 				return lastCompletion.equals(expectedDate)
 					? null
 					: new TaskInstance(task.id, expectedDate);
@@ -84,7 +86,8 @@ export class TaskInstanceUseCases {
 			case "daily": {
 				const expectedDate = today;
 
-				// If it was done today, schedule for tomorrow, if not today
+				// If the task was completed on today's date, schedule it for tomorrow.
+				// Otherwise (if not completed today or completed before today), schedule for today.
 				const wasDoneToday = lastCompletion.equals(expectedDate);
 				const delta = wasDoneToday ? 1 : 0;
 
@@ -96,14 +99,12 @@ export class TaskInstanceUseCases {
 				);
 			}
 			case "weekly": {
-				// NOTE: Initialized with this value to avoid compiler issues.
-				// As we iterate through more than a week’s worth of days,
-				// this value will inevitably shift to the next week’s instance.
-				//
-				// IMPORTANT: Simply adding +DAYS_IN_A_WEEK is not sufficient,
-				// since the anchor date itself can be modified to a value in-between.
-
+				// Initialize expectedDate. The loop will find the next instance.
+				// The loop checks days starting from 1 day *after* lastCompletion.
 				let expectedDate = lastCompletion;
+
+				// Loop a bit more than a week to ensure the next instance is found,
+				// even if the lastCompletion was just after the target day in the previous week.
 				for (let dx = 1; dx <= DAYS_IN_A_WEEK + 1; dx++) {
 					const dxDaysAfter = lastCompletion.clone().add({
 						days: dx,
@@ -118,37 +119,28 @@ export class TaskInstanceUseCases {
 				return new TaskInstance(task.id, expectedDate);
 			}
 			case "monthly-by-day": {
-				// CLAMP TASK CONFIGURATION BASED ON MONTH LIMITS
-				const anyDayNextMonth = lastCompletion.add({
-					days: MIN_DAYS_IN_A_MONTH,
-				});
-
-				// Amount of days next month can vary.
-				// Therefore we need to clamp that value
-				const amountOfDaysNextMonth = CalendarDate.getDaysInMonth(
-					anyDayNextMonth.getYear(),
-					anyDayNextMonth.getMonth(),
-				);
-
-				const dayOfTheMonth = Math.min(
-					task.cadence.dayOfTheMonth,
-					amountOfDaysNextMonth,
-				);
-
-				// NOTE: Initialized with this value to avoid compiler issues.
-				// As we iterate through more than a months’s worth of days,
-				// this value will inevitably shift to the next months’s instance.
-				//
-				// IMPORTANT: Simply adding 1 month is not sufficient,
-				// since the anchor date itself can be modified to a value in-between.
-
+				// Initialize expectedDate. The loop will find the next instance.
 				let expectedDate = lastCompletion;
+
+				// Loop a bit more than a month to ensure the next instance is found,
+				// even if lastCompletion was just after the target day in the previous month.
 				for (let dx = 1; dx <= MAX_DAYS_IN_A_MONTH + 1; dx++) {
 					const dxDaysAfter = lastCompletion.clone().add({
 						days: dx,
 					});
 
-					if (dxDaysAfter.getDay() === dayOfTheMonth) {
+					// DYNAMIC CLAMPING: Calculate the clamped day for *this specific month*
+					// This ensures that "day 31" correctly becomes "day 28/29/30" for shorter months being checked.
+					const daysInThisMonth = CalendarDate.getDaysInMonth(
+						dxDaysAfter.getYear(),
+						dxDaysAfter.getMonth(),
+					);
+					const clampedDayOfTheMonth = Math.min(
+						task.cadence.dayOfTheMonth, // User's desired day (e.g., 31)
+						daysInThisMonth, // Actual days in the month being checked (e.g., 28 for Feb)
+					);
+
+					if (dxDaysAfter.getDay() === clampedDayOfTheMonth) {
 						expectedDate = dxDaysAfter;
 						break;
 					}
@@ -157,44 +149,34 @@ export class TaskInstanceUseCases {
 				return new TaskInstance(task.id, expectedDate);
 			}
 			case "monthly-by-weekday": {
-				// CLAMP TASK CONFIGURATION BASED ON MONTH LIMITS
-				const anyDayNextMonth = lastCompletion.add({
-					days: MIN_DAYS_IN_A_MONTH,
-				});
+				// Store original values as they are needed for matching and dynamic clamping
+				const originalDayOfTheWeek = task.cadence.dayOfTheWeek;
+				const originalWeekOfTheMonth = task.cadence.weekOfTheMonth;
 
-				// Amount of weeks next month can vary.
-				// The user can add 5, but
-				//  - Some months have only 4 weeks.
-				//  - Some instances of a day (ex: Monday) might happen only 4 weeks.
-				// Therefore we need to clamp that value
-				const amountOfWeeksNextMonth = CalendarDate.getWeekdayOccurrences(
-					anyDayNextMonth.getYear(),
-					anyDayNextMonth.getMonth(),
-					task.cadence.dayOfTheWeek,
-				);
-				const weekOfTheMonth = Math.min(
-					task.cadence.weekOfTheMonth,
-					amountOfWeeksNextMonth,
-				);
-
-				const dayOfTheWeek = task.cadence.dayOfTheWeek;
-
-				// NOTE: Initialized with this value to avoid compiler issues.
-				// As we iterate through more than a months’s worth of days,
-				// this value will inevitably shift to the next months’s instance.
-				//
-				// IMPORTANT: Simply adding 1 month is not sufficient,
-				// since the anchor date itself can be modified to a value in-between.
-
+				// Initialize expectedDate. The loop will find the next instance.
 				let expectedDate = lastCompletion;
+
+				// Loop a bit more than a month to ensure the next instance is found.
 				for (let dx = 1; dx <= MAX_DAYS_IN_A_MONTH + 1; dx++) {
 					const dxDaysAfter = lastCompletion.clone().add({
 						days: dx,
 					});
 
+					// DYNAMIC CLAMPING: Calculate the clamped week of the month for *this specific month*
+					// This handles cases where a month might not have a 5th Monday, etc.
+					const amountOfWeeksInThisMonth = CalendarDate.getWeekdayOccurrences(
+						dxDaysAfter.getYear(),
+						dxDaysAfter.getMonth(),
+						originalDayOfTheWeek,
+					);
+					const clampedWeekOfTheMonth = Math.min(
+						originalWeekOfTheMonth, // User's desired week (e.g., 5)
+						amountOfWeeksInThisMonth, // Actual occurrences in the month being checked (e.g., 4)
+					);
+
 					if (
-						dxDaysAfter.getWeekOfMonth() === weekOfTheMonth &&
-						dxDaysAfter.getDayOfWeek() === dayOfTheWeek
+						dxDaysAfter.getWeekOfMonth() === clampedWeekOfTheMonth &&
+						dxDaysAfter.getDayOfWeek() === originalDayOfTheWeek
 					) {
 						expectedDate = dxDaysAfter;
 						break;
@@ -207,8 +189,11 @@ export class TaskInstanceUseCases {
 				const targetMonth = task.anchorDate.getMonth();
 				const targetDay = task.anchorDate.getDay();
 
-				// Iterate forward day-by-day until we find the next valid instance
+				// Initialize expectedDate. The loop will find the next instance.
 				let expectedDate = lastCompletion;
+
+				// Iterate forward day-by-day until we find the next valid instance.
+				// Loop a bit more than a year to ensure the next instance is found.
 				for (let dx = 1; dx <= DAYS_IN_A_YEAR + 1; dx++) {
 					const dxDaysAfter = lastCompletion.clone().add({ days: dx });
 					if (
@@ -223,8 +208,8 @@ export class TaskInstanceUseCases {
 				return new TaskInstance(task.id, expectedDate);
 			}
 			case "time-based-recurrence": {
-				// NOTE: For invalid dates (e.g., Feb 29 on a non-leap year)
-				// JS automatically rolls over to the next valid day.
+				// For invalid dates (e.g., Feb 29 on a non-leap year),
+				// it's assumed CalendarDate's add method will handle rollovers correctly.
 
 				const amount = task.cadence.amount;
 
@@ -241,6 +226,7 @@ export class TaskInstanceUseCases {
 						break;
 				}
 
+				// The next instance is simply the last completion date plus the recurrence interval.
 				const expectedDate = lastCompletion.add(addPayload);
 
 				return new TaskInstance(task.id, expectedDate);
