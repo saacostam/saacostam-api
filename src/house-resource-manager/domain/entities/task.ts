@@ -53,10 +53,3 @@ export class TaskCompletion {
 		public readonly userId: User["id"],
 	) {}
 }
-
-export class TaskInstance {
-	constructor(
-		public readonly taskId: Task["id"],
-		public readonly date: CalendarDate,
-	) {}
-}

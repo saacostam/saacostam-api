@@ -1,5 +1,6 @@
-import type { TaskInstance } from "../../domain/entities";
+import type { Task } from "../../domain/entities";
 
-export type TGetAllTaskInstancesResponse = (Omit<TaskInstance, "date"> & {
+export type TGetAllTaskInstancesResponse = {
 	date: string;
-})[];
+	task: Task;
+}[];

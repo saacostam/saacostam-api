@@ -1,10 +1,9 @@
-import {
-	type Task,
-	type TaskCompletion,
-	TaskInstance,
-} from "../../domain/entities";
+import type { Task, TaskCompletion } from "../../domain/entities";
 import { CalendarDate } from "../../domain/value-objects";
-import type { GetAllTaskInstancesDto } from "../dtos";
+import type {
+	GetAllTaskInstancesAppResponse,
+	GetAllTaskInstancesDto,
+} from "../dtos";
 import type { TaskCompletionRepository, TaskRepository } from "../repositories";
 
 const DAYS_IN_A_WEEK = 7;
@@ -22,7 +21,7 @@ export class TaskInstanceUseCases {
 		const taskCompletions =
 			await this.taskCompletionRepository.getAllByUserId(userId);
 
-		const taskInstances: TaskInstance[] = [];
+		const taskInstances: GetAllTaskInstancesAppResponse = [];
 		for (const task of tasks) {
 			const nextInstance = this._computeNextInstance({
 				task,
@@ -41,7 +40,7 @@ export class TaskInstanceUseCases {
 	_computeNextInstance(args: {
 		task: Task;
 		taskCompletions: TaskCompletion[];
-	}): TaskInstance | null {
+	}): GetAllTaskInstancesAppResponse[0] | null {
 		// SANITIZE INPUT: Filter completions to only those relevant to the current task
 		const { task, taskCompletions: _taskCompletions } = args;
 		const taskCompletions = _taskCompletions.filter(
@@ -82,7 +81,10 @@ export class TaskInstanceUseCases {
 				// it means the task has already been completed, so return null.
 				return lastCompletion.equals(expectedDate)
 					? null
-					: new TaskInstance(task.id, expectedDate);
+					: {
+							task: task,
+							date: expectedDate,
+						};
 			}
 			case "daily": {
 				const expectedDate = today;
@@ -92,12 +94,12 @@ export class TaskInstanceUseCases {
 				const wasDoneToday = lastCompletion.equals(expectedDate);
 				const delta = wasDoneToday ? 1 : 0;
 
-				return new TaskInstance(
-					task.id,
-					expectedDate.add({
+				return {
+					task,
+					date: expectedDate.add({
 						days: delta,
 					}),
-				);
+				};
 			}
 			case "weekly": {
 				// Initialize expectedDate. The loop will find the next instance.
@@ -117,7 +119,10 @@ export class TaskInstanceUseCases {
 					}
 				}
 
-				return new TaskInstance(task.id, expectedDate);
+				return {
+					task,
+					date: expectedDate,
+				};
 			}
 			case "monthly-by-day": {
 				// Initialize expectedDate. The loop will find the next instance.
@@ -147,7 +152,10 @@ export class TaskInstanceUseCases {
 					}
 				}
 
-				return new TaskInstance(task.id, expectedDate);
+				return {
+					task,
+					date: expectedDate,
+				};
 			}
 			case "monthly-by-weekday": {
 				// Store original values as they are needed for matching and dynamic clamping
@@ -184,7 +192,10 @@ export class TaskInstanceUseCases {
 					}
 				}
 
-				return new TaskInstance(task.id, expectedDate);
+				return {
+					task,
+					date: expectedDate,
+				};
 			}
 			case "yearly-by-day": {
 				const targetMonth = task.anchorDate.getMonth();
@@ -206,7 +217,10 @@ export class TaskInstanceUseCases {
 					}
 				}
 
-				return new TaskInstance(task.id, expectedDate);
+				return {
+					task,
+					date: expectedDate,
+				};
 			}
 			case "time-based-recurrence": {
 				// This is wrong.
@@ -237,7 +251,10 @@ export class TaskInstanceUseCases {
 				// The next instance is simply the last completion date plus the recurrence interval.
 				const expectedDate = lastCompletion.add(addPayload);
 
-				return new TaskInstance(task.id, expectedDate);
+				return {
+					task,
+					date: expectedDate,
+				};
 			}
 		}
 	}
