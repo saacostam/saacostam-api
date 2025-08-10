@@ -61,14 +61,11 @@ export class CalendarDate {
 	}
 
 	public getDay() {
-		return Math.floor((this._date.getUTCDate() - 1) / 7) + 1;
+		return this._date.getUTCDate();
 	}
 
 	public getWeekOfMonth(): number {
-		const firstDay = new Date(
-			Date.UTC(this._date.getUTCFullYear(), this._date.getUTCMonth(), 1),
-		).getUTCDay();
-		return Math.ceil((this._date.getUTCDate() + firstDay) / 7);
+		return Math.floor((this._date.getUTCDate() - 1) / 7) + 1;
 	}
 
 	public static getDaysInMonth(year: number, month: number): number {

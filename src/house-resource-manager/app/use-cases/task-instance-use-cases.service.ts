@@ -17,9 +17,7 @@ export class TaskInstanceUseCases {
 		private taskCompletionRepository: TaskCompletionRepository,
 	) {}
 
-	async getAllTaskInstances({
-		userId,
-	}: GetAllTaskInstancesDto): Promise<TaskInstance[]> {
+	async getAllTaskInstances({ userId }: GetAllTaskInstancesDto) {
 		const tasks = await this.taskRepository.getAllByUserId(userId);
 		const taskCompletions =
 			await this.taskCompletionRepository.getAllByUserId(userId);
@@ -34,7 +32,10 @@ export class TaskInstanceUseCases {
 			if (nextInstance) taskInstances.push(nextInstance);
 		}
 
-		return taskInstances;
+		return taskInstances.map((ti) => ({
+			...ti,
+			date: ti.date.getISO8601String(),
+		}));
 	}
 
 	_computeNextInstance(args: {
@@ -208,6 +209,13 @@ export class TaskInstanceUseCases {
 				return new TaskInstance(task.id, expectedDate);
 			}
 			case "time-based-recurrence": {
+				// This is wrong.
+				// There is an issue
+				//  with setting the
+				//  lastCompletion to -1
+				//  days. It
+				//  should handled separately.
+
 				// For invalid dates (e.g., Feb 29 on a non-leap year),
 				// it's assumed CalendarDate's add method will handle rollovers correctly.
 

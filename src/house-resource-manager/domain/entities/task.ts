@@ -50,6 +50,7 @@ export class TaskCompletion {
 		public readonly id: string,
 		public readonly taskId: Task["id"],
 		public readonly date: CalendarDate,
+		public readonly userId: User["id"],
 	) {}
 }
 
