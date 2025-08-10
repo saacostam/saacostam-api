@@ -5,8 +5,20 @@ export class CalendarDate {
 		this._date = new Date(Date.UTC(year, month - 1, day));
 	}
 
+	public clone(): CalendarDate {
+		return new CalendarDate(
+			this._date.getUTCDate(),
+			this._date.getUTCMonth() + 1,
+			this._date.getUTCFullYear(),
+		);
+	}
+
 	valueOf() {
 		return this._date.getTime();
+	}
+
+	equals(calendarDate: CalendarDate) {
+		return this.valueOf() === calendarDate.valueOf();
 	}
 
 	lessThan(calendarDate: CalendarDate): boolean {
@@ -32,9 +44,97 @@ export class CalendarDate {
 		return `${year}-${month}-${day}`;
 	}
 
+	public getDayOfWeek(): number {
+		return this._date.getUTCDay();
+	}
+
+	public getDayOfMonth(): number {
+		return this._date.getUTCDate();
+	}
+
+	public getYear() {
+		return this._date.getUTCFullYear();
+	}
+
+	public getMonth() {
+		return this._date.getUTCMonth() + 1;
+	}
+
+	public getDay() {
+		return Math.floor((this._date.getUTCDate() - 1) / 7) + 1;
+	}
+
+	public getWeekOfMonth(): number {
+		const firstDay = new Date(
+			Date.UTC(this._date.getUTCFullYear(), this._date.getUTCMonth(), 1),
+		).getUTCDay();
+		return Math.ceil((this._date.getUTCDate() + firstDay) / 7);
+	}
+
+	public static getDaysInMonth(year: number, month: number): number {
+		return new Date(Date.UTC(year, month, 0)).getUTCDate();
+	}
+
+	public static getWeekdayOccurrences(
+		year: number,
+		month: number,
+		weekday: number,
+	): number {
+		let count = 0;
+		const daysInMonth = CalendarDate.getDaysInMonth(year, month);
+		for (let day = 1; day <= daysInMonth; day++) {
+			const date = new Date(Date.UTC(year, month - 1, day));
+			if (date.getUTCDay() === weekday) count++;
+		}
+		return count;
+	}
+
 	public static fromISO8601(iso8601DateString: string): CalendarDate {
 		const [year, month, day] = iso8601DateString.split("-").map(Number);
 		if (!day || !month || !year) throw new Error("Invalid Date");
 		return new CalendarDate(day, month, year);
+	}
+
+	public add({
+		days = 0,
+		weeks = 0,
+		months = 0,
+	}: {
+		days?: number;
+		weeks?: number;
+		months?: number;
+	}): CalendarDate {
+		const newDate = new Date(this._date.getTime());
+
+		if (months) {
+			newDate.setUTCMonth(newDate.getUTCMonth() + months);
+		}
+		if (weeks) {
+			days += weeks * 7;
+		}
+		if (days) {
+			newDate.setUTCDate(newDate.getUTCDate() + days);
+		}
+
+		return new CalendarDate(
+			newDate.getUTCDate(),
+			newDate.getUTCMonth() + 1,
+			newDate.getUTCFullYear(),
+		);
+	}
+
+	public static _fromCurrentUTCDate(): CalendarDate {
+		const now = new Date();
+		return new CalendarDate(
+			now.getUTCDate(),
+			now.getUTCMonth() + 1,
+			now.getUTCFullYear(),
+		);
+	}
+
+	public static anchorDates(): { today: CalendarDate; tomorrow: CalendarDate } {
+		const today = CalendarDate._fromCurrentUTCDate();
+		const tomorrow = today.add({ days: 1 });
+		return { today, tomorrow };
 	}
 }

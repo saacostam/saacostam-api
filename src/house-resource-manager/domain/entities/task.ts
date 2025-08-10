@@ -49,6 +49,13 @@ export class TaskCompletion {
 	constructor(
 		public readonly id: string,
 		public readonly taskId: Task["id"],
-		public readonly date: Date,
+		public readonly date: CalendarDate,
+	) {}
+}
+
+export class TaskInstance {
+	constructor(
+		public readonly taskId: Task["id"],
+		public readonly date: CalendarDate,
 	) {}
 }
