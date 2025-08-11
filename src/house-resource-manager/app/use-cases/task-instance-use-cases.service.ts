@@ -1,6 +1,13 @@
-import type { Task, TaskCompletion } from "../../domain/entities";
+import { generateId } from "core.utils";
+import {
+	BaseDomainError,
+	DomainErrorType,
+} from "house-resource-manager/domain/errors";
+import { type Task, TaskCompletion } from "../../domain/entities";
 import { CalendarDate } from "../../domain/value-objects";
 import type {
+	CreateTaskInstanceCompletionDto,
+	DeleteTaskInstanceCompletionDto,
 	GetAllTaskInstancesAppResponse,
 	GetAllTaskInstancesDto,
 } from "../dtos";
@@ -35,6 +42,55 @@ export class TaskInstanceUseCases {
 			...ti,
 			date: ti.date.getISO8601String(),
 		}));
+	}
+
+	async createTaskInstanceCompletion({
+		date: rawDateIsoString,
+		taskId,
+		userId,
+	}: CreateTaskInstanceCompletionDto) {
+		const existingTask = await this._getTaskById(taskId, userId);
+
+		// Cast raw date-iso-string to value-object
+		let date: CalendarDate;
+		try {
+			date = CalendarDate.fromISO8601(rawDateIsoString);
+		} catch {
+			throw new BaseDomainError(
+				DomainErrorType.BAD_REQUEST,
+				"Invalid Date Format",
+				[
+					{
+						field: "date",
+						message: "Invalid Date Format",
+					},
+				],
+			);
+		}
+
+		const taskCompletion = new TaskCompletion(
+			generateId(),
+			existingTask.id,
+			date,
+			userId,
+		);
+
+		const newTaskCompletion =
+			await this.taskCompletionRepository.create(taskCompletion);
+		return {
+			id: newTaskCompletion.id,
+		};
+	}
+
+	async deleteTaskInstanceCompletion({
+		id,
+		userId,
+	}: DeleteTaskInstanceCompletionDto): Promise<void> {
+		const existingTaskCompletion = await this._getTaskCompletionById(
+			id,
+			userId,
+		);
+		return this.taskCompletionRepository.deleteById(existingTaskCompletion.id);
 	}
 
 	_computeNextInstance(args: {
@@ -258,5 +314,37 @@ export class TaskInstanceUseCases {
 				};
 			}
 		}
+	}
+
+	async _getTaskById(id: string, userId: string): Promise<Task> {
+		const notFoundError = new BaseDomainError(
+			DomainErrorType.NOT_FOUND,
+			`Task with id ${id} not found`,
+		);
+
+		const existingTask = await this.taskRepository.getById(id);
+
+		if (!existingTask) throw notFoundError;
+		if (existingTask.userId !== userId) throw notFoundError;
+
+		return existingTask;
+	}
+
+	async _getTaskCompletionById(
+		id: string,
+		userId: string,
+	): Promise<TaskCompletion> {
+		const notFoundError = new BaseDomainError(
+			DomainErrorType.NOT_FOUND,
+			`Task completion with id ${id} not found`,
+		);
+
+		const existingTaskCompletion =
+			await this.taskCompletionRepository.getById(id);
+
+		if (!existingTaskCompletion) throw notFoundError;
+		if (existingTaskCompletion.userId !== userId) throw notFoundError;
+
+		return existingTaskCompletion;
 	}
 }

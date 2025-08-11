@@ -2,7 +2,7 @@ import { Router } from "express";
 import { getIdFromRequest } from "../../../core.utils";
 import { taskUseCasesService } from "../../infra/di";
 import type {
-	TCreateTaskResponse,
+	TCreateTaskCompletionResponse,
 	TGetAllTasksResponse,
 	TGetTaskByIdResponse,
 	TUpdateTaskResponse,
@@ -41,10 +41,11 @@ taskRouter.post("/", async (req, res) => {
 	if (!userId) throw new UnauthorizedError();
 
 	const input = TaskValidator.createValidator.parse(req.body);
-	const result: TCreateTaskResponse = await taskUseCasesService.createTask({
-		...input,
-		userId,
-	});
+	const result: TCreateTaskCompletionResponse =
+		await taskUseCasesService.createTask({
+			...input,
+			userId,
+		});
 	res.status(201).json(result);
 });
 
