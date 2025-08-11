@@ -5,9 +5,19 @@ export interface GetAllTaskInstancesDto {
 	userId: string;
 }
 
+export type TaskInstanceStatus =
+	| {
+			type: "virtual";
+	  }
+	| {
+			type: "committed";
+			id: string;
+	  };
+
 export type GetAllTaskInstancesAppResponse = {
-	task: Task;
+	status: TaskInstanceStatus;
 	date: CalendarDate;
+	task: Task;
 }[];
 
 export interface CreateTaskInstanceCompletionDto {

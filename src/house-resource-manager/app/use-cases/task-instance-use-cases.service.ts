@@ -27,6 +27,22 @@ export class TaskInstanceUseCases {
 
 		const taskInstances: GetAllTaskInstancesAppResponse = [];
 		for (const task of tasks) {
+			// Get Last Completion (if possible), and send it as a history of what has been done.
+			const lastCompletion = this._getLastCompletion({
+				task,
+				taskCompletions,
+			});
+			if (lastCompletion) {
+				taskInstances.push({
+					status: {
+						type: "committed",
+						id: lastCompletion.id,
+					},
+					date: lastCompletion.date,
+					task,
+				});
+			}
+
 			const nextInstance = this._computeNextInstance({
 				task,
 				taskCompletions,
@@ -102,15 +118,11 @@ export class TaskInstanceUseCases {
 
 		// GET LAST-COMPLETION FOR THE TASK
 		// Check if there are any recorded completions for this task and use the latest one
-		const latestTaskCompletionDate = taskCompletions.reduce(
-			(latest: CalendarDate | undefined, tc) => {
-				if (!latest || tc.date.moreThan(latest)) {
-					return tc.date;
-				}
-				return latest;
-			},
-			undefined,
-		);
+		const latestTaskCompletion = this._getLastCompletion({
+			task,
+			taskCompletions,
+		});
+		const latestTaskCompletionDate = latestTaskCompletion?.date;
 
 		// EARLY RETURN FOR TIME-BASED-RECURRENCE
 		// Handled differently because it's computed from the last occurrence,
@@ -141,6 +153,9 @@ export class TaskInstanceUseCases {
 				: task.anchorDate;
 
 			return {
+				status: {
+					type: "virtual",
+				},
 				task,
 				date: expectedDate,
 			};
@@ -170,6 +185,9 @@ export class TaskInstanceUseCases {
 				return lastCompletion.equals(expectedDate)
 					? null
 					: {
+							status: {
+								type: "virtual",
+							},
 							task: task,
 							date: expectedDate,
 						};
@@ -183,6 +201,9 @@ export class TaskInstanceUseCases {
 				const delta = wasDoneToday ? 1 : 0;
 
 				return {
+					status: {
+						type: "virtual",
+					},
 					task,
 					date: expectedDate.add({
 						days: delta,
@@ -208,6 +229,9 @@ export class TaskInstanceUseCases {
 				}
 
 				return {
+					status: {
+						type: "virtual",
+					},
 					task,
 					date: expectedDate,
 				};
@@ -241,6 +265,9 @@ export class TaskInstanceUseCases {
 				}
 
 				return {
+					status: {
+						type: "virtual",
+					},
 					task,
 					date: expectedDate,
 				};
@@ -281,6 +308,9 @@ export class TaskInstanceUseCases {
 				}
 
 				return {
+					status: {
+						type: "virtual",
+					},
 					task,
 					date: expectedDate,
 				};
@@ -306,11 +336,39 @@ export class TaskInstanceUseCases {
 				}
 
 				return {
+					status: {
+						type: "virtual",
+					},
 					task,
 					date: expectedDate,
 				};
 			}
 		}
+	}
+
+	_getLastCompletion(args: {
+		task: Task;
+		taskCompletions: TaskCompletion[];
+	}): TaskCompletion | undefined {
+		// SANITIZE INPUT: Filter completions to only those relevant to the current task
+		const { task, taskCompletions: _taskCompletions } = args;
+		const taskCompletions = _taskCompletions.filter(
+			(tc) => tc.taskId === task.id,
+		);
+
+		// GET LAST-COMPLETION FOR THE TASK
+		// Check if there are any recorded completions for this task and use the latest one
+		const latestTaskCompletion = taskCompletions.reduce(
+			(latest: TaskCompletion | undefined, tc) => {
+				if (!latest || tc.date.moreThan(latest.date)) {
+					return tc;
+				}
+				return latest;
+			},
+			undefined,
+		);
+
+		return latestTaskCompletion;
 	}
 
 	async _getTaskById(id: string, userId: string): Promise<Task> {
