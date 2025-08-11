@@ -1,9 +1,6 @@
-import { generateId } from "core.utils";
-import {
-	BaseDomainError,
-	DomainErrorType,
-} from "house-resource-manager/domain/errors";
+import { generateId } from "../../../core.utils";
 import { type Task, TaskCompletion } from "../../domain/entities";
+import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 import { CalendarDate } from "../../domain/value-objects";
 import type {
 	CreateTaskInstanceCompletionDto,
