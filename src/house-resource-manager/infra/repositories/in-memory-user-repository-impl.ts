@@ -8,6 +8,7 @@ const USERS: UserWithHash[] = [
 		"Santiago",
 		"Acosta meza",
 		"$2b$10$r7mtcFnMtaGGfzXWRE05TO6rsjUilCPuvMLfbVWsRr90UriIR/yy.",
+		"America/Bogota",
 	),
 ];
 
@@ -16,7 +17,15 @@ export class InMemoryUserRepositoryImpl implements UserRepository {
 		USERS.push(user);
 
 		return new Promise((res) =>
-			res(new User(user.id, user.username, user.firstName, user.lastName)),
+			res(
+				new User(
+					user.id,
+					user.username,
+					user.firstName,
+					user.lastName,
+					user.timezone,
+				),
+			),
 		);
 	}
 
@@ -30,7 +39,13 @@ export class InMemoryUserRepositoryImpl implements UserRepository {
 		return new Promise((res) =>
 			res(
 				user
-					? new User(user.id, user.username, user.firstName, user.lastName)
+					? new User(
+							user.id,
+							user.username,
+							user.firstName,
+							user.lastName,
+							user.timezone,
+						)
 					: undefined,
 			),
 		);

@@ -44,6 +44,7 @@ export class AuthUseCasesService {
 			firstName.value,
 			lastName.value,
 			hashedPassword,
+			"America/Bogota",
 		);
 
 		const user = await this.userRepository.create(newUser);

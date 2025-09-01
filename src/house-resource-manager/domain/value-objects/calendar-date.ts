@@ -1,8 +1,24 @@
+import { DateTime } from "luxon";
+
+export type Timezone = "America/Bogota";
+
 export class CalendarDate {
 	private _date: Date;
+	public readonly timezone: Timezone;
 
-	private constructor(day: number, month: number, year: number) {
-		this._date = new Date(Date.UTC(year, month - 1, day));
+	private constructor(
+		day: number,
+		month: number,
+		year: number,
+		timezone: Timezone,
+	) {
+		const dt = DateTime.fromObject(
+			{ year, month, day, hour: 0, minute: 0, second: 0 },
+			{ zone: timezone },
+		);
+
+		this._date = dt.toJSDate();
+		this.timezone = timezone;
 	}
 
 	public clone(): CalendarDate {
@@ -10,6 +26,7 @@ export class CalendarDate {
 			this._date.getUTCDate(),
 			this._date.getUTCMonth() + 1,
 			this._date.getUTCFullYear(),
+			this.timezone,
 		);
 	}
 
@@ -86,10 +103,13 @@ export class CalendarDate {
 		return count;
 	}
 
-	public static fromISO8601(iso8601DateString: string): CalendarDate {
+	public static fromISO8601(
+		iso8601DateString: string,
+		timezone: Timezone,
+	): CalendarDate {
 		const [year, month, day] = iso8601DateString.split("-").map(Number);
 		if (!day || !month || !year) throw new Error("Invalid Date");
-		return new CalendarDate(day, month, year);
+		return new CalendarDate(day, month, year, timezone);
 	}
 
 	public add({
@@ -117,20 +137,25 @@ export class CalendarDate {
 			newDate.getUTCDate(),
 			newDate.getUTCMonth() + 1,
 			newDate.getUTCFullYear(),
+			this.timezone,
 		);
 	}
 
-	public static _fromCurrentUTCDate(): CalendarDate {
+	public static _fromCurrentUTCDate(timezone: Timezone): CalendarDate {
 		const now = new Date();
 		return new CalendarDate(
 			now.getUTCDate(),
 			now.getUTCMonth() + 1,
 			now.getUTCFullYear(),
+			timezone,
 		);
 	}
 
-	public static anchorDates(): { today: CalendarDate; tomorrow: CalendarDate } {
-		const today = CalendarDate._fromCurrentUTCDate();
+	public static anchorDates(timezone: Timezone): {
+		today: CalendarDate;
+		tomorrow: CalendarDate;
+	} {
+		const today = CalendarDate._fromCurrentUTCDate(timezone);
 		const tomorrow = today.add({ days: 1 });
 		return { today, tomorrow };
 	}

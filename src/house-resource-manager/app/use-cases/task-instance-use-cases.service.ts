@@ -1,14 +1,18 @@
 import { generateId } from "../../../core.utils";
-import { type Task, TaskCompletion } from "../../domain/entities";
+import { type Task, TaskCompletion, type User } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
-import { CalendarDate } from "../../domain/value-objects";
+import { CalendarDate, type Timezone } from "../../domain/value-objects";
 import type {
 	CreateTaskInstanceCompletionDto,
 	DeleteTaskInstanceCompletionDto,
 	GetAllTaskInstancesAppResponse,
 	GetAllTaskInstancesDto,
 } from "../dtos";
-import type { TaskCompletionRepository, TaskRepository } from "../repositories";
+import type {
+	TaskCompletionRepository,
+	TaskRepository,
+	UserRepository,
+} from "../repositories";
 
 const DAYS_IN_A_WEEK = 7;
 const DAYS_IN_A_YEAR = 365;
@@ -18,12 +22,15 @@ export class TaskInstanceUseCases {
 	constructor(
 		private taskRepository: TaskRepository,
 		private taskCompletionRepository: TaskCompletionRepository,
+		private userRepository: UserRepository,
 	) {}
 
 	async getAllTaskInstances({ userId }: GetAllTaskInstancesDto) {
-		const tasks = await this.taskRepository.getAllByUserId(userId);
-		const taskCompletions =
-			await this.taskCompletionRepository.getAllByUserId(userId);
+		const [tasks, taskCompletions, user] = await Promise.all([
+			this.taskRepository.getAllByUserId(userId),
+			this.taskCompletionRepository.getAllByUserId(userId),
+			this._getUser(userId),
+		]);
 
 		const taskInstances: GetAllTaskInstancesAppResponse = [];
 		for (const task of tasks) {
@@ -46,6 +53,7 @@ export class TaskInstanceUseCases {
 			const nextInstance = this._computeNextInstance({
 				task,
 				taskCompletions,
+				timezone: user.timezone,
 			});
 
 			if (nextInstance) taskInstances.push(nextInstance);
@@ -62,12 +70,15 @@ export class TaskInstanceUseCases {
 		taskId,
 		userId,
 	}: CreateTaskInstanceCompletionDto) {
-		const existingTask = await this._getTaskById(taskId, userId);
+		const [existingTask, user] = await Promise.all([
+			this._getTaskById(taskId, userId),
+			this._getUser(userId),
+		]);
 
 		// Cast raw date-iso-string to value-object
 		let date: CalendarDate;
 		try {
-			date = CalendarDate.fromISO8601(rawDateIsoString);
+			date = CalendarDate.fromISO8601(rawDateIsoString, user.timezone);
 		} catch {
 			throw new BaseDomainError(
 				DomainErrorType.BAD_REQUEST,
@@ -109,9 +120,10 @@ export class TaskInstanceUseCases {
 	_computeNextInstance(args: {
 		task: Task;
 		taskCompletions: TaskCompletion[];
+		timezone: Timezone;
 	}): GetAllTaskInstancesAppResponse[0] | null {
 		// SANITIZE INPUT: Filter completions to only those relevant to the current task
-		const { task, taskCompletions: _taskCompletions } = args;
+		const { task, taskCompletions: _taskCompletions, timezone } = args;
 		const taskCompletions = _taskCompletions.filter(
 			(tc) => tc.taskId === task.id,
 		);
@@ -173,7 +185,7 @@ export class TaskInstanceUseCases {
 		}
 
 		// GET ANCHOR DATES (e.g., today's date)
-		const { today } = CalendarDate.anchorDates();
+		const { today } = CalendarDate.anchorDates(timezone);
 
 		// COMPUTE THE NEXT OCCURRENCE based on the task's cadence type
 		switch (task.cadence.type) {
@@ -401,5 +413,17 @@ export class TaskInstanceUseCases {
 		if (existingTaskCompletion.userId !== userId) throw notFoundError;
 
 		return existingTaskCompletion;
+	}
+
+	async _getUser(userId: string): Promise<User> {
+		const userNotFoundError = new BaseDomainError(
+			DomainErrorType.NOT_FOUND,
+			"User not found",
+		);
+
+		const user = await this.userRepository.getById(userId);
+		if (!user) throw userNotFoundError;
+
+		return user;
 	}
 }

@@ -1,6 +1,11 @@
 import { generateId } from "../../../core.utils";
 
-import { type Category, type Resource, Task } from "../../domain/entities";
+import {
+	type Category,
+	type Resource,
+	Task,
+	type User,
+} from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 import { CalendarDate } from "../../domain/value-objects";
 import type {
@@ -14,6 +19,7 @@ import type {
 	CategoryRepository,
 	ResourceRepository,
 	TaskRepository,
+	UserRepository,
 } from "../repositories";
 
 export class TaskUseCasesService {
@@ -21,6 +27,7 @@ export class TaskUseCasesService {
 		private categoryRepository: CategoryRepository,
 		private resourceRepository: ResourceRepository,
 		private taskRepository: TaskRepository,
+		private userRepository: UserRepository,
 	) {}
 
 	async createTask({
@@ -36,13 +43,14 @@ export class TaskUseCasesService {
 		let category: Category | null = null;
 		let resources: Resource[] = [];
 
-		const [queriedCategory, queriedResources] = await Promise.all([
+		const [queriedCategory, queriedResources, user] = await Promise.all([
 			categoryId
 				? this._getCategoryById(categoryId, userId, "categoryId")
 				: undefined,
 			resourcesIds !== null
 				? this._getAllResourcesByIdList(resourcesIds, userId, "resourcesIds")
 				: undefined,
+			this._getUser(userId),
 		]);
 
 		if (queriedCategory) {
@@ -56,7 +64,10 @@ export class TaskUseCasesService {
 		// Cast raw date-iso-string to value-object
 		let anchorDate: CalendarDate;
 		try {
-			anchorDate = CalendarDate.fromISO8601(rawAnchorDateIsoString);
+			anchorDate = CalendarDate.fromISO8601(
+				rawAnchorDateIsoString,
+				user.timezone,
+			);
 		} catch {
 			throw new BaseDomainError(
 				DomainErrorType.BAD_REQUEST,
@@ -147,12 +158,18 @@ export class TaskUseCasesService {
 		anchorDate: rawAnchorDateIsoString,
 		userId,
 	}: UpdateTaskRequestDto) {
-		const existingTask = await this._getExistingById(id, userId);
+		const [existingTask, user] = await Promise.all([
+			this._getExistingById(id, userId),
+			this._getUser(userId),
+		]);
 
 		let anchorDateToUse: CalendarDate = existingTask.anchorDate;
 		if (rawAnchorDateIsoString !== undefined) {
 			try {
-				anchorDateToUse = CalendarDate.fromISO8601(rawAnchorDateIsoString);
+				anchorDateToUse = CalendarDate.fromISO8601(
+					rawAnchorDateIsoString,
+					user.timezone,
+				);
 			} catch {
 				throw new BaseDomainError(
 					DomainErrorType.BAD_REQUEST,
@@ -277,5 +294,20 @@ export class TaskUseCasesService {
 		if (existingTask.userId !== userId) throw notFoundError;
 
 		return existingTask;
+	}
+
+	async _getUser(userId: string): Promise<User> {
+		const userNotFoundError = new BaseDomainError(
+			DomainErrorType.NOT_FOUND,
+			"Unable to find user",
+		);
+
+		const user = await this.userRepository.getById(userId);
+
+		if (!user) {
+			throw userNotFoundError;
+		}
+
+		return user;
 	}
 }
