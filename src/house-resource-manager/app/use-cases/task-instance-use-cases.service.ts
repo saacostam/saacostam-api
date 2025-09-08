@@ -205,21 +205,18 @@ export class TaskInstanceUseCases {
 						};
 			}
 			case "daily": {
-				const expectedDate = today;
+				let expectedDate = today;
 
-				// If the task was completed on today's date, schedule it for tomorrow.
-				// Otherwise (if not completed today or completed before today), schedule for today.
-				const wasDoneToday = lastCompletion.equals(expectedDate);
-				const delta = wasDoneToday ? 1 : 0;
+				while (taskCompletions.find((tc) => tc.date.equals(expectedDate))) {
+					expectedDate = expectedDate.add({ days: 1 });
+				}
 
 				return {
 					status: {
 						type: "virtual",
 					},
 					task,
-					date: expectedDate.add({
-						days: delta,
-					}),
+					date: expectedDate,
 				};
 			}
 			case "weekly": {

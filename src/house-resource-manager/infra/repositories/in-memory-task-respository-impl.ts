@@ -1,7 +1,21 @@
 import type { TaskRepository } from "../../app/repositories";
-import type { Task } from "../../domain/entities";
+import { Task } from "../../domain/entities";
+import { CalendarDate } from "../../domain/value-objects";
 
-let TASKS: Task[] = [];
+let TASKS: Task[] = [
+	new Task(
+		"9227a66c-34ca-4339-a224-c2b1d71c3c22",
+		"Daily Task",
+		"Daily Task for debugging",
+		null,
+		null,
+		{
+			type: "daily",
+		},
+		"9227a66c-34ca-4339-a224-c2b1d71c3c26",
+		CalendarDate.anchorDates("America/Bogota").today,
+	),
+];
 
 export class InMemoryTaskRepositoryImpl implements TaskRepository {
 	create(task: Task): Promise<Task> {
