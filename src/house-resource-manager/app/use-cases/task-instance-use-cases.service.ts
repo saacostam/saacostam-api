@@ -32,6 +32,8 @@ export class TaskInstanceUseCases {
 			this._getUser(userId),
 		]);
 
+		const { today } = CalendarDate.anchorDates(user.timezone);
+
 		const taskInstances: GetAllTaskInstancesAppResponse = [];
 		for (const task of tasks) {
 			// Get Last Completion (if possible), and send it as a history of what has been done.
@@ -39,7 +41,8 @@ export class TaskInstanceUseCases {
 				task,
 				taskCompletions,
 			});
-			if (lastCompletion) {
+
+			if (lastCompletion?.date.moreOrEqual(today)) {
 				taskInstances.push({
 					status: {
 						type: "committed",
