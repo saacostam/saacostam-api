@@ -142,13 +142,8 @@ export class CalendarDate {
 	}
 
 	public static _fromCurrentUTCDate(timezone: Timezone): CalendarDate {
-		const now = new Date();
-		return new CalendarDate(
-			now.getUTCDate(),
-			now.getUTCMonth() + 1,
-			now.getUTCFullYear(),
-			timezone,
-		);
+		const now = DateTime.utc().setZone(timezone);
+		return new CalendarDate(now.day, now.month, now.year, timezone);
 	}
 
 	public static anchorDates(timezone: Timezone): {
