@@ -252,9 +252,9 @@ export class TaskInstanceUseCases {
 				// Initialize expectedDate. The loop will find the next instance.
 				let expectedDate = lastCompletion;
 
-				// Loop a bit more than a month to ensure the next instance is found,
+				// Loop a 2-months to ensure the next instance is found,
 				// even if lastCompletion was just after the target day in the previous month.
-				for (let dx = 1; dx <= MAX_DAYS_IN_A_MONTH + 1; dx++) {
+				for (let dx = 1; dx <= 2 * MAX_DAYS_IN_A_MONTH; dx++) {
 					const dxDaysAfter = lastCompletion.clone().add({
 						days: dx,
 					});
@@ -292,8 +292,8 @@ export class TaskInstanceUseCases {
 				// Initialize expectedDate. The loop will find the next instance.
 				let expectedDate = lastCompletion;
 
-				// Loop a bit more than a month to ensure the next instance is found.
-				for (let dx = 1; dx <= MAX_DAYS_IN_A_MONTH + 1; dx++) {
+				// Loop a bit two times a month, to ensure the next instance is found.
+				for (let dx = 1; dx <= 2 * MAX_DAYS_IN_A_MONTH; dx++) {
 					const dxDaysAfter = lastCompletion.clone().add({
 						days: dx,
 					});

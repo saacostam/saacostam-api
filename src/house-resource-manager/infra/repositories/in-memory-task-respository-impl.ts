@@ -15,6 +15,20 @@ let TASKS: Task[] = [
 		"9227a66c-34ca-4339-a224-c2b1d71c3c26",
 		CalendarDate.anchorDates("America/Bogota").today,
 	),
+	new Task(
+		"12b3955d-29a0-41bb-807a-e185ef5c1c18",
+		"Third Thursday",
+		"Third Thursday",
+		null,
+		null,
+		{
+			type: "monthly-by-weekday",
+			weekOfTheMonth: 3,
+			dayOfTheWeek: 3,
+		},
+		"9227a66c-34ca-4339-a224-c2b1d71c3c26",
+		CalendarDate.anchorDates("America/Bogota").tomorrow,
+	),
 ];
 
 export class InMemoryTaskRepositoryImpl implements TaskRepository {
