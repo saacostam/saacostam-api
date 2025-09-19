@@ -28,8 +28,9 @@ export class UnauthorizedError extends BaseDomainError {
 
 export const mapDomainErrorTypeToStatusCode: Record<DomainErrorType, number> = {
 	[DomainErrorType.BAD_REQUEST]: 400,
-	[DomainErrorType.NOT_FOUND]: 404,
 	[DomainErrorType.UNAUTHORIZED]: 401,
+	[DomainErrorType.NOT_FOUND]: 404,
+	[DomainErrorType.SERVER_ERROR]: 500,
 };
 
 export const ID_FIELD_NOT_FOUND_ERROR = new BaseDomainError(

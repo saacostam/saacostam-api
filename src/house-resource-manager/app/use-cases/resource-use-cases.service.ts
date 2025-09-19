@@ -101,7 +101,7 @@ export class ResourceUseCasesService {
 		const existingResource = await this._getExistingById(id, userId);
 
 		// If new category is included in payload, we should validate existence and ownership.
-		if (categoryId !== undefined && categoryId !== null) {
+		if (categoryId) {
 			const category = await this._getCategoryById(
 				categoryId,
 				userId,

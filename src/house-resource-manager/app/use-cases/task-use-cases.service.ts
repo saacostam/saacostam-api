@@ -164,7 +164,7 @@ export class TaskUseCasesService {
 		]);
 
 		let anchorDateToUse: CalendarDate = existingTask.anchorDate;
-		if (rawAnchorDateIsoString !== undefined) {
+		if (rawAnchorDateIsoString) {
 			try {
 				anchorDateToUse = CalendarDate.fromISO8601(
 					rawAnchorDateIsoString,

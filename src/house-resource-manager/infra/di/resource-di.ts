@@ -1,10 +1,10 @@
 import { ResourceUseCasesService } from "../../app/use-cases";
 import {
-	InMemoryCategoryRepositoryImpl,
-	InMemoryResourceRepositoryImpl,
+	MongooseCategoryRepositoryImpl,
+	MongooseResourceRepositoryImpl,
 } from "../repositories";
 
 export const resourceUseCasesService = new ResourceUseCasesService(
-	new InMemoryResourceRepositoryImpl(),
-	new InMemoryCategoryRepositoryImpl(),
+	new MongooseResourceRepositoryImpl(),
+	new MongooseCategoryRepositoryImpl(),
 );

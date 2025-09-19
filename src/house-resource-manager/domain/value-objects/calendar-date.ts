@@ -7,27 +7,33 @@ export class CalendarDate {
 	public readonly timezone: Timezone;
 
 	private constructor(
-		day: number,
-		month: number,
-		year: number,
-		timezone: Timezone,
+		args:
+			| { day: number; month: number; year: number; timezone: Timezone }
+			| { date: Date; timezone: Timezone },
 	) {
-		const dt = DateTime.fromObject(
-			{ year, month, day, hour: 0, minute: 0, second: 0 },
-			{ zone: timezone },
-		);
+		if ("date" in args) {
+			this._date = args.date;
+			this.timezone = args.timezone;
+		} else {
+			const { day, month, year, timezone } = args;
 
-		this._date = dt.toJSDate();
-		this.timezone = timezone;
+			const dt = DateTime.fromObject(
+				{ year, month, day, hour: 0, minute: 0, second: 0 },
+				{ zone: timezone },
+			);
+
+			this._date = dt.toJSDate();
+			this.timezone = timezone;
+		}
 	}
 
 	public clone(): CalendarDate {
-		return new CalendarDate(
-			this._date.getUTCDate(),
-			this._date.getUTCMonth() + 1,
-			this._date.getUTCFullYear(),
-			this.timezone,
-		);
+		return new CalendarDate({
+			day: this._date.getUTCDate(),
+			month: this._date.getUTCMonth() + 1,
+			year: this._date.getUTCFullYear(),
+			timezone: this.timezone,
+		});
 	}
 
 	valueOf() {
@@ -109,7 +115,19 @@ export class CalendarDate {
 	): CalendarDate {
 		const [year, month, day] = iso8601DateString.split("-").map(Number);
 		if (!day || !month || !year) throw new Error("Invalid Date");
-		return new CalendarDate(day, month, year, timezone);
+		return new CalendarDate({
+			day,
+			month,
+			year,
+			timezone,
+		});
+	}
+
+	public static fromDate(date: Date, timezone: Timezone): CalendarDate {
+		return new CalendarDate({
+			date,
+			timezone,
+		});
 	}
 
 	public add({
@@ -133,17 +151,22 @@ export class CalendarDate {
 			newDate.setUTCDate(newDate.getUTCDate() + days);
 		}
 
-		return new CalendarDate(
-			newDate.getUTCDate(),
-			newDate.getUTCMonth() + 1,
-			newDate.getUTCFullYear(),
-			this.timezone,
-		);
+		return new CalendarDate({
+			day: newDate.getUTCDate(),
+			month: newDate.getUTCMonth() + 1,
+			year: newDate.getUTCFullYear(),
+			timezone: this.timezone,
+		});
 	}
 
 	public static _fromCurrentUTCDate(timezone: Timezone): CalendarDate {
 		const now = DateTime.utc().setZone(timezone);
-		return new CalendarDate(now.day, now.month, now.year, timezone);
+		return new CalendarDate({
+			day: now.day,
+			month: now.month,
+			year: now.year,
+			timezone,
+		});
 	}
 
 	public static anchorDates(timezone: Timezone): {

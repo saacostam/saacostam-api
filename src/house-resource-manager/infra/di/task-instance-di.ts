@@ -1,12 +1,12 @@
 import { TaskInstanceUseCases } from "../../app/use-cases";
 import {
-	InMemoryTaskCompletionRepositoryImpl,
-	InMemoryTaskRepositoryImpl,
-	InMemoryUserRepositoryImpl,
+	MongooseTaskCompletionRepositoryImpl,
+	MongooseTaskRepositoryImpl,
+	MongooseUserRepositoryImpl,
 } from "../repositories";
 
 export const taskInstanceUseCasesService = new TaskInstanceUseCases(
-	new InMemoryTaskRepositoryImpl(),
-	new InMemoryTaskCompletionRepositoryImpl(),
-	new InMemoryUserRepositoryImpl(),
+	new MongooseTaskRepositoryImpl(),
+	new MongooseTaskCompletionRepositoryImpl(),
+	new MongooseUserRepositoryImpl(),
 );
