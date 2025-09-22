@@ -28,7 +28,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/luxon": "^3.7.1",
     "@types/node": "^24.0.4",
-    "dotenv": "^16.6.0",
+    "dotenv": "^17.2.2",
     "eslint": "^9.29.0",
     "express": "^5.1.0",
     "install": "^0.13.0",
@@ -44,6 +44,7 @@
     "cors": "^2.8.5",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.7.1",
+    "mongoose": "^8.18.1",
     "uuid": "^11.1.0",
     "yarn": "^1.22.22",
     "zod": "^3.25.67"

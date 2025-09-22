@@ -1,6 +1,6 @@
 import { UserUseCasesService } from "../../app/use-cases";
-import { InMemoryUserRepositoryImpl } from "../repositories";
+import { MongooseUserRepositoryImpl } from "../repositories";
 
 export const userUseCasesService = new UserUseCasesService(
-	new InMemoryUserRepositoryImpl(),
+	new MongooseUserRepositoryImpl(),
 );

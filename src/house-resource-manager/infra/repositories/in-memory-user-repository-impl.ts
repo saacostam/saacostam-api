@@ -29,10 +29,6 @@ export class InMemoryUserRepositoryImpl implements UserRepository {
 		);
 	}
 
-	getAll(): Promise<User[]> {
-		return new Promise((res) => res(USERS));
-	}
-
 	getById(id: string): Promise<User | undefined> {
 		const user = USERS.find((u) => u.id === id);
 

@@ -1,7 +1,17 @@
+import { CoreConfig, connectToDb } from "core.config";
 import app from "./app";
 
 const PORT = 3333;
 
-app.listen(3333, () => {
-	console.log(`Server running on port ${PORT}`);
-});
+async function main() {
+	try {
+		await connectToDb(CoreConfig.HRM_MONGODB_URI);
+		app.listen(PORT, () => {
+			console.log(`Server listening on port ${PORT}`);
+		});
+	} catch {
+		console.log("No connection to database");
+	}
+}
+
+void main();

@@ -1,6 +1,6 @@
 import { CategoryUseCasesService } from "../../app/use-cases";
-import { InMemoryCategoryRepositoryImpl } from "../repositories";
+import { MongooseCategoryRepositoryImpl } from "../repositories";
 
 export const categoryUseCasesService = new CategoryUseCasesService(
-	new InMemoryCategoryRepositoryImpl(),
+	new MongooseCategoryRepositoryImpl(),
 );
