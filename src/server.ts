@@ -1,5 +1,5 @@
-import { CoreConfig, connectToDb } from "core.config";
 import app from "./app";
+import { CoreConfig, connectToDb } from "./core.config";
 
 const PORT = 3333;
 
