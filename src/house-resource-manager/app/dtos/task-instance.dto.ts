@@ -1,6 +1,6 @@
 import type { Task } from "../../domain/entities";
 
-export interface GetAllTaskInstancesDto {
+export interface GetImmediateTaskInstancesDto {
 	userId: string;
 }
 

@@ -6,7 +6,7 @@ import type {
 	CreateTaskInstanceCompletionDto,
 	DeleteTaskInstanceCompletionDto,
 	GetAllTaskInstancesAppResponse,
-	GetAllTaskInstancesDto,
+	GetImmediateTaskInstancesDto,
 } from "../dtos";
 import type {
 	TaskCompletionRepository,
@@ -25,7 +25,7 @@ export class TaskInstanceUseCases {
 		private userRepository: UserRepository,
 	) {}
 
-	async getAllTaskInstances({ userId }: GetAllTaskInstancesDto) {
+	async getImmediateTaskInstances({ userId }: GetImmediateTaskInstancesDto) {
 		const [tasks, taskCompletions, user] = await Promise.all([
 			this.taskRepository.getAllByUserId(userId),
 			this.taskCompletionRepository.getAllByUserId(userId),

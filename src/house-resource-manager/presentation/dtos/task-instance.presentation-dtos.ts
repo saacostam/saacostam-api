@@ -1,6 +1,6 @@
 import type { Task, TaskCompletion } from "../../domain/entities";
 
-export type TGetAllTaskInstancesResponse = {
+export type TGetImmediateTaskInstancesResponse = {
 	date: string;
 	task: Task;
 	status:

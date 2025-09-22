@@ -3,19 +3,19 @@ import { getIdFromRequest } from "../../../core.utils";
 import { taskInstanceUseCasesService } from "../../infra/di";
 import type {
 	TCreateTaskCompletionResponse,
-	TGetAllTaskInstancesResponse,
+	TGetImmediateTaskInstancesResponse,
 } from "../dtos";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
 import { TaskInstanceValidator } from "../validators";
 
 const taskInstanceRouter = Router();
 
-taskInstanceRouter.get("/", async (req, res) => {
+taskInstanceRouter.get("/immediate", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result: TGetAllTaskInstancesResponse =
-		await taskInstanceUseCasesService.getAllTaskInstances({
+	const result: TGetImmediateTaskInstancesResponse =
+		await taskInstanceUseCasesService.getImmediateTaskInstances({
 			userId,
 		});
 	res.status(200).json(result);
