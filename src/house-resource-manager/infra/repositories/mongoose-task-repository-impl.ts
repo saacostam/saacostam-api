@@ -28,6 +28,10 @@ export class MongooseTaskRepositoryImpl implements TaskRepository {
 	async updateById(id: string, task: Task): Promise<Task> {
 		const updatedTask = await TaskModel.findByIdAndUpdate(id, {
 			...task,
+			anchorDate: {
+				_date: task.anchorDate.valueOf(),
+				timezone: task.anchorDate.timezone,
+			},
 			_id: task.id,
 		});
 
