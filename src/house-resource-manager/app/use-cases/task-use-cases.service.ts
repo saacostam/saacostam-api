@@ -1,13 +1,7 @@
 import { generateId } from "../../../core.utils";
 
-import {
-	type Category,
-	type Resource,
-	Task,
-	type User,
-} from "../../domain/entities";
+import { type Category, type Resource, Task } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
-import { CalendarDate } from "../../domain/value-objects";
 import type {
 	CreateTaskRequestDto,
 	DeleteTaskRequestDto,
@@ -19,7 +13,6 @@ import type {
 	CategoryRepository,
 	ResourceRepository,
 	TaskRepository,
-	UserRepository,
 } from "../repositories";
 
 export class TaskUseCasesService {
@@ -27,7 +20,6 @@ export class TaskUseCasesService {
 		private categoryRepository: CategoryRepository,
 		private resourceRepository: ResourceRepository,
 		private taskRepository: TaskRepository,
-		private userRepository: UserRepository,
 	) {}
 
 	async createTask({
@@ -37,20 +29,19 @@ export class TaskUseCasesService {
 		categoryId,
 		cadence,
 		userId,
-		anchorDate: rawAnchorDateIsoString,
+		anchorDate,
 	}: CreateTaskRequestDto) {
 		// Check liks to categories and resources
 		let category: Category | null = null;
 		let resources: Resource[] = [];
 
-		const [queriedCategory, queriedResources, user] = await Promise.all([
+		const [queriedCategory, queriedResources] = await Promise.all([
 			categoryId
 				? this._getCategoryById(categoryId, userId, "categoryId")
 				: undefined,
 			resourcesIds !== null
 				? this._getAllResourcesByIdList(resourcesIds, userId, "resourcesIds")
 				: undefined,
-			this._getUser(userId),
 		]);
 
 		if (queriedCategory) {
@@ -59,26 +50,6 @@ export class TaskUseCasesService {
 
 		if (queriedResources && queriedResources.length > 0) {
 			resources = queriedResources;
-		}
-
-		// Cast raw date-iso-string to value-object
-		let anchorDate: CalendarDate;
-		try {
-			anchorDate = CalendarDate.fromISO8601(
-				rawAnchorDateIsoString,
-				user.timezone,
-			);
-		} catch {
-			throw new BaseDomainError(
-				DomainErrorType.BAD_REQUEST,
-				"Invalid Date Format",
-				[
-					{
-						field: "anchorDate",
-						message: "Invalid Date Format",
-					},
-				],
-			);
 		}
 
 		const task = new Task(
@@ -118,7 +89,7 @@ export class TaskUseCasesService {
 
 			return {
 				...t,
-				anchorDate: t.anchorDate.getISO8601String(),
+				anchorDate: t.anchorDate,
 				category: linkedCategory ?? null,
 				resources:
 					linkedResources && linkedResources.length > 0
@@ -142,7 +113,6 @@ export class TaskUseCasesService {
 
 		return {
 			...task,
-			anchorDate: task.anchorDate.getISO8601String(),
 			category: queriedCategory ?? null,
 			resources: queriedResources ?? null,
 		};
@@ -155,34 +125,12 @@ export class TaskUseCasesService {
 		resourcesIds,
 		categoryId,
 		cadence,
-		anchorDate: rawAnchorDateIsoString,
+		anchorDate,
 		userId,
 	}: UpdateTaskRequestDto) {
-		const [existingTask, user] = await Promise.all([
+		const [existingTask] = await Promise.all([
 			this._getExistingById(id, userId),
-			this._getUser(userId),
 		]);
-
-		let anchorDateToUse: CalendarDate = existingTask.anchorDate;
-		if (rawAnchorDateIsoString) {
-			try {
-				anchorDateToUse = CalendarDate.fromISO8601(
-					rawAnchorDateIsoString,
-					user.timezone,
-				);
-			} catch {
-				throw new BaseDomainError(
-					DomainErrorType.BAD_REQUEST,
-					"Invalid Date Format",
-					[
-						{
-							field: "anchorDate",
-							message: "Invalid Date Format",
-						},
-					],
-				);
-			}
-		}
 
 		const categoryPromise = categoryId
 			? this._getCategoryById(categoryId, userId, "categoryId")
@@ -213,7 +161,7 @@ export class TaskUseCasesService {
 					: (queriedCategory?.id ?? null),
 			cadence === undefined ? existingTask.cadence : cadence,
 			userId,
-			anchorDateToUse,
+			anchorDate === undefined ? existingTask.anchorDate : anchorDate,
 		);
 
 		const newTaskEntry = await this.taskRepository.updateById(id, updatedTask);
@@ -294,20 +242,5 @@ export class TaskUseCasesService {
 		if (existingTask.userId !== userId) throw notFoundError;
 
 		return existingTask;
-	}
-
-	async _getUser(userId: string): Promise<User> {
-		const userNotFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			"Unable to find user",
-		);
-
-		const user = await this.userRepository.getById(userId);
-
-		if (!user) {
-			throw userNotFoundError;
-		}
-
-		return user;
 	}
 }

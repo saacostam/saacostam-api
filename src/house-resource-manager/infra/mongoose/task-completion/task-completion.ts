@@ -1,11 +1,10 @@
 import { model, Schema } from "mongoose";
-import { CalendarDateSchema } from "../calendar-date";
 
 export const TaskCompletionSchema = new Schema(
 	{
 		_id: { type: String, required: true },
 		taskId: { type: String, required: true },
-		date: { type: CalendarDateSchema, required: true },
+		date: { type: String, required: true },
 		userId: { type: String, required: true },
 	},
 	{ _id: false },

@@ -1,4 +1,3 @@
-import type { CalendarDate } from "../value-objects";
 import type { Category } from "./category";
 import type { Resource } from "./resource";
 import type { User } from "./user";
@@ -12,7 +11,7 @@ export class Task {
 		public readonly categoryId: Category["id"] | null,
 		public readonly cadence: Cadence,
 		public readonly userId: User["id"],
-		public readonly anchorDate: CalendarDate,
+		public readonly anchorDate: string,
 	) {}
 }
 
@@ -49,7 +48,7 @@ export class TaskCompletion {
 	constructor(
 		public readonly id: string,
 		public readonly taskId: Task["id"],
-		public readonly date: CalendarDate,
+		public readonly date: string,
 		public readonly userId: User["id"],
 	) {}
 }

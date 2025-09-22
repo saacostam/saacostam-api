@@ -1,5 +1,4 @@
 import { model, Schema } from "mongoose";
-import { CalendarDateSchema } from "../calendar-date";
 
 // Cadence
 const BaseCadenceSchema = new Schema(
@@ -85,10 +84,7 @@ export const TaskSchema = new Schema(
 			required: true,
 		},
 		userId: { type: String, required: true },
-		anchorDate: {
-			type: CalendarDateSchema,
-			required: true,
-		},
+		anchorDate: { type: String, required: true },
 	},
 	{ _id: false },
 );

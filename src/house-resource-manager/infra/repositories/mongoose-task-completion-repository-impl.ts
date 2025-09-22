@@ -2,7 +2,6 @@ import type { InferSchemaType } from "mongoose";
 import type { TaskCompletionRepository } from "../../app/repositories";
 import { TaskCompletion } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
-import { CalendarDate, type Timezone } from "../../domain/value-objects";
 import { TaskCompletionModel, type TaskCompletionSchema } from "../mongoose";
 
 export class MongooseTaskCompletionRepositoryImpl
@@ -58,10 +57,7 @@ export class MongooseTaskCompletionRepositoryImpl
 		return new TaskCompletion(
 			documentEntry._id,
 			documentEntry.taskId,
-			CalendarDate.fromDate(
-				documentEntry.date._date,
-				documentEntry.date.timezone as Timezone,
-			),
+			documentEntry.date,
 			documentEntry.userId,
 		);
 	}

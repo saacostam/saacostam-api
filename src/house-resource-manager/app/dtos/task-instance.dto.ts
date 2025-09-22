@@ -1,5 +1,4 @@
 import type { Task } from "../../domain/entities";
-import type { CalendarDate } from "../../domain/value-objects";
 
 export interface GetAllTaskInstancesDto {
 	userId: string;
@@ -16,7 +15,7 @@ export type TaskInstanceStatus =
 
 export type GetAllTaskInstancesAppResponse = {
 	status: TaskInstanceStatus;
-	date: CalendarDate;
+	date: string;
 	task: Task;
 }[];
 

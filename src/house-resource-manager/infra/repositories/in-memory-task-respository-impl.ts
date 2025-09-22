@@ -1,6 +1,5 @@
 import type { TaskRepository } from "../../app/repositories";
 import { Task } from "../../domain/entities";
-import { CalendarDate } from "../../domain/value-objects";
 
 let TASKS: Task[] = [
 	new Task(
@@ -13,7 +12,7 @@ let TASKS: Task[] = [
 			type: "daily",
 		},
 		"9227a66c-34ca-4339-a224-c2b1d71c3c26",
-		CalendarDate.anchorDates("America/Bogota").today,
+		"2025-08-02",
 	),
 	new Task(
 		"12b3955d-29a0-41bb-807a-e185ef5c1c18",
@@ -27,7 +26,7 @@ let TASKS: Task[] = [
 			dayOfTheWeek: 3,
 		},
 		"9227a66c-34ca-4339-a224-c2b1d71c3c26",
-		CalendarDate.anchorDates("America/Bogota").tomorrow,
+		"2025-08-02",
 	),
 ];
 

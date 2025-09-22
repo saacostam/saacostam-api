@@ -40,17 +40,25 @@ export class TaskInstanceUseCases {
 			const lastCompletion = this._getLastCompletion({
 				task,
 				taskCompletions,
+				timezone: user.timezone,
 			});
 
-			if (lastCompletion?.date.moreOrEqual(today)) {
-				taskInstances.push({
-					status: {
-						type: "committed",
-						id: lastCompletion.id,
-					},
-					date: lastCompletion.date,
-					task,
-				});
+			if (lastCompletion) {
+				const lastCompletionDate = CalendarDate.fromISO8601(
+					lastCompletion.date,
+					user.timezone,
+				);
+
+				if (lastCompletionDate.moreOrEqual(today)) {
+					taskInstances.push({
+						status: {
+							type: "committed",
+							id: lastCompletion.id,
+						},
+						date: lastCompletion.date,
+						task,
+					});
+				}
 			}
 
 			const nextInstance = this._computeNextInstance({
@@ -64,36 +72,18 @@ export class TaskInstanceUseCases {
 
 		return taskInstances.map((ti) => ({
 			...ti,
-			date: ti.date.getISO8601String(),
+			date: ti.date,
 		}));
 	}
 
 	async createTaskInstanceCompletion({
-		date: rawDateIsoString,
+		date,
 		taskId,
 		userId,
 	}: CreateTaskInstanceCompletionDto) {
-		const [existingTask, user] = await Promise.all([
+		const [existingTask] = await Promise.all([
 			this._getTaskById(taskId, userId),
-			this._getUser(userId),
 		]);
-
-		// Cast raw date-iso-string to value-object
-		let date: CalendarDate;
-		try {
-			date = CalendarDate.fromISO8601(rawDateIsoString, user.timezone);
-		} catch {
-			throw new BaseDomainError(
-				DomainErrorType.BAD_REQUEST,
-				"Invalid Date Format",
-				[
-					{
-						field: "date",
-						message: "Invalid Date Format",
-					},
-				],
-			);
-		}
 
 		const taskCompletion = new TaskCompletion(
 			generateId(),
@@ -136,8 +126,13 @@ export class TaskInstanceUseCases {
 		const latestTaskCompletion = this._getLastCompletion({
 			task,
 			taskCompletions,
+			timezone,
 		});
-		const latestTaskCompletionDate = latestTaskCompletion?.date;
+		const latestTaskCompletionDate = latestTaskCompletion?.date
+			? CalendarDate.fromISO8601(latestTaskCompletion.date, timezone)
+			: undefined;
+
+		const taskAnchorDate = CalendarDate.fromISO8601(task.anchorDate, timezone);
 
 		// EARLY RETURN FOR TIME-BASED-RECURRENCE
 		// Handled differently because it's computed from the last occurrence,
@@ -165,21 +160,21 @@ export class TaskInstanceUseCases {
 			// If no completion date exists, return the anchor date.
 			const expectedDate = latestTaskCompletionDate
 				? latestTaskCompletionDate.add(addPayload)
-				: task.anchorDate;
+				: taskAnchorDate;
 
 			return {
 				status: {
 					type: "virtual",
 				},
 				task,
-				date: expectedDate,
+				date: expectedDate.getISO8601String(),
 			};
 		}
 
 		// HANDLE OTHER TYPES - COMPUTE LAST COMPLETION
 		// Initialize lastCompletion to the day before the task's anchor date.
 		// This ensures that if no completions exist, the anchor date itself can be the first calculated instance.
-		let lastCompletion: CalendarDate = task.anchorDate.add({ days: -1 });
+		let lastCompletion: CalendarDate = taskAnchorDate.add({ days: -1 });
 
 		// If a latest completion exists AND it is more recent than our initial lastCompletion (anchorDate - 1 day),
 		// then use the actual latest completion date as the reference point.
@@ -193,7 +188,7 @@ export class TaskInstanceUseCases {
 		// COMPUTE THE NEXT OCCURRENCE based on the task's cadence type
 		switch (task.cadence.type) {
 			case "one-time": {
-				const expectedDate = task.anchorDate;
+				const expectedDate = taskAnchorDate;
 
 				// If the last completion date matches the expected one-time date,
 				// it means the task has already been completed, so return null.
@@ -204,13 +199,17 @@ export class TaskInstanceUseCases {
 								type: "virtual",
 							},
 							task: task,
-							date: expectedDate,
+							date: expectedDate.getISO8601String(),
 						};
 			}
 			case "daily": {
 				let expectedDate = today;
 
-				while (taskCompletions.find((tc) => tc.date.equals(expectedDate))) {
+				while (
+					taskCompletions.find((tc) =>
+						CalendarDate.fromISO8601(tc.date, timezone).equals(expectedDate),
+					)
+				) {
 					expectedDate = expectedDate.add({ days: 1 });
 				}
 
@@ -219,7 +218,7 @@ export class TaskInstanceUseCases {
 						type: "virtual",
 					},
 					task,
-					date: expectedDate,
+					date: expectedDate.getISO8601String(),
 				};
 			}
 			case "weekly": {
@@ -245,7 +244,7 @@ export class TaskInstanceUseCases {
 						type: "virtual",
 					},
 					task,
-					date: expectedDate,
+					date: expectedDate.getISO8601String(),
 				};
 			}
 			case "monthly-by-day": {
@@ -281,7 +280,7 @@ export class TaskInstanceUseCases {
 						type: "virtual",
 					},
 					task,
-					date: expectedDate,
+					date: expectedDate.getISO8601String(),
 				};
 			}
 			case "monthly-by-weekday": {
@@ -324,12 +323,12 @@ export class TaskInstanceUseCases {
 						type: "virtual",
 					},
 					task,
-					date: expectedDate,
+					date: expectedDate.getISO8601String(),
 				};
 			}
 			case "yearly-by-day": {
-				const targetMonth = task.anchorDate.getMonth();
-				const targetDay = task.anchorDate.getDay();
+				const targetMonth = taskAnchorDate.getMonth();
+				const targetDay = taskAnchorDate.getDay();
 
 				// Initialize expectedDate. The loop will find the next instance.
 				let expectedDate = lastCompletion;
@@ -352,7 +351,7 @@ export class TaskInstanceUseCases {
 						type: "virtual",
 					},
 					task,
-					date: expectedDate,
+					date: expectedDate.getISO8601String(),
 				};
 			}
 		}
@@ -361,9 +360,10 @@ export class TaskInstanceUseCases {
 	_getLastCompletion(args: {
 		task: Task;
 		taskCompletions: TaskCompletion[];
+		timezone: Timezone;
 	}): TaskCompletion | undefined {
 		// SANITIZE INPUT: Filter completions to only those relevant to the current task
-		const { task, taskCompletions: _taskCompletions } = args;
+		const { task, taskCompletions: _taskCompletions, timezone } = args;
 		const taskCompletions = _taskCompletions.filter(
 			(tc) => tc.taskId === task.id,
 		);
@@ -372,7 +372,12 @@ export class TaskInstanceUseCases {
 		// Check if there are any recorded completions for this task and use the latest one
 		const latestTaskCompletion = taskCompletions.reduce(
 			(latest: TaskCompletion | undefined, tc) => {
-				if (!latest || tc.date.moreThan(latest.date)) {
+				const tcDate = CalendarDate.fromISO8601(tc.date, timezone);
+
+				const latestDate = latest?.date
+					? CalendarDate.fromISO8601(latest.date, timezone)
+					: undefined;
+				if (!latestDate || tcDate.moreThan(latestDate)) {
 					return tc;
 				}
 				return latest;

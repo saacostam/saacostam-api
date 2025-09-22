@@ -2,7 +2,6 @@ import type { InferSchemaType } from "mongoose";
 import type { TaskRepository } from "../../app/repositories";
 import { type Cadence, Task } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
-import { CalendarDate, type Timezone } from "../../domain/value-objects";
 import { TaskModel, type TaskSchema } from "../mongoose";
 
 export class MongooseTaskRepositoryImpl implements TaskRepository {
@@ -28,10 +27,6 @@ export class MongooseTaskRepositoryImpl implements TaskRepository {
 	async updateById(id: string, task: Task): Promise<Task> {
 		const updatedTask = await TaskModel.findByIdAndUpdate(id, {
 			...task,
-			anchorDate: {
-				_date: task.anchorDate.valueOf(),
-				timezone: task.anchorDate.timezone,
-			},
 			_id: task.id,
 		});
 
@@ -56,10 +51,7 @@ export class MongooseTaskRepositoryImpl implements TaskRepository {
 			documentEntry.categoryId,
 			documentEntry.cadence as Cadence,
 			documentEntry.userId,
-			CalendarDate.fromDate(
-				documentEntry.anchorDate._date,
-				documentEntry.anchorDate.timezone as Timezone,
-			),
+			documentEntry.anchorDate,
 		);
 	}
 }
