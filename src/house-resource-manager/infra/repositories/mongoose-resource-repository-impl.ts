@@ -22,6 +22,10 @@ export class MongooseResourceRepositoryImpl implements ResourceRepository {
 		return resources.map(this._mapDocumentEntryToDomainObject);
 	}
 
+	async countAllByUserid(userId: string): Promise<number> {
+		return ResourceModel.countDocuments({ userId });
+	}
+
 	async getAllByIdList(ids: string[]): Promise<Resource[]> {
 		const resources = await ResourceModel.find({ _id: { $in: ids } });
 		return resources.map(this._mapDocumentEntryToDomainObject);

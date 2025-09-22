@@ -9,6 +9,7 @@ import type {
 	GetImmediateTaskInstancesDto,
 } from "../dtos";
 import type {
+	ResourceRepository,
 	TaskCompletionRepository,
 	TaskRepository,
 	UserRepository,
@@ -23,14 +24,17 @@ export class TaskInstanceUseCases {
 		private taskRepository: TaskRepository,
 		private taskCompletionRepository: TaskCompletionRepository,
 		private userRepository: UserRepository,
+		private resourceRepository: ResourceRepository,
 	) {}
 
 	async getImmediateTaskInstances({ userId }: GetImmediateTaskInstancesDto) {
-		const [tasks, taskCompletions, user] = await Promise.all([
-			this.taskRepository.getAllByUserId(userId),
-			this.taskCompletionRepository.getAllByUserId(userId),
-			this._getUser(userId),
-		]);
+		const [tasks, taskCompletions, user, totalNumberOfResources] =
+			await Promise.all([
+				this.taskRepository.getAllByUserId(userId),
+				this.taskCompletionRepository.getAllByUserId(userId),
+				this._getUser(userId),
+				this.resourceRepository.countAllByUserid(userId),
+			]);
 
 		const { today } = CalendarDate.anchorDates(user.timezone);
 
@@ -70,10 +74,26 @@ export class TaskInstanceUseCases {
 			if (nextInstance) taskInstances.push(nextInstance);
 		}
 
-		return taskInstances.map((ti) => ({
-			...ti,
-			date: ti.date,
-		}));
+		// Count the pending and overdue tasks
+		const pendingTasksCount = taskInstances.filter((ti) => {
+			const isNotComplete = ti.status.type === "virtual";
+			const tiCalendarDate = CalendarDate.fromISO8601(ti.date, user.timezone);
+			return tiCalendarDate.equals(today) && isNotComplete;
+		}).length;
+		const overdueTasksCount = taskInstances.filter((ti) => {
+			const isNotComplete = ti.status.type === "virtual";
+			const tiCalendarDate = CalendarDate.fromISO8601(ti.date, user.timezone);
+			return tiCalendarDate.lessThan(today) && isNotComplete;
+		}).length;
+
+		return {
+			taskInstances,
+			stats: {
+				totalResources: totalNumberOfResources,
+				pendingTasks: pendingTasksCount,
+				overdueTasks: overdueTasksCount,
+			},
+		};
 	}
 
 	async createTaskInstanceCompletion({
