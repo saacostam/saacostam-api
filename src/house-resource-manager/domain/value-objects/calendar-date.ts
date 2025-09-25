@@ -68,7 +68,7 @@ export class CalendarDate {
 	}
 
 	public getDayOfWeek(): number {
-		return (this._date.getUTCDay() - 1) % 7;
+		return (this._date.getUTCDay() - 1 + 7) % 7;
 	}
 
 	public getDayOfMonth(): number {
