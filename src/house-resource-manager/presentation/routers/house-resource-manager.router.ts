@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware, errorHandlerMiddleware } from "../middlewares";
 import { authRouter } from "./auth.router";
+import { boardRouter } from "./board.router";
 import { categoryRouter } from "./category.router";
 import { resourceRouter } from "./resource.router";
 import { taskRouter } from "./task.router";
@@ -14,6 +15,7 @@ houseResourceManager.use(authMiddleware);
 
 houseResourceManager.use("/category", categoryRouter);
 houseResourceManager.use("/resource", resourceRouter);
+houseResourceManager.use("/board", boardRouter);
 houseResourceManager.use("/task", taskRouter);
 houseResourceManager.use("/i/task", taskInstanceRouter);
 houseResourceManager.use("/user", userRouter);
