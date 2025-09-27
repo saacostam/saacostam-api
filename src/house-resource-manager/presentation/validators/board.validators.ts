@@ -12,7 +12,7 @@ const updateValidator = z.object({
 	content: contentField.optional(),
 });
 
-export const ScratchBoardValidator = {
+export const BoardValidator = {
 	createValidator,
 	updateValidator,
 };

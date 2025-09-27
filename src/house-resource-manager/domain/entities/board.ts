@@ -1,19 +1,19 @@
 import type { User } from "./user";
 
-export interface ScratchBoardArgs {
+export interface BoardArgs {
 	id: string;
 	name: string;
 	content: string;
 	userId: User["id"];
 }
 
-export class ScratchBoard implements ScratchBoardArgs {
+export class Board implements BoardArgs {
 	public readonly id: string;
 	public name: string;
 	public content: string;
 	public userId: string;
 
-	constructor(args: ScratchBoardArgs) {
+	constructor(args: BoardArgs) {
 		this.id = args.id;
 		this.name = args.name;
 		this.content = args.content;

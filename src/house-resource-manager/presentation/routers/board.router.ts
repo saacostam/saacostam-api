@@ -1,56 +1,56 @@
 import { Router } from "express";
 import { getIdFromRequest } from "../../../core.utils";
-import { scratchBoardUseCasesService } from "../../infra/di";
+import { boardUseCasesService } from "../../infra/di";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
-import { ScratchBoardValidator } from "../validators";
+import { BoardValidator } from "../validators";
 
-const scratchBoardRouter = Router();
+const boardRouter = Router();
 
-scratchBoardRouter.get("/", async (req, res) => {
+boardRouter.get("/", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result = await scratchBoardUseCasesService.getAllScratchBoards({
+	const result = await boardUseCasesService.getAllBoards({
 		userId,
 	});
 	res.status(200).json(result);
 });
 
-scratchBoardRouter.get("/:id", async (req, res) => {
+boardRouter.get("/:id", async (req, res) => {
 	const id = req.params.id;
 	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
 
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const result = await scratchBoardUseCasesService.getScratchBoardById({
+	const result = await boardUseCasesService.getBoardById({
 		id,
 		userId,
 	});
 	res.status(200).json(result);
 });
 
-scratchBoardRouter.post("/", async (req, res) => {
+boardRouter.post("/", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const input = ScratchBoardValidator.createValidator.parse(req.body);
-	const result = await scratchBoardUseCasesService.createScratchBoard({
+	const input = BoardValidator.createValidator.parse(req.body);
+	const result = await boardUseCasesService.createBoard({
 		...input,
 		userId,
 	});
 	res.status(201).json(result);
 });
 
-scratchBoardRouter.put("/:id", async (req, res) => {
+boardRouter.put("/:id", async (req, res) => {
 	const id = req.params.id;
 	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
 
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const input = ScratchBoardValidator.updateValidator.parse(req.body);
-	const result = await scratchBoardUseCasesService.updateScratchBoard({
+	const input = BoardValidator.updateValidator.parse(req.body);
+	const result = await boardUseCasesService.updateBoard({
 		id,
 		content: input.content,
 		name: input.name,
@@ -59,15 +59,15 @@ scratchBoardRouter.put("/:id", async (req, res) => {
 	res.status(200).json(result);
 });
 
-scratchBoardRouter.delete("/:id", async (req, res) => {
+boardRouter.delete("/:id", async (req, res) => {
 	const id = req.params.id;
 	if (!id) throw ID_FIELD_NOT_FOUND_ERROR;
 
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	await scratchBoardUseCasesService.deleteScratchBoard({ id, userId });
+	await boardUseCasesService.deleteBoard({ id, userId });
 	res.status(204).json();
 });
 
-export { scratchBoardRouter };
+export { boardRouter };
