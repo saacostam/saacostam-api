@@ -49,7 +49,7 @@ scratchBoardRouter.put("/:id", async (req, res) => {
 	const userId = getIdFromRequest(req);
 	if (!userId) throw new UnauthorizedError();
 
-	const input = ScratchBoardValidator.updatevalidator.parse(req.body);
+	const input = ScratchBoardValidator.updateValidator.parse(req.body);
 	const result = await scratchBoardUseCasesService.updateScratchBoard({
 		id,
 		content: input.content,

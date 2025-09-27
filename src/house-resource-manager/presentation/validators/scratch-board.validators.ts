@@ -14,5 +14,5 @@ const updateValidator = z.object({
 
 export const ScratchBoardValidator = {
 	createValidator,
-	updatevalidator: updateValidator,
+	updateValidator,
 };
