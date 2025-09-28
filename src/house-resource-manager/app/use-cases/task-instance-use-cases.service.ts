@@ -9,6 +9,7 @@ import type {
 	GetImmediateTaskInstancesDto,
 } from "../dtos";
 import type {
+	CategoryRepository,
 	ResourceRepository,
 	TaskCompletionRepository,
 	TaskRepository,
@@ -25,15 +26,17 @@ export class TaskInstanceUseCases {
 		private taskCompletionRepository: TaskCompletionRepository,
 		private userRepository: UserRepository,
 		private resourceRepository: ResourceRepository,
+		private categoriesRespository: CategoryRepository,
 	) {}
 
 	async getImmediateTaskInstances({ userId }: GetImmediateTaskInstancesDto) {
-		const [tasks, taskCompletions, user, totalNumberOfResources] =
+		const [tasks, taskCompletions, user, totalNumberOfResources, categories] =
 			await Promise.all([
 				this.taskRepository.getAllByUserId(userId),
 				this.taskCompletionRepository.getAllByUserId(userId),
 				this._getUser(userId),
 				this.resourceRepository.countAllByUserid(userId),
+				this.categoriesRespository.getAllByUserId(userId),
 			]);
 
 		const { today } = CalendarDate.anchorDates(user.timezone);
@@ -54,13 +57,21 @@ export class TaskInstanceUseCases {
 				);
 
 				if (lastCompletionDate.moreOrEqual(today)) {
+					const category =
+						task.categoryId === null
+							? null
+							: categories.find((c) => c.id === task.categoryId);
+
 					taskInstances.push({
 						status: {
 							type: "committed",
 							id: lastCompletion.id,
 						},
 						date: lastCompletion.date,
-						task,
+						task: {
+							...task,
+							category: category ?? null,
+						},
 					});
 				}
 			}
@@ -71,7 +82,20 @@ export class TaskInstanceUseCases {
 				timezone: user.timezone,
 			});
 
-			if (nextInstance) taskInstances.push(nextInstance);
+			if (nextInstance) {
+				const category =
+					nextInstance.task.categoryId === null
+						? null
+						: categories.find((c) => c.id === nextInstance.task.categoryId);
+
+				taskInstances.push({
+					...nextInstance,
+					task: {
+						...nextInstance.task,
+						category: category ?? null,
+					},
+				});
+			}
 		}
 
 		// Count the pending and overdue tasks
@@ -134,7 +158,11 @@ export class TaskInstanceUseCases {
 		task: Task;
 		taskCompletions: TaskCompletion[];
 		timezone: Timezone;
-	}): GetAllTaskInstancesAppResponse[0] | null {
+	}):
+		| (Omit<GetAllTaskInstancesAppResponse[0], "task"> & {
+				task: Omit<GetAllTaskInstancesAppResponse[0]["task"], "category">;
+		  })
+		| null {
 		// SANITIZE INPUT: Filter completions to only those relevant to the current task
 		const { task, taskCompletions: _taskCompletions, timezone } = args;
 		const taskCompletions = _taskCompletions.filter(

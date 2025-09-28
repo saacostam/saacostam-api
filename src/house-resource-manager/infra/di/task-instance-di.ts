@@ -1,5 +1,6 @@
 import { TaskInstanceUseCases } from "../../app/use-cases";
 import {
+	MongooseCategoryRepositoryImpl,
 	MongooseResourceRepositoryImpl,
 	MongooseTaskCompletionRepositoryImpl,
 	MongooseTaskRepositoryImpl,
@@ -11,4 +12,5 @@ export const taskInstanceUseCasesService = new TaskInstanceUseCases(
 	new MongooseTaskCompletionRepositoryImpl(),
 	new MongooseUserRepositoryImpl(),
 	new MongooseResourceRepositoryImpl(),
+	new MongooseCategoryRepositoryImpl(),
 );

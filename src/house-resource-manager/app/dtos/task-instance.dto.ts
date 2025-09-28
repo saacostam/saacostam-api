@@ -1,4 +1,4 @@
-import type { Task } from "../../domain/entities";
+import type { Category, Task } from "../../domain/entities";
 
 export interface GetImmediateTaskInstancesDto {
 	userId: string;
@@ -16,7 +16,9 @@ export type TaskInstanceStatus =
 export type GetAllTaskInstancesAppResponse = {
 	status: TaskInstanceStatus;
 	date: string;
-	task: Task;
+	task: Task & {
+		category: Category | null;
+	};
 }[];
 
 export interface CreateTaskInstanceCompletionDto {
