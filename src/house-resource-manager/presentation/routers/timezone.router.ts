@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { timezoneUseCasesService } from "house-resource-manager/infra/di";
+import { timezoneUseCasesService } from "../../infra/di";
 
 const timezoneRouter = Router();
 
