@@ -5,4 +5,5 @@ export interface UserRepository {
 	getById(id: string): Promise<User | undefined>;
 	getUserWithHashByUsername(user: string): Promise<UserWithHash | undefined>;
 	filterByUsername(username: string): Promise<User[]>;
+	updateById(id: string, user: User): Promise<User>;
 }

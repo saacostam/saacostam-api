@@ -1,6 +1,7 @@
 import type { InferSchemaType } from "mongoose";
 import type { UserRepository } from "../../app/repositories";
 import { User, UserWithHash } from "../../domain/entities";
+import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 import type { Timezone } from "../../domain/value-objects";
 import { UserModel, type UserSchema } from "../mongoose";
 
@@ -28,6 +29,22 @@ export class MongooseUserRepositoryImpl implements UserRepository {
 	async filterByUsername(username: string): Promise<User[]> {
 		const users = await UserModel.find({ username });
 		return users.map(this._mapDocumentEntryToDomainObject);
+	}
+
+	async updateById(id: string, user: User): Promise<User> {
+		const updatedUser = await UserModel.findByIdAndUpdate(id, {
+			...user,
+			_id: user.id,
+		});
+
+		if (!updatedUser) {
+			throw new BaseDomainError(
+				DomainErrorType.SERVER_ERROR,
+				"[MongooseUserRepositoryImpl.updateById] - Unable to update user: no user found with the provided id",
+			);
+		}
+
+		return this._mapDocumentEntryToDomainObject(updatedUser);
 	}
 
 	_mapDocumentEntryToDomainObject(
