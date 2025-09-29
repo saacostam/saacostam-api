@@ -1,7 +1,8 @@
 import { sign, verify } from "jsonwebtoken";
+import { CoreConfig } from "../../../core.config";
 import type { JwtTokenService, TokenPayload } from "../../app/providers";
 
-const SECRET = "REPLACE_ME";
+const SECRET = CoreConfig.JWT_SECRET;
 
 export class JwtTokenServiceImpl implements JwtTokenService {
 	getToken(tokenPayload: TokenPayload): string {
