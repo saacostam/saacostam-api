@@ -11,10 +11,14 @@ import {
 	type GetBoardByIdRequestDto,
 	type UpdateBoardRequestDto,
 } from "../dtos";
+import type { HtmlSanitizationService } from "../providers";
 import type { BoardRepository } from "../repositories";
 
 export class BoardUseCasesService {
-	constructor(private boardRepository: BoardRepository) {}
+	constructor(
+		private boardRepository: BoardRepository,
+		private htmlSanitizationService: HtmlSanitizationService,
+	) {}
 
 	async createBoard({ name, userId }: CreateBoardRequestDto) {
 		const board = new Board({
@@ -57,10 +61,14 @@ export class BoardUseCasesService {
 		id,
 		userId,
 
-		content,
+		content: _rawContent,
 		name,
 	}: UpdateBoardRequestDto) {
 		const existingEntry = await this._getExistingByIdOrFail(id, userId);
+
+		const content = _rawContent
+			? this.htmlSanitizationService.sanitizeHtml(_rawContent)
+			: undefined;
 
 		const updatedEntry = new Board({
 			id: existingEntry.id,
