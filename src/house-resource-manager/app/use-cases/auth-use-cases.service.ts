@@ -25,6 +25,7 @@ export class AuthUseCasesService {
 		firstName,
 		lastName,
 		password,
+		timezone,
 	}: SignUpRequestDto): Promise<SignUpResponseDto> {
 		const isUnique =
 			(await this.userRepository.filterByUsername(username.value)).length === 0;
@@ -44,7 +45,7 @@ export class AuthUseCasesService {
 			firstName.value,
 			lastName.value,
 			hashedPassword,
-			"America/Bogota",
+			timezone.value,
 		);
 
 		const user = await this.userRepository.create(newUser);

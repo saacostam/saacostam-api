@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
+import type { IANA_TIMEZONES } from "../../assets";
 
-export type Timezone = "America/Bogota";
+export type Timezone = (typeof IANA_TIMEZONES)[number]["zones"][number]["name"];
 
 export class CalendarDate {
 	private _date: Date;

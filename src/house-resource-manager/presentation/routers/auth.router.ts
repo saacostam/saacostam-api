@@ -24,6 +24,10 @@ authRouter.post("/signup", async (req, res) => {
 			value: payload.password,
 			fieldName: "password",
 		},
+		timezone: {
+			value: payload.timezone,
+			fieldName: "timezone",
+		},
 	});
 	res.status(200).json(result);
 });

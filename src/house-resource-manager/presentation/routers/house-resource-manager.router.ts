@@ -6,11 +6,14 @@ import { categoryRouter } from "./category.router";
 import { resourceRouter } from "./resource.router";
 import { taskRouter } from "./task.router";
 import { taskInstanceRouter } from "./task-instance.router";
+import { timezoneRouter } from "./timezone.router";
 import { userRouter } from "./user.router";
 
 const houseResourceManager = Router();
 
 houseResourceManager.use("/auth", authRouter);
+houseResourceManager.use("/timezone", timezoneRouter);
+
 houseResourceManager.use(authMiddleware);
 
 houseResourceManager.use("/category", categoryRouter);

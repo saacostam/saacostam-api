@@ -1,3 +1,5 @@
+import type { Timezone } from "../../domain/value-objects";
+
 export interface SignUpRequestDto {
 	username: {
 		fieldName: string;
@@ -14,6 +16,10 @@ export interface SignUpRequestDto {
 	password: {
 		fieldName: string;
 		value: string;
+	};
+	timezone: {
+		fieldName: string;
+		value: Timezone;
 	};
 }
 
