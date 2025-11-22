@@ -8,11 +8,11 @@ import { UserValidator } from "../validators";
 const userRouter = Router();
 
 userRouter.get("/", async (req, res) => {
-	const id = getIdFromRequest(req);
+	const userId = getIdFromRequest(req);
 
-	if (!id) throw new UnauthorizedError();
+	if (!userId) throw new UnauthorizedError();
 
-	const result = await userUseCasesService.getMe({ id });
+	const result = await userUseCasesService.getMe({ id: userId });
 	res.status(200).json(result);
 });
 

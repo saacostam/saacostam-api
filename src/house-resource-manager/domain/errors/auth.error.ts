@@ -23,7 +23,7 @@ export class UserWithUsernameAlreadyExistsError extends BaseDomainError {
 
 export class InvalidLoginAttemptError extends BaseDomainError {
 	constructor() {
-		super(DomainErrorType.UNAUTHORIZED, "Invalid Login Credentials");
+		super(DomainErrorType.BAD_REQUEST, "Invalid Login Credentials");
 
 		this.name = "InvalidLoginAttemptError";
 
