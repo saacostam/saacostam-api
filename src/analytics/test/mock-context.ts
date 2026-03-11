@@ -5,6 +5,8 @@ export function mockContext() {
 	// Providers
 	const dateProviderNow = vi.fn();
 
+	const uuidProviderGen = vi.fn();
+
 	// Repositories
 	const analyticsEventsRepositoryCreate = vi.fn();
 	const analyticsEventsRepositoryGetAll = vi.fn();
@@ -12,6 +14,9 @@ export function mockContext() {
 	const ctx: IContext = {
 		dateProvider: {
 			now: dateProviderNow,
+		},
+		uuidProvider: {
+			gen: uuidProviderGen,
 		},
 		analyticsEventsRepository: {
 			create: analyticsEventsRepositoryCreate,
@@ -23,6 +28,7 @@ export function mockContext() {
 		ctx,
 		// Providers
 		dateProviderNow,
+		uuidProviderGen,
 		// Repositories
 		analyticsEventsRepositoryCreate,
 		analyticsEventsRepositoryGetAll,

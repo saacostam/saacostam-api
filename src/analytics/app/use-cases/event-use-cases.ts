@@ -1,4 +1,3 @@
-import { generateId } from "../../../core.utils";
 import type { IEvent } from "../../domain";
 import type { IContext } from "../context";
 
@@ -9,7 +8,7 @@ export class EventUseCases {
 		req: EventUseCasesPayload["CreateEventRequest"],
 	): Promise<void> {
 		const newEvent: IEvent = {
-			id: generateId(),
+			id: this.ctx.uuidProvider.gen(),
 			name: req.name,
 			payload: req.payload,
 			createdAt: this.ctx.dateProvider.now(),
