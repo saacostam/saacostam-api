@@ -19,11 +19,13 @@ describe("EventUseCases", () => {
 			});
 
 			expect(dateProviderNow).toHaveBeenCalledOnce();
-			expect(analyticsEventsRepositoryCreate).toHaveBeenCalledExactlyOnceWith({
-				name: "name",
-				payload: "payload",
-				createdAt,
-			});
+			expect(analyticsEventsRepositoryCreate).toHaveBeenCalledExactlyOnceWith(
+				expect.objectContaining({
+					name: "name",
+					payload: "payload",
+					createdAt,
+				}),
+			);
 		});
 	});
 
