@@ -15,6 +15,14 @@ export class EventUseCases {
 
 		await this.ctx.analyticsEventsRepository.create(newEvent);
 	}
+
+	async queryAll(): Promise<EventUseCasesPayload["QueryAllResponse"]> {
+		const events = await this.ctx.analyticsEventsRepository.getAll();
+
+		return {
+			events,
+		}
+	}
 }
 
 export interface EventUseCasesPayload {
@@ -22,4 +30,8 @@ export interface EventUseCasesPayload {
 		name: string;
 		payload: string;
 	};
+
+	QueryAllResponse: {
+		events: IEvent[];
+	}
 }

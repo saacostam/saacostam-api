@@ -7,6 +7,7 @@ export function mockContext() {
     
     // Repositories
     const analyticsEventsRepositoryCreate = vi.fn();
+    const analyticsEventsRepositoryGetAll = vi.fn();
 
     const ctx: IContext = {
         dateProvider: {
@@ -14,6 +15,7 @@ export function mockContext() {
         },
         analyticsEventsRepository: {
             create: analyticsEventsRepositoryCreate,
+            getAll: analyticsEventsRepositoryGetAll,
         }
     }
 
@@ -23,5 +25,6 @@ export function mockContext() {
         dateProviderNow,
         // Repositories
         analyticsEventsRepositoryCreate,
+        analyticsEventsRepositoryGetAll,
     }
 }
