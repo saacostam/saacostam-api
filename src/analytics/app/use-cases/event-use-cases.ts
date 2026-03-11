@@ -21,7 +21,7 @@ export class EventUseCases {
 
 		return {
 			events,
-		}
+		};
 	}
 }
 
@@ -33,5 +33,5 @@ export interface EventUseCasesPayload {
 
 	QueryAllResponse: {
 		events: IEvent[];
-	}
+	};
 }
