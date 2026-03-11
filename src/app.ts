@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { analyticsRouter } from "./analytics/presentation";
 import { houseResourceManager } from "./house-resource-manager/presentation/routers";
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(
 	}),
 );
 
+app.use("/analytics", analyticsRouter);
 app.use("/hrm", houseResourceManager);
 
 app.get("/health", (_, res) => {
