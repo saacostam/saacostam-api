@@ -1,16 +1,16 @@
 export enum DomainErrorType {
-    BAD_REQUEST = "Bad Request",
-    SERVER_ERROR = "Server Error",
+	BAD_REQUEST = "Bad Request",
+	SERVER_ERROR = "Server Error",
 }
 
 export interface IFieldError {
-    field: string;
-    message: string;
+	field: string;
+	message: string;
 }
 
 /**
  * Domain-level abstraction over Error
- * 
+ *
  * Key characteristics:
  * - **Error type**: Categorizes the error (often mapped to HTTP status codes
  *   at the application or transport layer).
@@ -23,25 +23,28 @@ export interface IFieldError {
  *
  * This separation allows the domain to express meaningful failures without
  * coupling itself to transport concerns such as HTTP responses.
- * 
+ *
  */
 export class BaseDomainError extends Error {
-    public userMessage: string;
-    public type: DomainErrorType;
-    public errors: IFieldError[];
+	public userMessage: string;
+	public type: DomainErrorType;
+	public errors: IFieldError[];
 
-    constructor(args: {
-        type: DomainErrorType,
-        message: string,
-        userMessage: string;
-    }, errors?: IFieldError[]) {
-        super(args.message);
+	constructor(
+		args: {
+			type: DomainErrorType;
+			message: string;
+			userMessage: string;
+		},
+		errors?: IFieldError[],
+	) {
+		super(args.message);
 
-        this.userMessage = args.userMessage;
-        this.errors = errors || [];
-        this.name = "Domain Error";
-        this.type = args.type;
+		this.userMessage = args.userMessage;
+		this.errors = errors || [];
+		this.name = "Domain Error";
+		this.type = args.type;
 
-        Object.setPrototypeOf(this, BaseDomainError.prototype);
-    }
+		Object.setPrototypeOf(this, BaseDomainError.prototype);
+	}
 }
