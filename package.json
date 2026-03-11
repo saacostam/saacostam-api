@@ -18,7 +18,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/server.ts",
-    "format": "yarn biome check --write ."
+    "format": "yarn biome check --write .",
+    "test": "vitest"
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
@@ -38,7 +39,8 @@
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
