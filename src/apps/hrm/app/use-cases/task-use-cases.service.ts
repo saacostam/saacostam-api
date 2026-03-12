@@ -207,7 +207,7 @@ export class TaskUseCasesService {
 				{
 					type: DomainErrorType.NOT_FOUND,
 					userMessage: "Resource not found",
-					message: `TaskUseCasesService._getAllResourcesByIdList] Resource with id ${id} and user id ${userId} not found`,
+					message: `[TaskUseCasesService._getAllResourcesByIdList] Resource with id ${id} and user id ${userId} not found`,
 				},
 				[
 					{
