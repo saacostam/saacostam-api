@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { boardUseCasesService } from "@/apps/hrm/infra";
-import { getIdFromRequest } from "@/shared/core.utils";
+import { getIdFromRequest } from "@/shared/utils";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
 import { BoardValidator } from "../validators";
 

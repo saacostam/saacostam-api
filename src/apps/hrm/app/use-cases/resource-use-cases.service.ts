@@ -4,7 +4,7 @@ import {
 	DomainErrorType,
 	Resource,
 } from "@/apps/hrm/domain";
-import { generateId } from "@/shared/core.utils";
+import { generateId } from "@/shared/utils";
 import type {
 	CreateResourceRequestDto,
 	DeleteResourceRequestDto,

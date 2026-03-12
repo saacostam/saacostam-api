@@ -5,7 +5,7 @@ import {
 	type Resource,
 	Task,
 } from "@/apps/hrm/domain";
-import { generateId } from "@/shared/core.utils";
+import { generateId } from "@/shared/utils";
 import type {
 	CreateTaskRequestDto,
 	DeleteTaskRequestDto,

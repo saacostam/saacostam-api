@@ -7,7 +7,7 @@ import {
 	type Timezone,
 	type User,
 } from "@/apps/hrm/domain";
-import { generateId } from "@/shared/core.utils";
+import { generateId } from "@/shared/utils";
 import type {
 	CreateTaskInstanceCompletionDto,
 	DeleteTaskInstanceCompletionDto,

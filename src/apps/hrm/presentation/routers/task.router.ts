@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { taskUseCasesService } from "@/apps/hrm/infra";
-import { getIdFromRequest } from "@/shared/core.utils";
+import { getIdFromRequest } from "@/shared/utils";
 import type {
 	TCreateTaskCompletionResponse,
 	TGetAllTasksResponse,
