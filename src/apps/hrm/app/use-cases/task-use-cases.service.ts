@@ -239,7 +239,7 @@ export class TaskUseCasesService {
 		const notFoundError = new BaseDomainError({
 			type: DomainErrorType.NOT_FOUND,
 			userMessage: "Task not found",
-			message: `TaskUseCasesService._getExistingById] Task with id ${id} and user id ${userId} not found`,
+			message: `[TaskUseCasesService._getExistingById] Task with id ${id} and user id ${userId} not found`,
 		});
 
 		const existingTask = await this.taskRepository.getById(id);

@@ -155,7 +155,7 @@ export class ResourceUseCasesService {
 			{
 				type: DomainErrorType.NOT_FOUND,
 				userMessage: "Category not found",
-				message: `[ResourceUseCasesService._getCategoryById] Cateogry with id ${categoryId} and userId ${userId} not found`,
+				message: `[ResourceUseCasesService._getCategoryById] Category with id ${categoryId} and userId ${userId} not found`,
 			},
 			[
 				{
