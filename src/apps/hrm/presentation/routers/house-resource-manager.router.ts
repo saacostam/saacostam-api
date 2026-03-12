@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { authMiddleware, errorHandlerMiddleware } from "../middlewares";
+import { errorHandlerMiddleware } from "@/shared/errors/presentation";
+import { authMiddleware } from "../middlewares";
 import { authRouter } from "./auth.router";
 import { boardRouter } from "./board.router";
 import { categoryRouter } from "./category.router";

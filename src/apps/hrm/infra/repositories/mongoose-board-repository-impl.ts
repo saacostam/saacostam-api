@@ -1,6 +1,7 @@
 import type { InferSchemaType } from "mongoose";
 import type { BoardRepository } from "@/apps/hrm/app";
-import { BaseDomainError, Board, DomainErrorType } from "@/apps/hrm/domain";
+import { Board } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { BoardModel, type BoardSchema } from "../mongoose";
 
 export class MongooseBoardRepositoryImpl implements BoardRepository {
@@ -33,10 +34,12 @@ export class MongooseBoardRepositoryImpl implements BoardRepository {
 		});
 
 		if (!updatedBoard) {
-			throw new BaseDomainError(
-				DomainErrorType.SERVER_ERROR,
-				"[MongooseCategoryRepositoryImpl.updateById] - Unable to update category: no category found with the provided id",
-			);
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				message:
+					"[MongooseCategoryRepositoryImpl.updateById] - Unable to update category: no category found with the provided id",
+				userMessage: "Something went wrong. Please try again",
+			});
 		}
 
 		return this._mapDocumentEntryToDomainObject(updatedBoard);

@@ -1,10 +1,7 @@
 import type { InferSchemaType } from "mongoose";
 import type { TaskCompletionRepository } from "@/apps/hrm/app";
-import {
-	BaseDomainError,
-	DomainErrorType,
-	TaskCompletion,
-} from "@/apps/hrm/domain";
+import { TaskCompletion } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { TaskCompletionModel, type TaskCompletionSchema } from "../mongoose";
 
 export class MongooseTaskCompletionRepositoryImpl
@@ -45,10 +42,12 @@ export class MongooseTaskCompletionRepositoryImpl
 		);
 
 		if (!updatedTaskCompletion) {
-			throw new BaseDomainError(
-				DomainErrorType.SERVER_ERROR,
-				"[MongooseTaskCompletionRepositoryImpl.updateById] - Unable to update taskCompletion: no taskCompletion found with the provided id",
-			);
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				message:
+					"[MongooseTaskCompletionRepositoryImpl.updateById] - Unable to update taskCompletion: no taskCompletion found with the provided id",
+				userMessage: "Task history not found",
+			});
 		}
 
 		return this._mapDocumentEntryToDomainObject(updatedTaskCompletion);

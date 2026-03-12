@@ -1,4 +1,5 @@
-import { BaseDomainError, DomainErrorType, User } from "@/apps/hrm/domain";
+import { User } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import {
 	type GetUserRequestDto,
 	MutationUpdateSettingOutDto,
@@ -34,7 +35,11 @@ export class UserUseCasesService {
 		const user = await this.userRepository.getById(userId);
 
 		if (!user)
-			throw new BaseDomainError(DomainErrorType.NOT_FOUND, "User not found");
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				message: "[UserUseCasesService._getUser] User not found",
+				userMessage: "User not found",
+			});
 
 		return user;
 	}

@@ -1,12 +1,11 @@
 import {
-	BaseDomainError,
 	CalendarDate,
-	DomainErrorType,
 	type Task,
 	TaskCompletion,
 	type Timezone,
 	type User,
 } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { generateId } from "@/shared/utils";
 import type {
 	CreateTaskInstanceCompletionDto,
@@ -443,10 +442,11 @@ export class TaskInstanceUseCases {
 	}
 
 	async _getTaskById(id: string, userId: string): Promise<Task> {
-		const notFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Task with id ${id} not found`,
-		);
+		const notFoundError = new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Task not found",
+			message: `[TaskIntanceUseCases._getTaskById] Task with id ${id} and userId ${userId} not found`,
+		});
 
 		const existingTask = await this.taskRepository.getById(id);
 
@@ -460,10 +460,11 @@ export class TaskInstanceUseCases {
 		id: string,
 		userId: string,
 	): Promise<TaskCompletion> {
-		const notFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Task completion with id ${id} not found`,
-		);
+		const notFoundError = new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Task data not found",
+			message: `[TaskIntanceUseCases._getTaskCompletionById] Task completion with id ${id} and userId ${userId} not found`,
+		});
 
 		const existingTaskCompletion =
 			await this.taskCompletionRepository.getById(id);
@@ -475,10 +476,11 @@ export class TaskInstanceUseCases {
 	}
 
 	async _getUser(userId: string): Promise<User> {
-		const userNotFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			"User not found",
-		);
+		const userNotFoundError = new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "User not found",
+			message: `[TaskIntanceUseCases._getUser] User with id ${userId} not found`,
+		});
 
 		const user = await this.userRepository.getById(userId);
 		if (!user) throw userNotFoundError;

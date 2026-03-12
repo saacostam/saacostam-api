@@ -1,6 +1,7 @@
 import type { InferSchemaType } from "mongoose";
 import type { CategoryRepository } from "@/apps/hrm/app";
-import { BaseDomainError, Category, DomainErrorType } from "@/apps/hrm/domain";
+import { Category } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { CategoryModel, type CategorySchema } from "../mongoose";
 
 export class MongooseCategoryRepositoryImpl implements CategoryRepository {
@@ -35,10 +36,12 @@ export class MongooseCategoryRepositoryImpl implements CategoryRepository {
 		});
 
 		if (!updatedCategory) {
-			throw new BaseDomainError(
-				DomainErrorType.SERVER_ERROR,
-				"[MongooseCategoryRepositoryImpl.updateById] - Unable to update category: no category found with the provided id",
-			);
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				message:
+					"[MongooseCategoryRepositoryImpl.updateById] - Unable to update category: no category found with the provided id",
+				userMessage: "Something went wrong. Please try again",
+			});
 		}
 
 		return this._mapDocumentEntryToDomainObject(updatedCategory);

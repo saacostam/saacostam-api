@@ -1,6 +1,6 @@
-import { BaseDomainError, Category, DomainErrorType } from "@/apps/hrm/domain";
+import { Category } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { generateId } from "@/shared/utils";
-
 import type {
 	CreateCategoryRequestDto,
 	DeleteCategoryRequestDto,
@@ -64,10 +64,11 @@ export class CategoryUseCasesService {
 	async _getExistingById(id: string, userId: string): Promise<Category> {
 		const existingCategory = await this.categoryRepository.getById(id);
 
-		const notFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Category with id ${id} not found`,
-		);
+		const notFoundError = new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Category not found",
+			message: `[CategoryUseCasesService._getExistingById] Category with id ${id} and user id ${userId} not found`,
+		});
 
 		if (!existingCategory) throw notFoundError;
 		if (existingCategory.userId !== userId) throw notFoundError;

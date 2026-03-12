@@ -1,5 +1,7 @@
 export enum DomainErrorType {
 	BAD_REQUEST = "Bad Request",
+	NOT_FOUND = "Not Found",
+	UNAUTHORIZED = "Unauthorized",
 	SERVER_ERROR = "Server Error",
 }
 
@@ -46,5 +48,7 @@ export class BaseDomainError extends Error {
 		this.type = args.type;
 
 		Object.setPrototypeOf(this, BaseDomainError.prototype);
+
+		Error.captureStackTrace?.(this, this.constructor);
 	}
 }

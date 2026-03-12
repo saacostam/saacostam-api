@@ -1,10 +1,5 @@
-import {
-	BaseDomainError,
-	type Category,
-	DomainErrorType,
-	type Resource,
-	Task,
-} from "@/apps/hrm/domain";
+import { type Category, type Resource, Task } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { generateId } from "@/shared/utils";
 import type {
 	CreateTaskRequestDto,
@@ -181,8 +176,11 @@ export class TaskUseCasesService {
 		fieldName: string,
 	): Promise<Category> {
 		const categoryNotFound = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Category with id ${categoryId} not found`,
+			{
+				type: DomainErrorType.NOT_FOUND,
+				userMessage: "Category not found",
+				message: `[TaskUseCasesService._getCategoryById] Category with id ${categoryId} and user id ${userId} not found`,
+			},
 			[
 				{
 					field: fieldName,
@@ -206,8 +204,11 @@ export class TaskUseCasesService {
 	): Promise<Resource[]> {
 		const resourceNotFoundFactory = (id: string) =>
 			new BaseDomainError(
-				DomainErrorType.NOT_FOUND,
-				`Resource with id ${id} not found`,
+				{
+					type: DomainErrorType.NOT_FOUND,
+					userMessage: "Resource not found",
+					message: `[TaskUseCasesService._getAllResourcesByIdList] Resource with id ${id} and user id ${userId} not found`,
+				},
 				[
 					{
 						field: fieldName,
@@ -235,10 +236,11 @@ export class TaskUseCasesService {
 	}
 
 	async _getExistingById(id: string, userId: string): Promise<Task> {
-		const notFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Task with id ${id} not found`,
-		);
+		const notFoundError = new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Task not found",
+			message: `[TaskUseCasesService._getExistingById] Task with id ${id} and user id ${userId} not found`,
+		});
 
 		const existingTask = await this.taskRepository.getById(id);
 

@@ -1,10 +1,13 @@
-import { BaseDomainError, DomainErrorType } from "./base.error";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
 export class UserWithUsernameAlreadyExistsError extends BaseDomainError {
 	constructor(username: string, fieldName?: string) {
 		super(
-			DomainErrorType.BAD_REQUEST,
-			`A user with the username '${username}' already exists.`,
+			{
+				type: DomainErrorType.BAD_REQUEST,
+				userMessage: `A user with the username '${username}' already exists.`,
+				message: `[UserWithUsernameAlreadyExistsError] username: '${username}'`,
+			},
 			[
 				{
 					field: fieldName ?? "username",
@@ -23,7 +26,11 @@ export class UserWithUsernameAlreadyExistsError extends BaseDomainError {
 
 export class InvalidLoginAttemptError extends BaseDomainError {
 	constructor() {
-		super(DomainErrorType.BAD_REQUEST, "Invalid Login Credentials");
+		super({
+			type: DomainErrorType.BAD_REQUEST,
+			userMessage: "Invalid Login Credentials",
+			message: "[InvalidLoginAttemptError]",
+		});
 
 		this.name = "InvalidLoginAttemptError";
 
