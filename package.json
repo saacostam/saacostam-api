@@ -18,9 +18,11 @@
     "build": "tsc && tsc-alias",
     "start": "node dist/server.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node -r tsconfig-paths/register' src/server.ts",
-    "format": "yarn biome check --write .",
     "test": "vitest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "biome format --write .",
+    "lint": "biome check .",
+    "fix": "biome check --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
