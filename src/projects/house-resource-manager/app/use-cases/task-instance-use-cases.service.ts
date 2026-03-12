@@ -1,4 +1,4 @@
-import { generateId } from "../../../core.utils";
+import { generateId } from "../../../../shared/core.utils";
 import { type Task, TaskCompletion, type User } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";
 import { CalendarDate, type Timezone } from "../../domain/value-objects";

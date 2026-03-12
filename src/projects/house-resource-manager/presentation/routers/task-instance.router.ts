@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getIdFromRequest } from "../../../core.utils";
+import { getIdFromRequest } from "../../../../shared/core.utils";
 import { taskInstanceUseCasesService } from "../../infra/di";
 import type {
 	TCreateTaskCompletionResponse,

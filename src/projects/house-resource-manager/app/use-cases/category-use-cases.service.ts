@@ -1,4 +1,4 @@
-import { generateId } from "../../../core.utils";
+import { generateId } from "../../../../shared/core.utils";
 
 import { Category } from "../../domain/entities";
 import { BaseDomainError, DomainErrorType } from "../../domain/errors";

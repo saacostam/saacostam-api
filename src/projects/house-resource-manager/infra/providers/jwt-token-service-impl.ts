@@ -1,5 +1,5 @@
 import { sign, verify } from "jsonwebtoken";
-import { CoreConfig } from "../../../core.config";
+import { CoreConfig } from "../../../../shared/core.config";
 import type { JwtTokenService, TokenPayload } from "../../app/providers";
 
 const SECRET = CoreConfig.JWT_SECRET;

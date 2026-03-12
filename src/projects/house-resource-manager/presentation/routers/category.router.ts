@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getIdFromRequest } from "../../../core.utils";
+import { getIdFromRequest } from "../../../../shared/core.utils";
 import { categoryUseCasesService } from "../../infra/di";
 import { ID_FIELD_NOT_FOUND_ERROR, UnauthorizedError } from "../errors";
 import { CategoryValidator } from "../validators";

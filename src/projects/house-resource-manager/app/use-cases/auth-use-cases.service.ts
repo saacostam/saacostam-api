@@ -1,4 +1,4 @@
-import { generateId } from "../../../core.utils";
+import { generateId } from "../../../../shared/core.utils";
 import { UserWithHash } from "../../domain/entities";
 import {
 	InvalidLoginAttemptError,
