@@ -48,5 +48,7 @@ export class BaseDomainError extends Error {
 		this.type = args.type;
 
 		Object.setPrototypeOf(this, BaseDomainError.prototype);
+
+		Error.captureStackTrace?.(this, this.constructor);
 	}
 }
