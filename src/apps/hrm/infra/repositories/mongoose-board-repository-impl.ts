@@ -35,7 +35,7 @@ export class MongooseBoardRepositoryImpl implements BoardRepository {
 
 		if (!updatedBoard) {
 			throw new BaseDomainError({
-				type: DomainErrorType.SERVER_ERROR,
+				type: DomainErrorType.NOT_FOUND,
 				message:
 					"[MongooseCategoryRepositoryImpl.updateById] - Unable to update category: no category found with the provided id",
 				userMessage: "Something went wrong. Please try again",

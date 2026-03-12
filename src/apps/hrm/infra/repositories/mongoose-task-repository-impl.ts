@@ -32,7 +32,7 @@ export class MongooseTaskRepositoryImpl implements TaskRepository {
 
 		if (!updatedTask) {
 			throw new BaseDomainError({
-				type: DomainErrorType.SERVER_ERROR,
+				type: DomainErrorType.NOT_FOUND,
 				message:
 					"[MongooseTaskRepositoryImpl.updateById] - Unable to update task: no task found with the provided id",
 				userMessage: "Task not found",

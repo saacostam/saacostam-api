@@ -38,7 +38,7 @@ export class MongooseUserRepositoryImpl implements UserRepository {
 
 		if (!updatedUser) {
 			throw new BaseDomainError({
-				type: DomainErrorType.SERVER_ERROR,
+				type: DomainErrorType.NOT_FOUND,
 				message:
 					"[MongooseUserRepositoryImpl.updateById] - Unable to update user: no user found with the provided id",
 				userMessage: "User not found",

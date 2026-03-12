@@ -43,7 +43,7 @@ export class MongooseTaskCompletionRepositoryImpl
 
 		if (!updatedTaskCompletion) {
 			throw new BaseDomainError({
-				type: DomainErrorType.SERVER_ERROR,
+				type: DomainErrorType.NOT_FOUND,
 				message:
 					"[MongooseTaskCompletionRepositoryImpl.updateById] - Unable to update taskCompletion: no taskCompletion found with the provided id",
 				userMessage: "Task history not found",

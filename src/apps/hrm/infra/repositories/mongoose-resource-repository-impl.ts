@@ -46,7 +46,7 @@ export class MongooseResourceRepositoryImpl implements ResourceRepository {
 
 		if (!updatedResource) {
 			throw new BaseDomainError({
-				type: DomainErrorType.SERVER_ERROR,
+				type: DomainErrorType.NOT_FOUND,
 				message:
 					"[MongooseResourceRepositoryImpl.updateById] - Unable to update resource: no resource found with the provided id",
 				userMessage: "Something went wrong. Please try again",
