@@ -5,8 +5,8 @@ export interface IContext {
 	prov: {
 		date: IDateProvider;
 		uuid: IUuidProvider;
-	}
+	};
 	repo: {
 		event: IEventRepository;
-	}
+	};
 }

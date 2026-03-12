@@ -6,11 +6,7 @@ import { EventUseCases } from "./event-use-cases";
 describe("EventUseCases", () => {
 	describe("createEvent", () => {
 		it("should commit event to repository", () => {
-			const {
-				ctx,
-				prov,
-				repo,
-			} = mockContext();
+			const { ctx, prov, repo } = mockContext();
 
 			const uc = new EventUseCases(ctx);
 

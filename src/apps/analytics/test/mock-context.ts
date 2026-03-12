@@ -17,7 +17,7 @@ export function mockContext() {
 		event: {
 			create: vi.fn(),
 			getAll: vi.fn(),
-		}
+		},
 	} satisfies IContext["repo"];
 
 	const ctx: IContext = {
