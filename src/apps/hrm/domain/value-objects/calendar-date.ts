@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import type { IANA_TIMEZONES } from "../../assets";
+import type { IANA_TIMEZONES } from "@/apps/hrm/assets";
 
 export type Timezone = (typeof IANA_TIMEZONES)[number]["zones"][number]["name"];
 
