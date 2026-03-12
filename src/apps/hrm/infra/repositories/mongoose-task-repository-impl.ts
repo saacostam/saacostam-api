@@ -1,7 +1,11 @@
 import type { InferSchemaType } from "mongoose";
-import type { TaskRepository } from "../../app/repositories";
-import { type Cadence, Task } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import type { TaskRepository } from "@/apps/hrm/app";
+import {
+	BaseDomainError,
+	type Cadence,
+	DomainErrorType,
+	Task,
+} from "@/apps/hrm/domain";
 import { TaskModel, type TaskSchema } from "../mongoose";
 
 export class MongooseTaskRepositoryImpl implements TaskRepository {

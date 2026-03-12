@@ -1,4 +1,4 @@
-import { ResourceUseCasesService } from "../../app/use-cases";
+import { ResourceUseCasesService } from "@/apps/hrm/app";
 import {
 	MongooseCategoryRepositoryImpl,
 	MongooseResourceRepositoryImpl,

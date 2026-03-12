@@ -1,8 +1,7 @@
 import type { InferSchemaType } from "mongoose";
-import type { BoardRepository } from "../../app/repositories";
-import { Board } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
-import { BoardModel, type BoardSchema } from "../mongoose/board";
+import type { BoardRepository } from "@/apps/hrm/app";
+import { BaseDomainError, Board, DomainErrorType } from "@/apps/hrm/domain";
+import { BoardModel, type BoardSchema } from "../mongoose";
 
 export class MongooseBoardRepositoryImpl implements BoardRepository {
 	async create(board: Board): Promise<Board> {

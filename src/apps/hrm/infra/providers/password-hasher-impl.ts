@@ -1,5 +1,5 @@
 import { compare, hash } from "bcrypt";
-import type { PasswordHasher } from "../../app/providers";
+import type { PasswordHasher } from "@/apps/hrm/app";
 
 export class PasswordHasherImpl implements PasswordHasher {
 	hash(password: string) {

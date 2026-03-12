@@ -1,7 +1,10 @@
 import type { InferSchemaType } from "mongoose";
-import type { TaskCompletionRepository } from "../../app/repositories";
-import { TaskCompletion } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import type { TaskCompletionRepository } from "@/apps/hrm/app";
+import {
+	BaseDomainError,
+	DomainErrorType,
+	TaskCompletion,
+} from "@/apps/hrm/domain";
 import { TaskCompletionModel, type TaskCompletionSchema } from "../mongoose";
 
 export class MongooseTaskCompletionRepositoryImpl

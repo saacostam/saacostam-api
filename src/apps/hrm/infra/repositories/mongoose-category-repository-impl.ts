@@ -1,7 +1,6 @@
 import type { InferSchemaType } from "mongoose";
-import type { CategoryRepository } from "../../app/repositories";
-import { Category } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import type { CategoryRepository } from "@/apps/hrm/app";
+import { BaseDomainError, Category, DomainErrorType } from "@/apps/hrm/domain";
 import { CategoryModel, type CategorySchema } from "../mongoose";
 
 export class MongooseCategoryRepositoryImpl implements CategoryRepository {

@@ -1,4 +1,4 @@
-import { TaskUseCasesService } from "../../app/use-cases";
+import { TaskUseCasesService } from "@/apps/hrm/app";
 import {
 	MongooseCategoryRepositoryImpl,
 	MongooseResourceRepositoryImpl,

@@ -1,4 +1,4 @@
-import { AuthUseCasesService } from "../../app/use-cases";
+import { AuthUseCasesService } from "@/apps/hrm/app";
 import { JwtTokenServiceImpl, PasswordHasherImpl } from "../providers";
 import { MongooseUserRepositoryImpl } from "../repositories";
 

@@ -1,4 +1,4 @@
-import { CategoryUseCasesService } from "../../app/use-cases";
+import { CategoryUseCasesService } from "@/apps/hrm/app";
 import { MongooseCategoryRepositoryImpl } from "../repositories";
 
 export const categoryUseCasesService = new CategoryUseCasesService(

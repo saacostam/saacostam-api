@@ -1,4 +1,4 @@
-import { TaskInstanceUseCases } from "../../app/use-cases";
+import { TaskInstanceUseCases } from "@/apps/hrm/app";
 import {
 	MongooseCategoryRepositoryImpl,
 	MongooseResourceRepositoryImpl,

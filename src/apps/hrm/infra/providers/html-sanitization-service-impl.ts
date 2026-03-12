@@ -1,5 +1,5 @@
 import sanitizeHtml from "sanitize-html";
-import type { HtmlSanitizationService } from "../../app/providers";
+import type { HtmlSanitizationService } from "@/apps/hrm/app";
 
 export class HtmlSanitizationServiceImpl implements HtmlSanitizationService {
 	sanitizeHtml(html: string): string {

@@ -1,7 +1,6 @@
 import type { InferSchemaType } from "mongoose";
-import type { ResourceRepository } from "../../app/repositories";
-import { Resource } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import type { ResourceRepository } from "@/apps/hrm/app";
+import { BaseDomainError, DomainErrorType, Resource } from "@/apps/hrm/domain";
 import { ResourceModel, type ResourceSchema } from "../mongoose";
 
 export class MongooseResourceRepositoryImpl implements ResourceRepository {

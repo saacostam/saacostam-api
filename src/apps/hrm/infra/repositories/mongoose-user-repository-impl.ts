@@ -1,8 +1,12 @@
 import type { InferSchemaType } from "mongoose";
-import type { UserRepository } from "../../app/repositories";
-import { User, UserWithHash } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
-import type { Timezone } from "../../domain/value-objects";
+import type { UserRepository } from "@/apps/hrm/app";
+import {
+	BaseDomainError,
+	DomainErrorType,
+	type Timezone,
+	User,
+	UserWithHash,
+} from "@/apps/hrm/domain";
 import { UserModel, type UserSchema } from "../mongoose";
 
 export class MongooseUserRepositoryImpl implements UserRepository {
