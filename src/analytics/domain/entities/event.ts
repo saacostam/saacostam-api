@@ -5,5 +5,5 @@ export interface IEvent {
 	id: string;
 	name: string;
 	createdAt: Date;
-	payload: string;
+	payload: string | null;
 }

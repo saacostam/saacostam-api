@@ -10,7 +10,7 @@ export class EventUseCases {
 		const newEvent: IEvent = {
 			id: this.ctx.uuidProvider.gen(),
 			name: req.name,
-			payload: req.payload,
+			payload: req.payload ?? null,
 			createdAt: this.ctx.dateProvider.now(),
 		};
 
@@ -29,7 +29,7 @@ export class EventUseCases {
 export interface EventUseCasesPayload {
 	CreateEventRequest: {
 		name: string;
-		payload: string;
+		payload?: string | null;
 	};
 
 	QueryAllResponse: {
