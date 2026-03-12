@@ -8,17 +8,17 @@ export class EventUseCases {
 		req: EventUseCasesPayload["CreateEventRequest"],
 	): Promise<void> {
 		const newEvent: IEvent = {
-			id: this.ctx.uuidProvider.gen(),
+			id: this.ctx.prov.uuid.gen(),
 			name: req.name,
 			payload: req.payload ?? null,
-			createdAt: this.ctx.dateProvider.now(),
+			createdAt: this.ctx.prov.date.now(),
 		};
 
-		await this.ctx.analyticsEventsRepository.create(newEvent);
+		await this.ctx.repo.event.create(newEvent);
 	}
 
 	async queryAll(): Promise<EventUseCasesPayload["QueryAllResponse"]> {
-		const events = await this.ctx.analyticsEventsRepository.getAll();
+		const events = await this.ctx.repo.event.getAll();
 
 		return {
 			events,

@@ -3,7 +3,11 @@ import { SimpleDateProvider, SimpleUuidProvider } from "../providers";
 import { InMemoryEventRepository } from "../repositories";
 
 export const context: IContext = {
-	dateProvider: new SimpleDateProvider(),
-	uuidProvider: new SimpleUuidProvider(),
-	analyticsEventsRepository: new InMemoryEventRepository(),
+	prov: {
+		date: new SimpleDateProvider(),
+		uuid: new SimpleUuidProvider(),
+	},
+	repo: {
+		event: new InMemoryEventRepository(),
+	},
 };

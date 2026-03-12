@@ -8,24 +8,23 @@ describe("EventUseCases", () => {
 		it("should commit event to repository", () => {
 			const {
 				ctx,
-				analyticsEventsRepositoryCreate,
-				dateProviderNow,
-				uuidProviderGen,
+				prov,
+				repo,
 			} = mockContext();
 
 			const uc = new EventUseCases(ctx);
 
 			const createdAt = new Date(123);
 
-			dateProviderNow.mockReturnValueOnce(createdAt);
-			uuidProviderGen.mockReturnValueOnce("id");
+			prov.date.now.mockReturnValueOnce(createdAt);
+			prov.uuid.gen.mockReturnValueOnce("id");
 
 			uc.createEvent({
 				name: "name",
 				payload: "payload",
 			});
 
-			expect(dateProviderNow).toHaveBeenCalledOnce();
+			expect(prov.date.now).toHaveBeenCalledOnce();
 
 			const createEventPayload: IEvent = {
 				id: "id",
@@ -33,7 +32,7 @@ describe("EventUseCases", () => {
 				payload: "payload",
 				createdAt,
 			};
-			expect(analyticsEventsRepositoryCreate).toHaveBeenCalledExactlyOnceWith(
+			expect(repo.event.create).toHaveBeenCalledExactlyOnceWith(
 				createEventPayload,
 			);
 		});
@@ -41,11 +40,11 @@ describe("EventUseCases", () => {
 
 	describe("queryAll", () => {
 		it("should fetch all events", async () => {
-			const { ctx, analyticsEventsRepositoryGetAll } = mockContext();
+			const { ctx, repo } = mockContext();
 
 			const uc = new EventUseCases(ctx);
 
-			analyticsEventsRepositoryGetAll.mockReturnValueOnce(MOCK_EVENTS);
+			repo.event.getAll.mockReturnValueOnce(MOCK_EVENTS);
 			const queryAllResult = await uc.queryAll();
 
 			expect(queryAllResult.events).toBe(MOCK_EVENTS);

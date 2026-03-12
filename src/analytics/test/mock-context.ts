@@ -3,34 +3,31 @@ import type { IContext } from "../app";
 
 export function mockContext() {
 	// Providers
-	const dateProviderNow = vi.fn();
-
-	const uuidProviderGen = vi.fn();
+	const prov = {
+		date: {
+			now: vi.fn(),
+		},
+		uuid: {
+			gen: vi.fn(),
+		},
+	} satisfies IContext["prov"];
 
 	// Repositories
-	const analyticsEventsRepositoryCreate = vi.fn();
-	const analyticsEventsRepositoryGetAll = vi.fn();
+	const repo = {
+		event: {
+			create: vi.fn(),
+			getAll: vi.fn(),
+		}
+	} satisfies IContext["repo"];
 
 	const ctx: IContext = {
-		dateProvider: {
-			now: dateProviderNow,
-		},
-		uuidProvider: {
-			gen: uuidProviderGen,
-		},
-		analyticsEventsRepository: {
-			create: analyticsEventsRepositoryCreate,
-			getAll: analyticsEventsRepositoryGetAll,
-		},
+		prov,
+		repo,
 	};
 
 	return {
 		ctx,
-		// Providers
-		dateProviderNow,
-		uuidProviderGen,
-		// Repositories
-		analyticsEventsRepositoryCreate,
-		analyticsEventsRepositoryGetAll,
+		prov,
+		repo,
 	};
 }
