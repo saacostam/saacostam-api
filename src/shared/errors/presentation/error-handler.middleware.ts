@@ -14,7 +14,7 @@ export function errorHandlerMiddleware(
 	res: Response,
 	_next: NextFunction,
 ) {
-	console.error(JSON.stringify(err));
+	console.error(err instanceof Error ? err.stack : err);
 
 	let statusCode = 500;
 	let message = mapDomainErrorTypeToGenericError[DomainErrorType.SERVER_ERROR];
