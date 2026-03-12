@@ -1,4 +1,4 @@
-import type { Task } from "../../domain/entities";
+import type { Task } from "@/apps/hrm/domain";
 
 export interface TaskRepository {
 	create(task: Task): Promise<Task>;

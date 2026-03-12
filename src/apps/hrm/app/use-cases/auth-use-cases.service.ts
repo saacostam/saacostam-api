@@ -1,9 +1,9 @@
-import { generateId } from "../../../../shared/core.utils";
-import { UserWithHash } from "../../domain/entities";
 import {
 	InvalidLoginAttemptError,
+	UserWithHash,
 	UserWithUsernameAlreadyExistsError,
-} from "../../domain/errors";
+} from "@/apps/hrm/domain";
+import { generateId } from "@/shared/core.utils";
 import type {
 	LoginRequestDto,
 	LoginResponseDto,

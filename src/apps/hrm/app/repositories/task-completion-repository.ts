@@ -1,4 +1,4 @@
-import type { TaskCompletion } from "../../domain/entities";
+import type { TaskCompletion } from "@/apps/hrm/domain";
 
 export interface TaskCompletionRepository {
 	create(taskCompletion: TaskCompletion): Promise<TaskCompletion>;

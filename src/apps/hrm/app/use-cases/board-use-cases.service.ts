@@ -1,7 +1,5 @@
-import { generateId } from "../../../../shared/core.utils";
-
-import { Board } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import { BaseDomainError, Board, DomainErrorType } from "@/apps/hrm/domain";
+import { generateId } from "@/shared/core.utils";
 import {
 	type CreateBoardRequestDto,
 	type DeleteBoardRequestDto,

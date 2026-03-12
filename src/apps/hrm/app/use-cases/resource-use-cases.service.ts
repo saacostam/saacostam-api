@@ -1,7 +1,10 @@
-import { generateId } from "../../../../shared/core.utils";
-
-import { type Category, Resource } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import {
+	BaseDomainError,
+	type Category,
+	DomainErrorType,
+	Resource,
+} from "@/apps/hrm/domain";
+import { generateId } from "@/shared/core.utils";
 import type {
 	CreateResourceRequestDto,
 	DeleteResourceRequestDto,

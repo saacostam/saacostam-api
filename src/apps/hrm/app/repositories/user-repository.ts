@@ -1,4 +1,4 @@
-import type { User, UserWithHash } from "../../domain/entities";
+import type { User, UserWithHash } from "@/apps/hrm/domain";
 
 export interface UserRepository {
 	create(user: UserWithHash): Promise<User>;

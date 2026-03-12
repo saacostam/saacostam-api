@@ -1,4 +1,4 @@
-import type { Category } from "../../domain/entities";
+import type { Category } from "@/apps/hrm/domain";
 
 export interface CategoryRepository {
 	create(category: Category): Promise<Category>;

@@ -1,7 +1,5 @@
-import { generateId } from "../../../../shared/core.utils";
-
-import { Category } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import { BaseDomainError, Category, DomainErrorType } from "@/apps/hrm/domain";
+import { generateId } from "@/shared/core.utils";
 
 import type {
 	CreateCategoryRequestDto,

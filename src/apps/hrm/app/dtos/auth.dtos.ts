@@ -1,4 +1,4 @@
-import type { Timezone } from "../../domain/value-objects";
+import type { Timezone } from "@/apps/hrm/domain";
 
 export interface SignUpRequestDto {
 	username: {

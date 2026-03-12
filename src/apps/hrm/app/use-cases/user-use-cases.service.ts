@@ -1,5 +1,4 @@
-import { User } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import { BaseDomainError, DomainErrorType, User } from "@/apps/hrm/domain";
 import {
 	type GetUserRequestDto,
 	MutationUpdateSettingOutDto,

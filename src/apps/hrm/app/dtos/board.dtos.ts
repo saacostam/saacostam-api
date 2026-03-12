@@ -1,4 +1,4 @@
-import type { Board } from "../../domain/entities";
+import type { Board } from "@/apps/hrm/domain";
 
 export interface CreateBoardRequestDto {
 	name: string;

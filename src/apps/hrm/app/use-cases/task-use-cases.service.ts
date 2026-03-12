@@ -1,7 +1,11 @@
-import { generateId } from "../../../../shared/core.utils";
-
-import { type Category, type Resource, Task } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import {
+	BaseDomainError,
+	type Category,
+	DomainErrorType,
+	type Resource,
+	Task,
+} from "@/apps/hrm/domain";
+import { generateId } from "@/shared/core.utils";
 import type {
 	CreateTaskRequestDto,
 	DeleteTaskRequestDto,

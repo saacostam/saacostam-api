@@ -1,7 +1,13 @@
-import { generateId } from "../../../../shared/core.utils";
-import { type Task, TaskCompletion, type User } from "../../domain/entities";
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
-import { CalendarDate, type Timezone } from "../../domain/value-objects";
+import {
+	BaseDomainError,
+	CalendarDate,
+	DomainErrorType,
+	type Task,
+	TaskCompletion,
+	type Timezone,
+	type User,
+} from "@/apps/hrm/domain";
+import { generateId } from "@/shared/core.utils";
 import type {
 	CreateTaskInstanceCompletionDto,
 	DeleteTaskInstanceCompletionDto,

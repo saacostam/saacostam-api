@@ -1,4 +1,4 @@
-import type { Cadence } from "../../domain/entities";
+import type { Cadence } from "@/apps/hrm/domain";
 
 export interface CreateTaskRequestDto {
 	name: string;

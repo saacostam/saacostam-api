@@ -1,4 +1,4 @@
-import type { Category, Task } from "../../domain/entities";
+import type { Category, Task } from "@/apps/hrm/domain";
 
 export interface GetImmediateTaskInstancesDto {
 	userId: string;

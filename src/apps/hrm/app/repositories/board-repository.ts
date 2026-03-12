@@ -1,4 +1,4 @@
-import type { Board } from "../../domain/entities";
+import type { Board } from "@/apps/hrm/domain";
 
 export interface BoardRepository {
 	create(board: Board): Promise<Board>;

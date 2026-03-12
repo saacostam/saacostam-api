@@ -1,4 +1,4 @@
-import type { Resource } from "../../domain/entities";
+import type { Resource } from "@/apps/hrm/domain";
 
 export interface ResourceRepository {
 	create(resource: Resource): Promise<Resource>;
