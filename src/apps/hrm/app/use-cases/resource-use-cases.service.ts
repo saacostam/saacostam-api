@@ -1,9 +1,5 @@
-import {
-	BaseDomainError,
-	type Category,
-	DomainErrorType,
-	Resource,
-} from "@/apps/hrm/domain";
+import { type Category, Resource } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { generateId } from "@/shared/utils";
 import type {
 	CreateResourceRequestDto,
@@ -136,10 +132,11 @@ export class ResourceUseCasesService {
 	}
 
 	async _getExistingById(id: string, userId: string): Promise<Resource> {
-		const notFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Resource with id ${id} not found`,
-		);
+		const notFoundError = new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Resource not found",
+			message: `[ResourceUseCasesService._getExistingById] Resource with id ${id} and userId ${userId} not found`,
+		});
 
 		const existingResource = await this.resourceRepository.getById(id);
 
@@ -155,8 +152,11 @@ export class ResourceUseCasesService {
 		fieldName: string,
 	): Promise<Category> {
 		const categoryNotFound = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Category with id ${categoryId} not found`,
+			{
+				type: DomainErrorType.NOT_FOUND,
+				userMessage: "Category not found",
+				message: `[ResourceUseCasesService._getCategoryById] Cateogry with id ${categoryId} and userId ${userId} not found`,
+			},
 			[
 				{
 					field: fieldName,

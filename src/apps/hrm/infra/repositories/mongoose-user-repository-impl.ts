@@ -1,12 +1,7 @@
 import type { InferSchemaType } from "mongoose";
 import type { UserRepository } from "@/apps/hrm/app";
-import {
-	BaseDomainError,
-	DomainErrorType,
-	type Timezone,
-	User,
-	UserWithHash,
-} from "@/apps/hrm/domain";
+import { type Timezone, User, UserWithHash } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { UserModel, type UserSchema } from "../mongoose";
 
 export class MongooseUserRepositoryImpl implements UserRepository {
@@ -42,10 +37,12 @@ export class MongooseUserRepositoryImpl implements UserRepository {
 		});
 
 		if (!updatedUser) {
-			throw new BaseDomainError(
-				DomainErrorType.SERVER_ERROR,
-				"[MongooseUserRepositoryImpl.updateById] - Unable to update user: no user found with the provided id",
-			);
+			throw new BaseDomainError({
+				type: DomainErrorType.SERVER_ERROR,
+				message:
+					"[MongooseUserRepositoryImpl.updateById] - Unable to update user: no user found with the provided id",
+				userMessage: "User not found",
+			});
 		}
 
 		return this._mapDocumentEntryToDomainObject(updatedUser);

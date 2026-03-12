@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { BaseDomainError } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import {
 	type ErrorResponse,
 	type FieldError,
+	mapDomainErrorTypeToGenericError,
 	mapDomainErrorTypeToStatusCode,
-} from "../errors";
+} from "./errors";
 
 export function errorHandlerMiddleware(
 	err: unknown,
@@ -13,15 +14,15 @@ export function errorHandlerMiddleware(
 	res: Response,
 	_next: NextFunction,
 ) {
-	console.error(err);
+	console.error(JSON.stringify(err));
 
 	let statusCode = 500;
-	let message = "Internal Server Error";
+	let message = mapDomainErrorTypeToGenericError[DomainErrorType.SERVER_ERROR];
 	let errors: FieldError[] | undefined;
 
 	if (err instanceof ZodError) {
-		statusCode = 400; // Bad Request for validation errors
-		message = "Invalid request data";
+		statusCode = 400; // Bad Request for purely syntactical validation errors
+		message = mapDomainErrorTypeToGenericError[DomainErrorType.BAD_REQUEST];
 
 		const fieldSpecificErrors: FieldError[] = [];
 		const rootValidationMessages: string[] = [];
@@ -46,7 +47,10 @@ export function errorHandlerMiddleware(
 		}
 	} else if (err instanceof BaseDomainError) {
 		statusCode = mapDomainErrorTypeToStatusCode[err.type];
-		message = err.message;
+		message =
+			err.userMessage ||
+			mapDomainErrorTypeToGenericError[err.type] ||
+			mapDomainErrorTypeToGenericError[DomainErrorType.SERVER_ERROR];
 		errors = err.errors;
 	} else if (err instanceof Error) {
 		const errorWithStatus = err as unknown as { status: unknown };

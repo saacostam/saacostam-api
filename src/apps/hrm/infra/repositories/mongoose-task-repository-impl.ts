@@ -1,11 +1,7 @@
 import type { InferSchemaType } from "mongoose";
 import type { TaskRepository } from "@/apps/hrm/app";
-import {
-	BaseDomainError,
-	type Cadence,
-	DomainErrorType,
-	Task,
-} from "@/apps/hrm/domain";
+import { type Cadence, Task } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { TaskModel, type TaskSchema } from "../mongoose";
 
 export class MongooseTaskRepositoryImpl implements TaskRepository {
@@ -35,10 +31,12 @@ export class MongooseTaskRepositoryImpl implements TaskRepository {
 		});
 
 		if (!updatedTask) {
-			throw new BaseDomainError(
-				DomainErrorType.SERVER_ERROR,
-				"[MongooseTaskRepositoryImpl.updateById] - Unable to update task: no task found with the provided id",
-			);
+			throw new BaseDomainError({
+				type: DomainErrorType.SERVER_ERROR,
+				message:
+					"[MongooseTaskRepositoryImpl.updateById] - Unable to update task: no task found with the provided id",
+				userMessage: "Task not found",
+			});
 		}
 
 		return this._mapDocumentEntryToDomainObject(updatedTask);

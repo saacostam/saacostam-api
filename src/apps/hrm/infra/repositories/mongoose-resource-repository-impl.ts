@@ -1,6 +1,7 @@
 import type { InferSchemaType } from "mongoose";
 import type { ResourceRepository } from "@/apps/hrm/app";
-import { BaseDomainError, DomainErrorType, Resource } from "@/apps/hrm/domain";
+import { Resource } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { ResourceModel, type ResourceSchema } from "../mongoose";
 
 export class MongooseResourceRepositoryImpl implements ResourceRepository {
@@ -44,10 +45,12 @@ export class MongooseResourceRepositoryImpl implements ResourceRepository {
 		});
 
 		if (!updatedResource) {
-			throw new BaseDomainError(
-				DomainErrorType.SERVER_ERROR,
-				"[MongooseResourceRepositoryImpl.updateById] - Unable to update resource: no resource found with the provided id",
-			);
+			throw new BaseDomainError({
+				type: DomainErrorType.SERVER_ERROR,
+				message:
+					"[MongooseResourceRepositoryImpl.updateById] - Unable to update resource: no resource found with the provided id",
+				userMessage: "Something went wrong. Please try again",
+			});
 		}
 
 		return this._mapDocumentEntryToDomainObject(updatedResource);

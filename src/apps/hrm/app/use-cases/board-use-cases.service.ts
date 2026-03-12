@@ -1,4 +1,5 @@
-import { BaseDomainError, Board, DomainErrorType } from "@/apps/hrm/domain";
+import { Board } from "@/apps/hrm/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { generateId } from "@/shared/utils";
 import {
 	type CreateBoardRequestDto,
@@ -83,10 +84,11 @@ export class BoardUseCasesService {
 	}
 
 	async _getExistingByIdOrFail(id: string, userId: string): Promise<Board> {
-		const notFoundError = new BaseDomainError(
-			DomainErrorType.NOT_FOUND,
-			`Board with id ${id} not found`,
-		);
+		const notFoundError = new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Board not found",
+			message: `[BoardUseCasesService._getExistingByIdOrFail] Board with id ${id} and user id ${userId} not found`,
+		});
 
 		const existingEntry = await this.boardRepository.getById(id);
 

@@ -1,21 +1,14 @@
-import { BaseDomainError, DomainErrorType } from "@/apps/hrm/domain";
-
-export interface FieldError {
-	field: string;
-	message: string;
-}
-
-export interface ErrorResponse {
-	message: string;
-	status: number;
-	errors?: FieldError[];
-}
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
 export class UnauthorizedError extends BaseDomainError {
 	public statusCode: number;
 
 	constructor() {
-		super(DomainErrorType.UNAUTHORIZED, "Unauthorized");
+		super({
+			type: DomainErrorType.UNAUTHORIZED,
+			userMessage: "Unauthorized",
+			message: "Authentication required.",
+		});
 		this.name = "UnauthorizedError";
 		this.statusCode = 401;
 
@@ -26,16 +19,12 @@ export class UnauthorizedError extends BaseDomainError {
 	}
 }
 
-export const mapDomainErrorTypeToStatusCode: Record<DomainErrorType, number> = {
-	[DomainErrorType.BAD_REQUEST]: 400,
-	[DomainErrorType.UNAUTHORIZED]: 401,
-	[DomainErrorType.NOT_FOUND]: 404,
-	[DomainErrorType.SERVER_ERROR]: 500,
-};
-
 export const ID_FIELD_NOT_FOUND_ERROR = new BaseDomainError(
-	DomainErrorType.BAD_REQUEST,
-	"Id field is required",
+	{
+		type: DomainErrorType.BAD_REQUEST,
+		userMessage: "Id field is required",
+		message: "[ID_FIELD_NOT_FOUND_ERROR]",
+	},
 	[
 		{
 			field: "id",
