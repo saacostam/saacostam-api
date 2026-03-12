@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { IANA_TIMEZONES } from "../../assets";
-import type { Timezone } from "../../domain/value-objects";
+import { IANA_TIMEZONES } from "@/apps/hrm/assets";
+import type { Timezone } from "@/apps/hrm/domain";
 
 const ianaStrings = new Set(
 	IANA_TIMEZONES.flatMap((c) => c.zones.map((z) => z.name)),

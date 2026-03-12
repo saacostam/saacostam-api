@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { timezoneUseCasesService } from "../../infra/di";
+import { timezoneUseCasesService } from "@/apps/hrm/infra";
 
 const timezoneRouter = Router();
 

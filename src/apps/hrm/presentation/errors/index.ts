@@ -1,4 +1,4 @@
-import { BaseDomainError, DomainErrorType } from "../../domain/errors";
+import { BaseDomainError, DomainErrorType } from "@/apps/hrm/domain";
 
 export interface FieldError {
 	field: string;

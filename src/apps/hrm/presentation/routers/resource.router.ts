@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { getIdFromRequest } from "../../../../shared/core.utils";
-import { resourceUseCasesService } from "../../infra/di";
+import { resourceUseCasesService } from "@/apps/hrm/infra";
+import { getIdFromRequest } from "@/shared/core.utils";
 import type {
 	TCreateResourceResponse,
 	TGetAllResourcesResponse,

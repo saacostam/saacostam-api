@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { JwtTokenServiceImpl } from "../../infra/providers";
+import { JwtTokenServiceImpl } from "@/apps/hrm/infra";
 import { UnauthorizedError } from "../errors";
 
 const jwtTokenService = new JwtTokenServiceImpl();

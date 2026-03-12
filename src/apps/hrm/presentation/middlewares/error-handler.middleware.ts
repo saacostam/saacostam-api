@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { BaseDomainError } from "../../domain/errors";
+import { BaseDomainError } from "@/apps/hrm/domain";
 import {
 	type ErrorResponse,
 	type FieldError,

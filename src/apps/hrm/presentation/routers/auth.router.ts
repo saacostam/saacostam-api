@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authUseCasesService } from "../../infra/di";
+import { authUseCasesService } from "@/apps/hrm/infra";
 import { AuthValidator } from "../validators";
 
 const authRouter = Router();

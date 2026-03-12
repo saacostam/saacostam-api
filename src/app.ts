@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
-import { analyticsRouter } from "./apps/analytics/presentation";
-import { houseResourceManager } from "./apps/hrm/presentation/routers";
+import { analyticsRouter } from "@/apps/analytics/presentation";
+import { houseResourceManager } from "@/apps/hrm/presentation";
 
 const app = express();
 

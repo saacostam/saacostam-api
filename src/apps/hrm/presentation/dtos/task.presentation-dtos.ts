@@ -1,4 +1,4 @@
-import type { Category, Resource, Task } from "../../domain/entities";
+import type { Category, Resource, Task } from "@/apps/hrm/domain";
 
 export type TGetTaskByIdResponse = Omit<Task, "anchorDate"> & {
 	category: Category | null;

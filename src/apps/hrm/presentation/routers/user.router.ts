@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { getIdFromRequest } from "../../../../shared/core.utils";
-import { MutationUpdateSettingsInDto } from "../../app/dtos";
-import { userUseCasesService } from "../../infra/di";
+import { MutationUpdateSettingsInDto } from "@/apps/hrm/app";
+import { userUseCasesService } from "@/apps/hrm/infra";
+import { getIdFromRequest } from "@/shared/core.utils";
 import { UnauthorizedError } from "../errors";
 import { UserValidator } from "../validators";
 

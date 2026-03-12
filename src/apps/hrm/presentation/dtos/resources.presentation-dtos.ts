@@ -1,4 +1,4 @@
-import type { Category, Resource } from "../../domain/entities";
+import type { Category, Resource } from "@/apps/hrm/domain";
 
 export type TGetResourceByIdResponse = Resource & {
 	category: Category | null;

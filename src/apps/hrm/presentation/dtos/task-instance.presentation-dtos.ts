@@ -1,4 +1,4 @@
-import type { Task, TaskCompletion } from "../../domain/entities";
+import type { Task, TaskCompletion } from "@/apps/hrm/domain";
 
 export interface TGetImmediateTaskInstancesResponse {
 	taskInstances: {
