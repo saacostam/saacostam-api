@@ -10,7 +10,7 @@ eventRouter.get("/", async (_, res) => {
 });
 
 eventRouter.post("/", async (req, res) => {
-	const payload = EventValidator.createEventValidator.parse(req.body);
+	const payload = EventValidator.createEventInputSchema.parse(req.body);
 	const response = await eventUseCases.createEvent(payload);
 	res.status(201).json(response);
 });
