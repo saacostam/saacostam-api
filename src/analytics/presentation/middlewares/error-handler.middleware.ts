@@ -1,9 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
+import { DomainErrorType } from "house-resource-manager/domain/errors";
 import { ZodError } from "zod";
 import { BaseDomainError } from "../../domain/errors";
 import {
 	type ErrorResponse,
 	type FieldError,
+	mapDomainErrorTypeToGenericError,
 	mapDomainErrorTypeToStatusCode,
 } from "../errors";
 
@@ -16,12 +18,12 @@ export function errorHandlerMiddleware(
 	console.error(JSON.stringify(err));
 
 	let statusCode = 500;
-	let message = "Internal Server Error";
+	let message = mapDomainErrorTypeToGenericError[DomainErrorType.SERVER_ERROR];
 	let errors: FieldError[] | undefined;
 
 	if (err instanceof ZodError) {
 		statusCode = 400; // Bad Request for purely syntactical validation errors
-		message = "Invalid request data";
+		message = mapDomainErrorTypeToGenericError[DomainErrorType.BAD_REQUEST];
 
 		const fieldSpecificErrors: FieldError[] = [];
 		const rootValidationMessages: string[] = [];
@@ -46,7 +48,10 @@ export function errorHandlerMiddleware(
 		}
 	} else if (err instanceof BaseDomainError) {
 		statusCode = mapDomainErrorTypeToStatusCode[err.type];
-		message = err.message;
+		message =
+			err.userMessage ||
+			mapDomainErrorTypeToGenericError[err.type] ||
+			mapDomainErrorTypeToGenericError[DomainErrorType.SERVER_ERROR];
 		errors = err.errors;
 	} else if (err instanceof Error) {
 		const errorWithStatus = err as unknown as { status: unknown };
