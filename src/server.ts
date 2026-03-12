@@ -1,5 +1,5 @@
-import app from "./app";
 import { CoreConfig, connectToDb } from "@/shared/config";
+import app from "./app";
 
 const PORT = 3333;
 
