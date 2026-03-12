@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import type { IContext } from "../app";
+import type { IContext } from "@/projects/analytics/app";
 
 export function mockContext() {
 	// Providers

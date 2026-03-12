@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { IEvent } from "../../domain";
-import { MOCK_EVENTS, mockContext } from "../../test";
+import type { IEvent } from "@/projects/analytics/domain";
+import { MOCK_EVENTS, mockContext } from "@/projects/analytics/test";
 import { EventUseCases } from "./event-use-cases";
 
 describe("EventUseCases", () => {

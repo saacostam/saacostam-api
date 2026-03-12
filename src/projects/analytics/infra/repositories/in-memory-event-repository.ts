@@ -1,5 +1,5 @@
-import type { IEventRepository } from "../../app";
-import type { IEvent } from "../../domain";
+import type { IEventRepository } from "@/projects/analytics/app";
+import type { IEvent } from "@/projects/analytics/domain";
 
 export class InMemoryEventRepository implements IEventRepository {
 	private events: IEvent[] = [];

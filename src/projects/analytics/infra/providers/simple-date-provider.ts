@@ -1,4 +1,4 @@
-import type { IDateProvider } from "../../app";
+import type { IDateProvider } from "@/projects/analytics/app";
 
 export class SimpleDateProvider implements IDateProvider {
 	now(): Date {

@@ -1,4 +1,4 @@
-import type { IEvent } from "../../domain";
+import type { IEvent } from "@/projects/analytics/domain";
 import type { IContext } from "../context";
 
 export class EventUseCases {
