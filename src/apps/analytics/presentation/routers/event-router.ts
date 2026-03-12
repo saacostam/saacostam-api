@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { eventUseCases } from "@/projects/analytics/infra";
+import { eventUseCases } from "@/apps/analytics/infra";
 import { EventValidator } from "../validators";
 
 const eventRouter = Router();

@@ -1,4 +1,4 @@
-import type { IEvent } from "@/projects/analytics/domain";
+import type { IEvent } from "@/apps/analytics/domain";
 
 export const MOCK_EVENTS: IEvent[] = [
 	{

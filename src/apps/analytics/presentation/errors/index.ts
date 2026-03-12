@@ -1,4 +1,4 @@
-import { DomainErrorType } from "@/projects/analytics/domain";
+import { DomainErrorType } from "@/apps/analytics/domain";
 
 export interface FieldError {
 	field: string;

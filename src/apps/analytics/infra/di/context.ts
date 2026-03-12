@@ -1,4 +1,4 @@
-import type { IContext } from "@/projects/analytics/app";
+import type { IContext } from "@/apps/analytics/app";
 import { SimpleDateProvider, SimpleUuidProvider } from "../providers";
 import { InMemoryEventRepository } from "../repositories";
 

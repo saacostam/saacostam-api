@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { BaseDomainError, DomainErrorType } from "@/projects/analytics/domain";
+import { BaseDomainError, DomainErrorType } from "@/apps/analytics/domain";
 import {
 	type ErrorResponse,
 	type FieldError,
