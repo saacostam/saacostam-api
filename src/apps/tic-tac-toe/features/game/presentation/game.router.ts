@@ -12,11 +12,11 @@ const userIdNotFound = (ctx: string) =>
 	});
 
 gameRouter.get("/", async (_, res) => {
-	const result = await gameUseCases.queryOpenGames();;
+	const result = await gameUseCases.queryOpenGames();
 	res.status(200).json(result);
 });
 
-	gameRouter.get("/userId/:userId", async (req, res) => {
+gameRouter.get("/userId/:userId", async (req, res) => {
 	const userId = req.params.userId;
 	if (!userId) throw userIdNotFound("queryUserGames");
 
