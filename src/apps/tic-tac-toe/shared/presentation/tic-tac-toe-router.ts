@@ -1,5 +1,6 @@
 import { Router } from "express";
 import type { Instance } from "express-ws";
+import { gameRouter } from "@/apps/tic-tac-toe/features/game/presentation";
 import { wsRouterFactory } from "@/apps/tic-tac-toe/shared/adapters/presentation";
 
 export const ticTacToeRouterFactory = (args: {
@@ -11,6 +12,8 @@ export const ticTacToeRouterFactory = (args: {
 		expressWsInstance: args.expressWsInstance,
 	});
 	ticTacToeRouter.use("/ws", wsRouter);
+
+	ticTacToeRouter.use("/games", gameRouter);
 
 	return ticTacToeRouter;
 };
