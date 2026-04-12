@@ -11,7 +11,12 @@ const userIdNotFound = (ctx: string) =>
 		userMessage: "User ID is required but was not provided",
 	});
 
-gameRouter.get("/userId/:userId", async (req, res) => {
+gameRouter.get("/", async (_, res) => {
+	const result = await gameUseCases.queryOpenGames();;
+	res.status(200).json(result);
+});
+
+	gameRouter.get("/userId/:userId", async (req, res) => {
 	const userId = req.params.userId;
 	if (!userId) throw userIdNotFound("queryUserGames");
 
