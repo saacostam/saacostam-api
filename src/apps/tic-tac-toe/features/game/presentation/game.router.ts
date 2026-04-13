@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { gameUseCases } from "@/apps/tic-tac-toe/features/game/di-root";
+import { gameUseCases } from "@/apps/tic-tac-toe/shared/di-root";
 import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 import { GameValidator } from "./game.validator";
 
