@@ -2,6 +2,8 @@ import {
 	gameService,
 	type IGame,
 	type IGameRepository,
+	IGameStatus,
+	type ITurn,
 } from "@/apps/tic-tac-toe/features/game/domain";
 import type { IUserRepository } from "@/apps/tic-tac-toe/features/user/domain";
 import {
@@ -63,5 +65,55 @@ export class GameUseCases {
 		return {
 			game: lastGame,
 		};
+	}
+
+	async sendTurn(args: {
+		gameId: string;
+		userId: string;
+		x: number;
+		y: number;
+	}): Promise<void> {
+		let game = await this.gameRepo.getGameById(args.gameId);
+
+		if (!game) {
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				userMessage: "Game not found",
+				message: `[GameUseCases.sendTurn] game with id ${args.gameId} not found`,
+			});
+		}
+
+		// Valid state
+		if (game.userIds.length < 2 || game.status === IGameStatus.FINISHED) {
+			throw new BaseDomainError({
+				type: DomainErrorType.CONFLICT,
+				userMessage: "Game is not in playable state",
+				message: `[GameUseCases.sendTurn] game with id ${args.gameId} can't apply a turn as it is in invalid state`,
+			});
+		}
+
+		const turn: ITurn = {
+			x: args.x,
+			y: args.y,
+			playerId: args.userId,
+		};
+		game = gameService.applyTurn(game, turn);
+
+		// Check Win Condition
+		const checWin = gameService.checkWinCondition(game);
+		if (checWin.hasWinCondition) {
+			game.status = IGameStatus.FINISHED;
+			game.winnerPlayerId = checWin.winnerUserId;
+		}
+
+		// Update State
+		await this.gameRepo.updateGameById(game.id, game);
+
+		// Send event
+		void Promise.allSettled(
+			game.userIds.map((id) =>
+				this.eventAdapter.publish(id, IEventType.USER_GAME_CHANGED),
+			),
+		);
 	}
 }
