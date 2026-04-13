@@ -5,8 +5,8 @@ export interface ITurn {
 }
 
 export enum IGameStatus {
-	STARTED = "STARTED",
-	FINISHED = "FINISHED",
+	STARTED = "started",
+	FINISHED = "finished",
 }
 
 export interface IGame {
