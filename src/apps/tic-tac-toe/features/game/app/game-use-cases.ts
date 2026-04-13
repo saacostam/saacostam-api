@@ -12,6 +12,22 @@ import {
 } from "@/apps/tic-tac-toe/shared/adapters/domain";
 import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
+const getGameNotFoundError = (args: { ctx: string; gameId: string }) => {
+	return new BaseDomainError({
+		type: DomainErrorType.NOT_FOUND,
+		userMessage: "Game not found",
+		message: `[GameUseCases.${args.ctx}] game with id ${args.gameId} not found`,
+	});
+};
+
+const getUserNotFoundError = (args: { ctx: string; userId: string }) => {
+	return new BaseDomainError({
+		type: DomainErrorType.NOT_FOUND,
+		message: `[GameUseCases.${args.ctx}] User with id ${args.userId} not found`,
+		userMessage: "User not found",
+	});
+};
+
 export class GameUseCases {
 	constructor(
 		private eventAdapter: IEventAdapter,
@@ -23,10 +39,9 @@ export class GameUseCases {
 		const user = await this.userRepo.getUserById({ id: userId });
 
 		if (!user) {
-			throw new BaseDomainError({
-				type: DomainErrorType.NOT_FOUND,
-				message: `[GameUseCases.createGame] User with id ${userId} not found`,
-				userMessage: "User not found",
+			throw getUserNotFoundError({
+				ctx: "createGame",
+				userId,
 			});
 		}
 
@@ -50,10 +65,9 @@ export class GameUseCases {
 		const user = await this.userRepo.getUserById({ id: userId });
 
 		if (!user) {
-			throw new BaseDomainError({
-				type: DomainErrorType.NOT_FOUND,
-				message: `[GameUseCases.joinGame] User with id ${userId} not found`,
-				userMessage: "User not found",
+			throw getUserNotFoundError({
+				ctx: "joinGame",
+				userId,
 			});
 		}
 
@@ -69,10 +83,9 @@ export class GameUseCases {
 
 		const game = await this.gameRepo.getGameById(gameId);
 		if (!game) {
-			throw new BaseDomainError({
-				type: DomainErrorType.NOT_FOUND,
-				userMessage: "Game not found",
-				message: `[GameUseCases.joinGame] game with id ${gameId} not found`,
+			throw getGameNotFoundError({
+				ctx: "joinGame",
+				gameId,
 			});
 		}
 
@@ -135,10 +148,9 @@ export class GameUseCases {
 		let game = await this.gameRepo.getGameById(args.gameId);
 
 		if (!game) {
-			throw new BaseDomainError({
-				type: DomainErrorType.NOT_FOUND,
-				userMessage: "Game not found",
-				message: `[GameUseCases.sendTurn] game with id ${args.gameId} not found`,
+			throw getGameNotFoundError({
+				ctx: "sendTurn",
+				gameId: args.gameId,
 			});
 		}
 
