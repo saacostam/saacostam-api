@@ -72,3 +72,19 @@ gameRouter.post("/:gameId/userId/:userId/join", async (req, res) => {
 	await gameUseCases.joinGame(userId, gameId);
 	res.status(201).json();
 });
+
+gameRouter.post("/:gameId/userId/:userId/end", async (req, res) => {
+	const userId = req.params.userId;
+	if (!userId) throw userIdNotFound("endGame");
+
+	const gameId = req.params.gameId;
+	if (!gameId)
+		throw new BaseDomainError({
+			type: DomainErrorType.BAD_REQUEST,
+			message: `[gameRouter.endGame] Game id not found`,
+			userMessage: "Game ID is required but was not provided",
+		});
+
+	await gameUseCases.endGame(gameId, userId);
+	res.status(200).json();
+});

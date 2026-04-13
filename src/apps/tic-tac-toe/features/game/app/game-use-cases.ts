@@ -61,6 +61,37 @@ export class GameUseCases {
 		void this.eventAdapter.broadcast(IEventType.GAMES_CHANGED);
 	}
 
+	async endGame(gameId: string, userId: string) {
+		const game = await this.gameRepo.getGameById(gameId);
+		if (!game) {
+			throw getGameNotFoundError({
+				ctx: "joinGame",
+				gameId,
+			});
+		}
+
+		// Remove userId
+		game.userIds = game.userIds.filter((id) => id !== userId);
+
+		let hasRemovedGame = false;
+		if (game.status === IGameStatus.STARTED || game.userIds.length === 0) {
+			await this.gameRepo.removeGame(game.id);
+			hasRemovedGame = true;
+		} else {
+			await this.gameRepo.updateGameById(game.id, game);
+		}
+
+		// Notify
+		const message = hasRemovedGame ? "Game was ended" : undefined;
+
+		void Promise.allSettled(
+			game.userIds.map((id) =>
+				this.eventAdapter.publish(id, IEventType.USER_GAME_CHANGED, message),
+			),
+		);
+		void this.eventAdapter.broadcast(IEventType.GAMES_CHANGED);
+	}
+
 	async joinGame(userId: string, gameId: string): Promise<void> {
 		const user = await this.userRepo.getUserById({ id: userId });
 
