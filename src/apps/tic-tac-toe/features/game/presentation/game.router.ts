@@ -12,6 +12,13 @@ const userIdNotFound = (ctx: string) =>
 		userMessage: "User ID is required but was not provided",
 	});
 
+const gameIdNotFound = (ctx: string) =>
+	new BaseDomainError({
+		type: DomainErrorType.BAD_REQUEST,
+		message: `[gameRouter.${ctx}] Game id not found`,
+		userMessage: "Game ID is required but was not provided",
+	});
+
 gameRouter.get("/", async (_, res) => {
 	const result = await gameUseCases.queryOpenGames();
 	res.status(200).json(result);
@@ -38,12 +45,7 @@ gameRouter.post("/:gameId/userId/:userId/turn", async (req, res) => {
 	if (!userId) throw userIdNotFound("sendTurn");
 
 	const gameId = req.params.gameId;
-	if (!gameId)
-		throw new BaseDomainError({
-			type: DomainErrorType.BAD_REQUEST,
-			message: `[gameRouter.sendTurn] Game id not found`,
-			userMessage: "Game ID is required but was not provided",
-		});
+	if (!gameId) throw gameIdNotFound("sendTurn");
 
 	const payload = GameValidator.sendTurnValidator.parse(req.body);
 
@@ -62,12 +64,7 @@ gameRouter.post("/:gameId/userId/:userId/join", async (req, res) => {
 	if (!userId) throw userIdNotFound("joinGame");
 
 	const gameId = req.params.gameId;
-	if (!gameId)
-		throw new BaseDomainError({
-			type: DomainErrorType.BAD_REQUEST,
-			message: `[gameRouter.joinGame] Game id not found`,
-			userMessage: "Game ID is required but was not provided",
-		});
+	if (!gameId) throw gameIdNotFound("joinGame");
 
 	await gameUseCases.joinGame(userId, gameId);
 	res.status(201).json();
@@ -78,12 +75,7 @@ gameRouter.post("/:gameId/userId/:userId/end", async (req, res) => {
 	if (!userId) throw userIdNotFound("endGame");
 
 	const gameId = req.params.gameId;
-	if (!gameId)
-		throw new BaseDomainError({
-			type: DomainErrorType.BAD_REQUEST,
-			message: `[gameRouter.endGame] Game id not found`,
-			userMessage: "Game ID is required but was not provided",
-		});
+	if (!gameId) throw gameIdNotFound("endGame");
 
 	await gameUseCases.endGame(gameId, userId);
 	res.status(200).json();
