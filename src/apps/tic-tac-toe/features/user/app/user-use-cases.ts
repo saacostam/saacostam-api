@@ -2,7 +2,10 @@ import type {
 	IGame,
 	IGameRepository,
 } from "@/apps/tic-tac-toe/features/game/domain";
-import type { IUserRepository } from "@/apps/tic-tac-toe/features/user/domain";
+import type {
+	IUser,
+	IUserRepository,
+} from "@/apps/tic-tac-toe/features/user/domain";
 import {
 	type IEventAdapter,
 	IEventType,
@@ -20,6 +23,19 @@ export class UserUseCases {
 		const user = await this.userRepo.createUser({ name: args.name });
 
 		return user.id;
+	}
+
+	async getUser(userId: string): Promise<IUser> {
+		const user = await this.userRepo.getUserById({ id: userId });
+		if (!user) {
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				message: `[UserUseCases.getUser] User with id ${userId} not found`,
+				userMessage: "User not found",
+			});
+		}
+
+		return user;
 	}
 
 	async removeUser(userId: string): Promise<void> {
