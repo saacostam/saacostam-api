@@ -14,7 +14,7 @@ export class InMemoryGamesRepository implements IGameRepository {
 	async createGame(userId: string): Promise<IGame> {
 		const game: IGame = {
 			id: this.uuidAdapter.gen(),
-			playerIds: [userId],
+			userIds: [userId],
 			turns: [],
 			status: IGameStatus.STARTED,
 			winnerPlayerId: null,
@@ -35,7 +35,7 @@ export class InMemoryGamesRepository implements IGameRepository {
 		const userGames: IGame[] = [];
 
 		for (const game of this.games) {
-			if (game.playerIds.includes(userId)) {
+			if (game.userIds.includes(userId)) {
 				userGames.push(game);
 			}
 		}
@@ -47,7 +47,7 @@ export class InMemoryGamesRepository implements IGameRepository {
 		const openGames: IGame[] = [];
 
 		for (const game of this.games) {
-			if (game.playerIds.length < 2 && game.status === IGameStatus.STARTED) {
+			if (game.userIds.length < 2 && game.status === IGameStatus.STARTED) {
 				openGames.push(game);
 			}
 		}

@@ -23,3 +23,15 @@ gameRouter.get("/userId/:userId", async (req, res) => {
 	const result = await gameUseCases.queryUserGames(userId);
 	res.status(200).json(result);
 });
+
+gameRouter.post("/userId/:userId", async (req, res) => {
+	const userId = req.params.userId;
+	if (!userId) throw userIdNotFound("createGame");
+
+	try {
+		await gameUseCases.createGame(userId);
+	} catch (error) {
+		console.error(error);
+	}
+	res.status(200).json();
+});

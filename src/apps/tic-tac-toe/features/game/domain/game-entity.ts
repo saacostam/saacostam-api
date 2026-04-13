@@ -11,7 +11,7 @@ export enum IGameStatus {
 
 export interface IGame {
 	id: string;
-	playerIds: string[];
+	userIds: string[];
 	turns: ITurn[];
 	status: IGameStatus;
 	winnerPlayerId: string | null;

@@ -1,10 +1,48 @@
-import type {
-	IGame,
-	IGameRepository,
+import {
+	gameService,
+	type IGame,
+	type IGameRepository,
 } from "@/apps/tic-tac-toe/features/game/domain";
+import type { IUserRepository } from "@/apps/tic-tac-toe/features/user/domain";
+import {
+	type IEventAdapter,
+	IEventType,
+} from "@/apps/tic-tac-toe/shared/adapters/domain";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
 export class GameUseCases {
-	constructor(private gameRepo: IGameRepository) {}
+	constructor(
+		private eventAdapter: IEventAdapter,
+		private userRepo: IUserRepository,
+		private gameRepo: IGameRepository,
+	) {}
+
+	async createGame(userId: string): Promise<void> {
+		const user = await this.userRepo.getUserById({ id: userId });
+
+		if (!user) {
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				message: `[GameUseCases.createGame] User with id ${userId} not found`,
+				userMessage: "User not found",
+			});
+		}
+
+		const gamesByUser = await this.gameRepo.getGamesByUserId(userId);
+		const hasOpenGame = gamesByUser.find(gameService.isOpen);
+
+		if (hasOpenGame) {
+			throw new BaseDomainError({
+				type: DomainErrorType.CONFLICT,
+				userMessage: "User already has a game in progress",
+				message: `[GameUseCases.createGame] User by id ${userId} has an open game`,
+			});
+		}
+
+		await this.gameRepo.createGame(userId);
+
+		void this.eventAdapter.broadcast(IEventType.GAMES_CHANGED);
+	}
 
 	async queryOpenGames(): Promise<IGame[]> {
 		return this.gameRepo.getOpenGames();
