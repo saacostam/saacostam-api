@@ -13,6 +13,7 @@ export interface ErrorResponse {
 
 export const mapDomainErrorTypeToStatusCode: Record<DomainErrorType, number> = {
 	[DomainErrorType.BAD_REQUEST]: 400,
+	[DomainErrorType.CONFLICT]: 409,
 	[DomainErrorType.UNAUTHORIZED]: 401,
 	[DomainErrorType.NOT_FOUND]: 404,
 	[DomainErrorType.SERVER_ERROR]: 500,
@@ -21,6 +22,7 @@ export const mapDomainErrorTypeToStatusCode: Record<DomainErrorType, number> = {
 export const mapDomainErrorTypeToGenericError: Record<DomainErrorType, string> =
 	{
 		[DomainErrorType.BAD_REQUEST]: "Invalid request",
+		[DomainErrorType.CONFLICT]: "Conflict",
 		[DomainErrorType.UNAUTHORIZED]: "Unauthorized",
 		[DomainErrorType.NOT_FOUND]: "Not found",
 		[DomainErrorType.SERVER_ERROR]: "Something went wrong",
