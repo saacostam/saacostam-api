@@ -30,7 +30,7 @@ class GameService {
 		}
 
 		// Determinte last player
-		const lastPlayer = game.turns.at(-1)?.playerId ?? game.userIds.at(0);
+		const lastPlayer = game.turns.at(-1)?.playerId ?? game.userIds.at(1);
 		if (!lastPlayer) {
 			throw new BaseDomainError({
 				type: DomainErrorType.CONFLICT,
