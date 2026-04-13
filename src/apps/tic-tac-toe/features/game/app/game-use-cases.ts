@@ -46,6 +46,65 @@ export class GameUseCases {
 		void this.eventAdapter.broadcast(IEventType.GAMES_CHANGED);
 	}
 
+	async joinGame(userId: string, gameId: string): Promise<void> {
+		const user = await this.userRepo.getUserById({ id: userId });
+
+		if (!user) {
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				message: `[GameUseCases.joinGame] User with id ${userId} not found`,
+				userMessage: "User not found",
+			});
+		}
+
+		const gamesByUser = await this.gameRepo.getGamesByUserId(user.id);
+		const openGame = gamesByUser.find(gameService.isOpen);
+		if (openGame) {
+			throw new BaseDomainError({
+				userMessage: "User already has a game in progress",
+				message: `[GameUseCases.joinGame] user by id ${userId} has an open game`,
+				type: DomainErrorType.CONFLICT,
+			});
+		}
+
+		const game = await this.gameRepo.getGameById(gameId);
+		if (!game) {
+			throw new BaseDomainError({
+				type: DomainErrorType.NOT_FOUND,
+				userMessage: "Game not found",
+				message: `[GameUseCases.joinGame] game with id ${gameId} not found`,
+			});
+		}
+
+		if (game.status === IGameStatus.FINISHED) {
+			throw new BaseDomainError({
+				message: `[GameUseCases.joinGame] attempting to join game with id ${gameId} that has already finished`,
+				userMessage: "Cannot join this game — it has already finished",
+				type: DomainErrorType.CONFLICT,
+			});
+		}
+
+		const isOpen = gameService.isOpen(game);
+		if (!isOpen) {
+			throw new BaseDomainError({
+				userMessage: "Cannot join game, already full",
+				message: `[GameUseCases.joinGame] game by id ${gameId} already full`,
+				type: DomainErrorType.CONFLICT,
+			});
+		}
+
+		// Update State
+		game.userIds.push(userId);
+		await this.gameRepo.updateGameById(game.id, game);
+
+		// Send event
+		void Promise.allSettled(
+			game.userIds.map((id) =>
+				this.eventAdapter.publish(id, IEventType.USER_GAME_CHANGED),
+			),
+		);
+	}
+
 	async queryOpenGames(): Promise<IGame[]> {
 		return this.gameRepo.getOpenGames();
 	}
