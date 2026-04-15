@@ -3,6 +3,7 @@ import express from "express";
 import expressWs from "express-ws";
 import { analyticsRouter } from "@/apps/analytics/presentation";
 import { houseResourceManager } from "@/apps/hrm/presentation";
+import { monexoRouter } from "@/apps/monexo/shared/presentation";
 import { ticTacToeRouterFactory } from "@/apps/tic-tac-toe/shared/presentation";
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(
 const expressWsInstance = expressWs(app);
 
 app.use("/analytics", analyticsRouter);
+app.use("/monexo", monexoRouter);
 app.use("/hrm", houseResourceManager);
 
 const ticTacToeRouter = ticTacToeRouterFactory({
