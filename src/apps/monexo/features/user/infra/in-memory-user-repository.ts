@@ -36,6 +36,11 @@ export class InMemoryUserRepository implements IUserRepository {
 	}
 
 	async filterByUsername(username: string): Promise<IUser[]> {
-		return this.users.filter((u) => u.username === username);
+		return this.users
+			.filter((u) => u.username === username)
+			.map((u) => ({
+				id: u.id,
+				username: u.username,
+			}));
 	}
 }
