@@ -10,4 +10,5 @@ export interface IUserRepository {
 	create(user: IUserWithHash): Promise<IUser>;
 	getById(id: string): Promise<IUser | null>;
 	getUserWithHashByUsername(username: string): Promise<IUserWithHash | null>;
+	filterByUsername(username: string): Promise<IUser[]>;
 }

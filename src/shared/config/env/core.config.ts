@@ -1,12 +1,17 @@
 import "dotenv/config";
 
 const HRM_MONGODB_URI = process.env.HRM_MONGODB_URI;
-const JWT_SECRET = process.env.JWT_SECRET;
+const HRM_JWT_SECRET = process.env.HRM_JWT_SECRET;
 
-if (!HRM_MONGODB_URI) throw new Error("No MONGODB_URI env variable found");
-if (!JWT_SECRET) throw new Error("No JWT_SECRET env variable found");
+const MONEXO_JWT_SECRET = process.env.MONEXO_JWT_SECRET;
+
+if (!HRM_MONGODB_URI) throw new Error("No HRM_MONGODB_URI env variable found");
+if (!HRM_JWT_SECRET) throw new Error("No HRM_JWT_SECRET env variable found");
+if (!MONEXO_JWT_SECRET)
+	throw new Error("No MONEXO_JWT_SECRET env varible found");
 
 export const CoreConfig = {
 	HRM_MONGODB_URI,
-	JWT_SECRET,
+	HRM_JWT_SECRET,
+	MONEXO_JWT_SECRET,
 };

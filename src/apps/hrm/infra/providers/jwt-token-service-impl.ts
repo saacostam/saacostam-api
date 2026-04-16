@@ -2,7 +2,7 @@ import { sign, verify } from "jsonwebtoken";
 import type { JwtTokenService, TokenPayload } from "@/apps/hrm/app";
 import { CoreConfig } from "@/shared/config";
 
-const SECRET = CoreConfig.JWT_SECRET;
+const SECRET = CoreConfig.HRM_JWT_SECRET;
 
 export class JwtTokenServiceImpl implements JwtTokenService {
 	getToken(tokenPayload: TokenPayload): string {

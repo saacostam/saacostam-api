@@ -34,4 +34,8 @@ export class InMemoryUserRepository implements IUserRepository {
 
 		return userWithHash ?? null;
 	}
+
+	async filterByUsername(username: string): Promise<IUser[]> {
+		return this.users.filter((u) => u.username === username);
+	}
 }
