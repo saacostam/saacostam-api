@@ -4,6 +4,16 @@ import { AuthValidator } from "./validators";
 
 export const authRouter = Router();
 
+authRouter.post("/login", async (req, res) => {
+	const payload = AuthValidator.loginValidator.parse(req.body);
+
+	const loginResponse = await authUseCases.login(
+		payload.username,
+		payload.password,
+	);
+	res.status(200).json(loginResponse);
+});
+
 authRouter.post("/signup", async (req, res) => {
 	const payload = AuthValidator.signUpValidator.parse(req.body);
 

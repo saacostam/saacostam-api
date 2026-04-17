@@ -5,6 +5,32 @@ import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 export class AuthUseCases {
 	constructor(private ctx: IContext) {}
 
+	async login(username: string, password: string): Promise<{ token: string }> {
+		const existingUser =
+			await this.ctx.repo.user.getUserWithHashByUsername(username);
+
+		if (!existingUser) {
+			throw this.createInvalidCredError(
+				`User with username ${username} not found`,
+			);
+		}
+
+		const isPasswordCorrect = await this.ctx.prov.pwHasher.compare(
+			password,
+			existingUser.passwordHash,
+		);
+
+		if (!isPasswordCorrect) {
+			throw this.createInvalidCredError("Incorrect password");
+		}
+
+		const token = this.ctx.prov.jwt.getToken({ userId: existingUser.id });
+
+		return {
+			token,
+		};
+	}
+
 	async signUp(
 		username: {
 			field: string;
@@ -45,5 +71,13 @@ export class AuthUseCases {
 		};
 
 		await this.ctx.repo.user.create(newUser);
+	}
+
+	private createInvalidCredError(ctx: string): BaseDomainError {
+		return new BaseDomainError({
+			type: DomainErrorType.BAD_REQUEST,
+			userMessage: "Invalid login credentials",
+			message: `[AuthUseCases.login] ${ctx}`,
+		});
 	}
 }
