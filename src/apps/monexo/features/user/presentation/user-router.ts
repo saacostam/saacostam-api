@@ -1,20 +1,12 @@
 import { Router } from "express";
-import { userUseCases } from "@/apps/monexo/shared/di/root";
-import { errorFactory } from "@/apps/monexo/shared/errors";
+import { userUseCases, withAuth } from "@/apps/monexo/shared/di/root";
 
 export const userRouter = Router();
 
-userRouter.get("/:userId", async (req, res) => {
-	const userId = req.params.userId;
-	if (!userId)
-		throw errorFactory.fieldMissing({
-			ctx: "userRouter.getById",
-			field: {
-				detailedName: "user id",
-				name: "userId",
-			},
-		});
-
-	const user = await userUseCases.getUser(userId);
-	res.status(200).json(user);
-});
+userRouter.get(
+	"/",
+	withAuth(async (req, res) => {
+		const user = await userUseCases.getUser(req.user.userId);
+		res.status(200).json(user);
+	}),
+);

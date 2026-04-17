@@ -2,6 +2,7 @@ import { AuthUseCases } from "@/apps/monexo/features/auth/app";
 import { UserUseCases } from "@/apps/monexo/features/user/app";
 import { InMemoryUserRepository } from "@/apps/monexo/features/user/infra";
 import type { IContext } from "@/apps/monexo/shared/di/app";
+import { createWithAuth } from "@/apps/monexo/shared/middleware";
 import {
 	JwtTokenAdapterImpl,
 	PasswordHasherImpl,
@@ -27,3 +28,5 @@ const ctx: IContext = {
 
 export const authUseCases = new AuthUseCases(ctx);
 export const userUseCases = new UserUseCases(ctx);
+
+export const withAuth = createWithAuth(jwtTokenAdapter);
