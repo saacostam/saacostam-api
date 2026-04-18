@@ -3,6 +3,13 @@ import type { IContext } from "@/apps/monexo/shared/di/app";
 
 export function mockDiContext() {
 	const repo = {
+		category: {
+			create: vi.fn(),
+			delete: vi.fn(),
+			getAllPublic: vi.fn(),
+			getAllPrivate: vi.fn(),
+			updateCategory: vi.fn(),
+		},
 		user: {
 			create: vi.fn(),
 			getById: vi.fn(),

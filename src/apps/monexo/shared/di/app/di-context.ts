@@ -1,3 +1,4 @@
+import type { ICategoryRepository } from "@/apps/monexo/features/category/domain";
 import type { IUserRepository } from "@/apps/monexo/features/user/domain";
 import type {
 	IGenIdAdapter,
@@ -7,6 +8,7 @@ import type {
 
 export interface IContext {
 	repo: {
+		category: ICategoryRepository;
 		user: IUserRepository;
 	};
 	prov: {
