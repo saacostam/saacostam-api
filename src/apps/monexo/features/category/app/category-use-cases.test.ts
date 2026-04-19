@@ -67,6 +67,74 @@ describe("CategoryUseCases", () => {
 		});
 	});
 
+	describe("getById", () => {
+		it("throws not found error when category does not exist", async () => {
+			ctx.repo.category.getById.mockResolvedValue(null);
+
+			await expect(
+				useCases.getById({ id: "category-id", userId: "user-id" }),
+			).rejects.toMatchObject({
+				type: DomainErrorType.NOT_FOUND,
+			});
+
+			expect(ctx.repo.category.getById).toHaveBeenCalledExactlyOnceWith(
+				"category-id",
+			);
+		});
+
+		it("throws forbidden when private category belongs to another user", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: {
+					type: "private",
+					userId: "other-user",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			await expect(
+				useCases.getById({ id: category.id, userId: "user-id" }),
+			).rejects.toMatchObject({
+				type: DomainErrorType.FORBIDDEN,
+			});
+		});
+
+		it("returns category when private and owned by user", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: {
+					type: "private",
+					userId: "user-id",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			const res = await useCases.getById({
+				id: category.id,
+				userId: "user-id",
+			});
+
+			expect(res).toEqual(category);
+		});
+
+		it("returns category when public", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: {
+					type: "public",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			const res = await useCases.getById({
+				id: category.id,
+				userId: "any-user",
+			});
+
+			expect(res).toEqual(category);
+		});
+	});
+
 	describe("getCategories", () => {
 		it("returns combined private and public categories when both succeed", async () => {
 			const privateCategories = [
