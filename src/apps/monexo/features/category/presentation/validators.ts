@@ -11,6 +11,12 @@ const createCategory = z.object({
 	name: nameField,
 });
 
+const updateCategory = z.object({
+	description: descriptionField.optional(),
+	name: nameField.optional(),
+});
+
 export const CategoryValidator = {
 	createCategory,
+	updateCategory,
 };

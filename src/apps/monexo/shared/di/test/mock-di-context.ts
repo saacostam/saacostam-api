@@ -8,6 +8,7 @@ export function mockDiContext() {
 			delete: vi.fn(),
 			getAllPublic: vi.fn(),
 			getAllPrivate: vi.fn(),
+			getById: vi.fn(),
 			updateCategory: vi.fn(),
 		},
 		user: {

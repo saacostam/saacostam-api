@@ -1,5 +1,7 @@
 import type { ICategory } from "@/apps/monexo/features/category/domain";
 import type { IContext } from "@/apps/monexo/shared/di/app";
+import { errorFactory } from "@/apps/monexo/shared/errors";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
 export class CategoryUseCases {
 	constructor(private ctx: IContext) {}
@@ -28,6 +30,31 @@ export class CategoryUseCases {
 		};
 	}
 
+	async getById(args: { id: string; userId: string }): Promise<ICategory> {
+		const { id, userId } = args;
+
+		const category = await this.ctx.repo.category.getById(id);
+
+		if (!category)
+			throw errorFactory.categoryByIdNotFound({
+				id,
+				ctx: "CategoryUseCases.getById",
+			});
+
+		if (
+			category.ownership.type === "private" &&
+			category.ownership.userId !== userId
+		) {
+			throw new BaseDomainError({
+				type: DomainErrorType.FORBIDDEN,
+				message: `[CategoryUseCases.getById] Forbidden: user=${userId}, category=${id}`,
+				userMessage: "Insufficient permissions to view this category",
+			});
+		}
+
+		return category;
+	}
+
 	async getCategories(args: { userId: string }): Promise<ICategory[]> {
 		const categoriesFetching = await Promise.allSettled([
 			this.ctx.repo.category.getAllPrivate(args.userId),
@@ -47,5 +74,50 @@ export class CategoryUseCases {
 		});
 
 		return categories;
+	}
+
+	async updateCategory(args: {
+		id: string;
+		userId: string;
+		description?: string | null;
+		name?: string;
+	}): Promise<{ id: string }> {
+		const { id, userId, description, name } = args;
+
+		const category = await this.ctx.repo.category.getById(id);
+
+		if (!category) {
+			throw errorFactory.categoryByIdNotFound({
+				id,
+				ctx: "CategoryUseCases.updateCategory",
+			});
+		}
+
+		if (
+			category.ownership.type === "public" ||
+			category.ownership.userId !== userId
+		) {
+			throw new BaseDomainError({
+				type: DomainErrorType.FORBIDDEN,
+				message: `[CategoryUseCases.updateCategory] Forbidden: user=${userId}, category=${id}`,
+				userMessage: "Insufficient permissions to update this category",
+			});
+		}
+
+		const newCategory: ICategory = {
+			id: category.id,
+			name: name ?? category.name,
+			description: !description ? "" : (description ?? category.description),
+			ownership: category.ownership,
+		};
+
+		const updatedCategory = await this.ctx.repo.category.updateCategory(
+			id,
+			newCategory,
+		);
+
+		return {
+			id: updatedCategory.id,
+		};
 	}
 }

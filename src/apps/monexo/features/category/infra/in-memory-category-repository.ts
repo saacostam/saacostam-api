@@ -87,6 +87,10 @@ export class InMemoryCategoryRepository implements ICategoryRepository {
 		);
 	}
 
+	async getById(id: string): Promise<ICategory | null> {
+		return this.categories.find((c) => c.id === id) ?? null;
+	}
+
 	async updateCategory(id: string, category: ICategory): Promise<ICategory> {
 		this.categories = this.categories.map((c) => (c.id === id ? category : c));
 

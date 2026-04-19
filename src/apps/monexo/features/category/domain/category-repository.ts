@@ -8,5 +8,6 @@ export interface ICategoryRepository {
 	delete(id: string): Promise<void>;
 	getAllPublic(): Promise<ICategory[]>;
 	getAllPrivate(userId: string): Promise<ICategory[]>;
+	getById(id: string): Promise<ICategory | null>;
 	updateCategory(id: string, category: ICategory): Promise<ICategory>;
 }
