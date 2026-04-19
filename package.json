@@ -22,7 +22,8 @@
     "prepare": "husky",
     "format": "biome format --write .",
     "lint": "biome check .",
-    "fix": "biome check --write ."
+    "fix": "biome check --write .",
+    "check": "biome check --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
