@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockCategoryFactory } from "@/apps/monexo/features/category/test";
 import { mockDiContext } from "@/apps/monexo/shared/di/test";
+import { DomainErrorType } from "@/shared/errors/domain";
 import { CategoryUseCases } from "./category-use-cases";
 
 describe("CategoryUseCases", () => {
@@ -122,6 +123,77 @@ describe("CategoryUseCases", () => {
 			expect(ctx.prov.errorLogger.log).toHaveBeenCalledWith(error2, {
 				where: "CategoriesUseCases.getCategories.categoriesFetching",
 			});
+		});
+	});
+
+	describe("remove", () => {
+		it("throws not found error when category does not exist", async () => {
+			ctx.repo.category.getById.mockResolvedValue(null);
+
+			await expect(
+				useCases.remove({ id: "category-id", userId: "user-id" }),
+			).rejects.toMatchObject({
+				type: DomainErrorType.NOT_FOUND,
+			});
+
+			expect(ctx.repo.category.delete).not.toHaveBeenCalled();
+		});
+
+		it("throws forbidden when private category belongs to another user", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: {
+					type: "private",
+					userId: "other-user",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			await expect(
+				useCases.remove({ id: category.id, userId: "user-id" }),
+			).rejects.toMatchObject({
+				type: DomainErrorType.FORBIDDEN,
+			});
+
+			expect(ctx.repo.category.delete).not.toHaveBeenCalled();
+		});
+
+		it("allows deleting private category owned by user", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: {
+					type: "private",
+					userId: "user-id",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+			ctx.repo.category.delete.mockResolvedValue(undefined);
+
+			await expect(
+				useCases.remove({ id: category.id, userId: "user-id" }),
+			).resolves.toBeUndefined();
+
+			expect(ctx.repo.category.delete).toHaveBeenCalledExactlyOnceWith(
+				category.id,
+			);
+		});
+
+		it("throws forbidden when deleting public category", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: {
+					type: "public",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			await expect(
+				useCases.remove({ id: category.id, userId: "user-id" }),
+			).rejects.toMatchObject({
+				type: DomainErrorType.FORBIDDEN,
+			});
+
+			expect(ctx.repo.category.delete).not.toHaveBeenCalled();
 		});
 	});
 });
