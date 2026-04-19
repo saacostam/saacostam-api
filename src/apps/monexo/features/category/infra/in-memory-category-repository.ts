@@ -87,6 +87,10 @@ export class InMemoryCategoryRepository implements ICategoryRepository {
 		);
 	}
 
+	async getAllByIdList(ids: string[]): Promise<ICategory[]> {
+		return this.categories.filter((c) => ids.includes(c.id));
+	}
+
 	async getById(id: string): Promise<ICategory | null> {
 		return this.categories.find((c) => c.id === id) ?? null;
 	}
