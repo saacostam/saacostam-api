@@ -36,6 +36,27 @@ categoryRouter.get(
 	}),
 );
 
+categoryRouter.delete(
+	"/:id",
+	withAuth(async (req, res) => {
+		const id = req.params.id;
+		if (!id)
+			throw errorFactory.fieldMissing({
+				field: {
+					detailedName: "Category id",
+					name: "id",
+				},
+				ctx: "categoryRouter.delete - delete category by id",
+			});
+
+		const response = await categoryUseCases.remove({
+			id,
+			userId: req.user.userId,
+		});
+		res.status(200).json(response);
+	}),
+);
+
 categoryRouter.post(
 	"/",
 	withAuth(async (req, res) => {

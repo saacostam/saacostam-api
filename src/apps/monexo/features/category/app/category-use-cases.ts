@@ -76,6 +76,31 @@ export class CategoryUseCases {
 		return categories;
 	}
 
+	async remove(args: { id: string; userId: string }): Promise<void> {
+		const { id, userId } = args;
+
+		const category = await this.ctx.repo.category.getById(id);
+
+		if (!category)
+			throw errorFactory.categoryByIdNotFound({
+				id,
+				ctx: "CategoryUseCases.remove",
+			});
+
+		if (
+			category.ownership.type === "private" &&
+			category.ownership.userId !== userId
+		) {
+			throw new BaseDomainError({
+				type: DomainErrorType.FORBIDDEN,
+				message: `[CategoryUseCases.remove] Forbidden: user=${userId}, category=${id}`,
+				userMessage: "Insufficient permissions to delete this category",
+			});
+		}
+
+		await this.ctx.repo.category.delete(category.id);
+	}
+
 	async updateCategory(args: {
 		id: string;
 		userId: string;
