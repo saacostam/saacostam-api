@@ -264,4 +264,161 @@ describe("CategoryUseCases", () => {
 			expect(ctx.repo.category.delete).not.toHaveBeenCalled();
 		});
 	});
+
+	describe("updateCategory", () => {
+		it("throws not found error when category does not exist", async () => {
+			ctx.repo.category.getById.mockResolvedValue(null);
+
+			await expect(
+				useCases.updateCategory({
+					id: "category-id",
+					userId: "user-id",
+				}),
+			).rejects.toMatchObject({
+				type: DomainErrorType.NOT_FOUND,
+			});
+
+			expect(ctx.repo.category.updateCategory).not.toHaveBeenCalled();
+		});
+
+		it("throws forbidden when category is public", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: { type: "public" },
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			await expect(
+				useCases.updateCategory({
+					id: category.id,
+					userId: "user-id",
+					name: "new-name",
+				}),
+			).rejects.toMatchObject({
+				type: DomainErrorType.FORBIDDEN,
+			});
+
+			expect(ctx.repo.category.updateCategory).not.toHaveBeenCalled();
+		});
+
+		it("throws forbidden when private category belongs to another user", async () => {
+			const category = mockCategoryFactory.gen({
+				ownership: {
+					type: "private",
+					userId: "other-user",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			await expect(
+				useCases.updateCategory({
+					id: category.id,
+					userId: "user-id",
+					name: "new-name",
+				}),
+			).rejects.toMatchObject({
+				type: DomainErrorType.FORBIDDEN,
+			});
+
+			expect(ctx.repo.category.updateCategory).not.toHaveBeenCalled();
+		});
+
+		it("updates name and description when provided", async () => {
+			const category = mockCategoryFactory.gen({
+				name: "old-name",
+				description: "old-description",
+				ownership: {
+					type: "private",
+					userId: "user-id",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+
+			const updated = {
+				...category,
+				name: "new-name",
+				description: "new-desc",
+			};
+			ctx.repo.category.updateCategory.mockResolvedValue(updated);
+
+			const res = await useCases.updateCategory({
+				id: category.id,
+				userId: "user-id",
+				name: "new-name",
+				description: "new-desc",
+			});
+
+			expect(res).toEqual({ id: updated.id });
+
+			expect(ctx.repo.category.updateCategory).toHaveBeenCalledExactlyOnceWith(
+				category.id,
+				{
+					id: category.id,
+					name: "new-name",
+					description: "new-desc",
+					ownership: category.ownership,
+				},
+			);
+		});
+
+		it("keeps existing values when name/description are undefined", async () => {
+			const category = mockCategoryFactory.gen({
+				name: "old-name",
+				description: "old-description",
+				ownership: {
+					type: "private",
+					userId: "user-id",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+			ctx.repo.category.updateCategory.mockResolvedValue(category);
+
+			await useCases.updateCategory({
+				id: category.id,
+				userId: "user-id",
+			});
+
+			expect(ctx.repo.category.updateCategory).toHaveBeenCalledExactlyOnceWith(
+				category.id,
+				{
+					id: category.id,
+					name: category.name,
+					description: "", // because !description → ""
+					ownership: category.ownership,
+				},
+			);
+		});
+
+		it("sets description to empty string when null or empty", async () => {
+			const category = mockCategoryFactory.gen({
+				description: "old-description",
+				ownership: {
+					type: "private",
+					userId: "user-id",
+				},
+			});
+
+			ctx.repo.category.getById.mockResolvedValue(category);
+			ctx.repo.category.updateCategory.mockResolvedValue({
+				...category,
+				description: "",
+			});
+
+			await useCases.updateCategory({
+				id: category.id,
+				userId: "user-id",
+				description: null,
+			});
+
+			expect(ctx.repo.category.updateCategory).toHaveBeenCalledWith(
+				category.id,
+				expect.objectContaining({
+					description: "",
+				}),
+			);
+		});
+	});
 });
