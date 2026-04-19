@@ -1,6 +1,7 @@
 import { AuthUseCases } from "@/apps/monexo/features/auth/app";
 import { CategoryUseCases } from "@/apps/monexo/features/category/app";
 import { InMemoryCategoryRepository } from "@/apps/monexo/features/category/infra";
+import { InMemoryExpenseRepository } from "@/apps/monexo/features/expense/infra";
 import { UserUseCases } from "@/apps/monexo/features/user/app";
 import { InMemoryUserRepository } from "@/apps/monexo/features/user/infra";
 import type { IContext } from "@/apps/monexo/shared/di/app";
@@ -13,6 +14,7 @@ import {
 } from "@/apps/monexo/shared/providers/infra";
 
 const inMemoryCategoryRepository = new InMemoryCategoryRepository();
+const inMemoryExpenseRepository = new InMemoryExpenseRepository();
 const inMemoryUserRepository = new InMemoryUserRepository();
 
 const errorLogger = new ErrorLoggerProviderImpl();
@@ -23,6 +25,7 @@ const uuidGenIdAdapter = new UuidIdGeneratorAdapter();
 const ctx: IContext = {
 	repo: {
 		category: inMemoryCategoryRepository,
+		expense: inMemoryExpenseRepository,
 		user: inMemoryUserRepository,
 	},
 	prov: {

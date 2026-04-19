@@ -11,6 +11,13 @@ export function mockDiContext() {
 			getById: vi.fn(),
 			updateCategory: vi.fn(),
 		},
+		expense: {
+			create: vi.fn(),
+			delete: vi.fn(),
+			getAllByUserId: vi.fn(),
+			getById: vi.fn(),
+			update: vi.fn(),
+		},
 		user: {
 			create: vi.fn(),
 			getById: vi.fn(),
