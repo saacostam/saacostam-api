@@ -88,7 +88,7 @@ export class CategoryUseCases {
 			});
 
 		if (
-			category.ownership.type === "private" &&
+			category.ownership.type === "public" ||
 			category.ownership.userId !== userId
 		) {
 			throw new BaseDomainError({
