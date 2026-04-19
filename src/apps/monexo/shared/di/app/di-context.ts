@@ -1,6 +1,7 @@
 import type { ICategoryRepository } from "@/apps/monexo/features/category/domain";
 import type { IUserRepository } from "@/apps/monexo/features/user/domain";
 import type {
+	IErrorLoggerProvider,
 	IGenIdAdapter,
 	IJwtTokenAdapter,
 	IPasswordHasherAdapter,
@@ -12,6 +13,7 @@ export interface IContext {
 		user: IUserRepository;
 	};
 	prov: {
+		errorLogger: IErrorLoggerProvider;
 		genId: IGenIdAdapter;
 		pwHasher: IPasswordHasherAdapter;
 		jwt: IJwtTokenAdapter;

@@ -19,6 +19,9 @@ export function mockDiContext() {
 	} satisfies IContext["repo"];
 
 	const prov = {
+		errorLogger: {
+			log: vi.fn(),
+		},
 		genId: {
 			gen: vi.fn(),
 		},

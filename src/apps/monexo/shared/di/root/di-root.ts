@@ -6,6 +6,7 @@ import { InMemoryUserRepository } from "@/apps/monexo/features/user/infra";
 import type { IContext } from "@/apps/monexo/shared/di/app";
 import { createWithAuth } from "@/apps/monexo/shared/middleware";
 import {
+	ErrorLoggerProviderImpl,
 	JwtTokenAdapterImpl,
 	PasswordHasherImpl,
 	UuidIdGeneratorAdapter,
@@ -14,6 +15,7 @@ import {
 const inMemoryCategoryRepository = new InMemoryCategoryRepository();
 const inMemoryUserRepository = new InMemoryUserRepository();
 
+const errorLogger = new ErrorLoggerProviderImpl();
 const jwtTokenAdapter = new JwtTokenAdapterImpl();
 const passwordHasherAdapter = new PasswordHasherImpl();
 const uuidGenIdAdapter = new UuidIdGeneratorAdapter();
@@ -24,6 +26,7 @@ const ctx: IContext = {
 		user: inMemoryUserRepository,
 	},
 	prov: {
+		errorLogger: errorLogger,
 		genId: uuidGenIdAdapter,
 		jwt: jwtTokenAdapter,
 		pwHasher: passwordHasherAdapter,
