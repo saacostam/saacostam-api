@@ -4,6 +4,16 @@ import { CategoryValidator } from "./validators";
 
 export const categoryRouter = Router();
 
+categoryRouter.get(
+	"/",
+	withAuth(async (req, res) => {
+		const response = await categoryUseCases.getCategories({
+			userId: req.user.userId,
+		});
+		res.status(200).json(response);
+	}),
+);
+
 categoryRouter.post(
 	"/",
 	withAuth(async (req, res) => {

@@ -27,4 +27,25 @@ export class CategoryUseCases {
 			id: newCategory.id,
 		};
 	}
+
+	async getCategories(args: { userId: string }): Promise<ICategory[]> {
+		const categoriesFetching = await Promise.allSettled([
+			this.ctx.repo.category.getAllPrivate(args.userId),
+			this.ctx.repo.category.getAllPublic(),
+		]);
+
+		const categories: ICategory[] = [];
+
+		categoriesFetching.forEach((result) => {
+			if (result.status === "fulfilled") {
+				categories.push(...result.value);
+			} else {
+				this.ctx.prov.errorLogger.log(result.reason, {
+					where: "CategoriesUseCases.getCategories.categoriesFetching",
+				});
+			}
+		});
+
+		return categories;
+	}
 }
