@@ -17,6 +17,15 @@ const createExpense = z.object({
 	name: nameField,
 });
 
+const updateExpense = z.object({
+	amount: amountField.optional(),
+	categoryId: categoryIdField.optional(),
+	date: dateField.optional(),
+	description: descriptionField.optional(),
+	name: nameField.optional(),
+});
+
 export const ExpenseValidator = {
 	createExpense,
+	updateExpense,
 };

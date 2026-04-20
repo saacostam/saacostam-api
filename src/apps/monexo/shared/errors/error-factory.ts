@@ -13,6 +13,18 @@ class ErrorFactory {
 		});
 	}
 
+	expenseByIdNotFound(args: {
+		id: string;
+		append?: string;
+		ctx: string;
+	}): BaseDomainError {
+		return new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Expense not found",
+			message: `[${args.ctx}] Expense with id ${args.id} was not found${args.append ? ` - ${args.append}` : ""}`,
+		});
+	}
+
 	fieldMissing(args: {
 		ctx: string;
 		field: {
