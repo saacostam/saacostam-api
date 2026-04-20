@@ -37,6 +37,32 @@ export class ExpenseUseCases {
 		};
 	}
 
+	async delete(args: { id: string; userId: string }): Promise<{ id: string }> {
+		const { id, userId } = args;
+
+		const expense = await this.ctx.repo.expense.getById(id);
+
+		if (!expense)
+			throw errorFactory.expenseByIdNotFound({
+				id,
+				ctx: "ExpenseUseCases.delete",
+			});
+
+		if (expense.userId !== userId) {
+			throw new BaseDomainError({
+				type: DomainErrorType.FORBIDDEN,
+				message: `[ExpenseUseCases.delete] Forbidden: user=${userId}, expense=${id}`,
+				userMessage: "Insufficient permissions to delete this expense",
+			});
+		}
+
+		await this.ctx.repo.expense.delete(expense.id);
+
+		return {
+			id: expense.id,
+		};
+	}
+
 	async getAll(args: { userId: string }): Promise<IWithCategory<IExpense>[]> {
 		const expenses = await this.ctx.repo.expense.getAllByUserId(args.userId);
 

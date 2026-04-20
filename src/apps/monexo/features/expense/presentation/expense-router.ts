@@ -36,6 +36,27 @@ expenseRouter.get(
 	}),
 );
 
+expenseRouter.delete(
+	"/:expenseId",
+	withAuth(async (req, res) => {
+		const expenseId = req.params.expenseId;
+		if (!expenseId)
+			throw errorFactory.fieldMissing({
+				field: {
+					detailedName: "Expense id",
+					name: "expenseId",
+				},
+				ctx: "expenseRouter.delete - delete expense by id",
+			});
+
+		const response = await expenseUseCases.delete({
+			id: expenseId,
+			userId: req.user.userId,
+		});
+		res.status(200).json(response);
+	}),
+);
+
 expenseRouter.post(
 	"/",
 	withAuth(async (req, res) => {
