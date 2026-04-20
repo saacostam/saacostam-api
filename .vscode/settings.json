@@ -1,4 +1,7 @@
 {
   "js/ts.preferences.importModuleSpecifier": "non-relative",
-  "js/ts.preferences.importModuleSpecifierEnding": "minimal"
+  "js/ts.preferences.importModuleSpecifierEnding": "minimal",
+  "cSpell.words": [
+    "monexo"
+  ]
 }
