@@ -12,6 +12,83 @@ describe("ExpenseUseCases", () => {
 		useCases = new ExpenseUseCases(ctx);
 	});
 
+	describe("create (table-driven)", () => {
+		const baseArgs = {
+			name: "Test",
+			amount: 100,
+			date: 123,
+			userId: "user-1",
+		};
+
+		type Case = {
+			name: string;
+			input: Partial<Parameters<ExpenseUseCases["create"]>[0]>;
+			expected: {
+				description: string;
+				categoryId: string | null;
+			};
+		};
+
+		const cases: Case[] = [
+			{
+				name: "defaults description and categoryId when omitted",
+				input: {},
+				expected: { description: "", categoryId: null },
+			},
+			{
+				name: "normalizes description=null to empty string",
+				input: { description: null },
+				expected: { description: "", categoryId: null },
+			},
+			{
+				name: "keeps provided description",
+				input: { description: "desc" },
+				expected: { description: "desc", categoryId: null },
+			},
+			{
+				name: "sets categoryId=null when explicitly null",
+				input: { categoryId: null },
+				expected: { description: "", categoryId: null },
+			},
+			{
+				name: "keeps provided categoryId",
+				input: { categoryId: "cat-1" },
+				expected: { description: "", categoryId: "cat-1" },
+			},
+			{
+				name: "handles both description and categoryId provided",
+				input: { description: "desc", categoryId: "cat-1" },
+				expected: { description: "desc", categoryId: "cat-1" },
+			},
+		];
+
+		it.each(cases)("$name", async ({ input, expected }) => {
+			const generatedId = "exp-1";
+
+			ctx.prov.genId.gen.mockReturnValue(generatedId);
+			ctx.repo.expense.create.mockImplementation(async (e) => e);
+
+			const res = await useCases.create({
+				...baseArgs,
+				...input,
+			});
+
+			expect(ctx.prov.genId.gen).toHaveBeenCalledExactlyOnceWith();
+
+			expect(ctx.repo.expense.create).toHaveBeenCalledExactlyOnceWith({
+				id: generatedId,
+				name: baseArgs.name,
+				description: expected.description,
+				amount: baseArgs.amount,
+				date: baseArgs.date,
+				userId: baseArgs.userId,
+				categoryId: expected.categoryId,
+			});
+
+			expect(res).toEqual({ id: generatedId });
+		});
+	});
+
 	describe("getAll", () => {
 		it("returns expenses enriched with categories", async () => {
 			const expenses = [
