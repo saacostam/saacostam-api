@@ -15,6 +15,27 @@ expenseRouter.get(
 	}),
 );
 
+expenseRouter.get(
+	"/:expenseId",
+	withAuth(async (req, res) => {
+		const expenseId = req.params.expenseId;
+		if (!expenseId)
+			throw errorFactory.fieldMissing({
+				field: {
+					detailedName: "Expense id",
+					name: "expenseId",
+				},
+				ctx: "expenseRouter.get - get expense by id",
+			});
+
+		const response = await expenseUseCases.getById({
+			id: expenseId,
+			userId: req.user.userId,
+		});
+		res.status(200).json(response);
+	}),
+);
+
 expenseRouter.post(
 	"/",
 	withAuth(async (req, res) => {

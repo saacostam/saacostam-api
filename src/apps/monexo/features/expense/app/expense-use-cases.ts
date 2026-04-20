@@ -1,3 +1,4 @@
+import type { ICategory } from "@/apps/monexo/features/category/domain";
 import type {
 	IExpense,
 	IWithCategory,
@@ -57,6 +58,39 @@ export class ExpenseUseCases {
 				category: category ?? null,
 			};
 		});
+	}
+
+	async getById(args: {
+		id: string;
+		userId: string;
+	}): Promise<IWithCategory<IExpense>> {
+		const { id, userId } = args;
+
+		const expense = await this.ctx.repo.expense.getById(id);
+
+		if (!expense)
+			throw errorFactory.expenseByIdNotFound({
+				id,
+				ctx: "ExpenseUseCases.getById",
+			});
+
+		if (expense.userId !== userId) {
+			throw new BaseDomainError({
+				type: DomainErrorType.FORBIDDEN,
+				message: `[ExpenseUseCases.getById] Forbidden: user=${userId}, expense=${id}`,
+				userMessage: "Insufficient permissions to view this expense",
+			});
+		}
+
+		let category: ICategory | null = null;
+		if (expense.categoryId !== null) {
+			category = await this.ctx.repo.category.getById(expense.categoryId);
+		}
+
+		return {
+			...expense,
+			category,
+		};
 	}
 
 	async update(args: {
