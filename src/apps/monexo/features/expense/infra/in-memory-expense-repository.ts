@@ -1,6 +1,7 @@
 import type {
 	IExpense,
 	IExpenseRepository,
+	IExpenseRepositoryPayload,
 } from "@/apps/monexo/features/expense/domain";
 
 export class InMemoryExpenseRepository implements IExpenseRepository {
@@ -18,6 +19,16 @@ export class InMemoryExpenseRepository implements IExpenseRepository {
 
 	async getAllByUserId(userId: string): Promise<IExpense[]> {
 		return this.expenses.filter((e) => e.userId === userId);
+	}
+
+	async getAllByUserIdInRange(
+		args: IExpenseRepositoryPayload["GetAllByUserInRangeArgs"],
+	): Promise<IExpense[]> {
+		const { userId, start, end } = args;
+
+		return this.expenses.filter(
+			(e) => e.userId === userId && start <= e.date && e.date < end,
+		);
 	}
 
 	async getById(id: string): Promise<IExpense | null> {

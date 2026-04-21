@@ -16,6 +16,19 @@ expenseRouter.get(
 );
 
 expenseRouter.get(
+	"/range",
+	withAuth(async (req, res) => {
+		const payload = ExpenseValidator.getAllExpensesInRange.parse(req.query);
+		const response = await expenseUseCases.getAllInRange({
+			userId: req.user.userId,
+			start: payload.start,
+			end: payload.end,
+		});
+		res.status(200).json(response);
+	}),
+);
+
+expenseRouter.get(
 	"/:expenseId",
 	withAuth(async (req, res) => {
 		const expenseId = req.params.expenseId;

@@ -16,6 +16,7 @@ export function mockDiContext() {
 			create: vi.fn(),
 			delete: vi.fn(),
 			getAllByUserId: vi.fn(),
+			getAllByUserIdInRange: vi.fn(),
 			getById: vi.fn(),
 			update: vi.fn(),
 		},

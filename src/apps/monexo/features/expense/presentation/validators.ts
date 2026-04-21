@@ -17,6 +17,15 @@ const createExpense = z.object({
 	name: nameField,
 });
 
+const getAllExpensesInRange = z
+	.object({
+		start: z.coerce.number(),
+		end: z.coerce.number(),
+	})
+	.refine(({ start, end }) => start < end, {
+		message: "start must be less than end",
+	});
+
 const updateExpense = z.object({
 	amount: amountField.optional(),
 	categoryId: categoryIdField.optional(),
@@ -27,5 +36,6 @@ const updateExpense = z.object({
 
 export const ExpenseValidator = {
 	createExpense,
+	getAllExpensesInRange,
 	updateExpense,
 };
