@@ -4,7 +4,7 @@ import { InMemoryCategoryRepository } from "@/apps/monexo/features/category/infr
 import { ExpenseUseCases } from "@/apps/monexo/features/expense/app";
 import { InMemoryExpenseRepository } from "@/apps/monexo/features/expense/infra";
 import { UserUseCases } from "@/apps/monexo/features/user/app";
-import { InMemoryUserRepository } from "@/apps/monexo/features/user/infra";
+import { MongoUserRepository } from "@/apps/monexo/features/user/infra";
 import type { IContext } from "@/apps/monexo/shared/di/app";
 import { createWithAuth } from "@/apps/monexo/shared/middleware";
 import {
@@ -16,7 +16,7 @@ import {
 
 const inMemoryCategoryRepository = new InMemoryCategoryRepository();
 const inMemoryExpenseRepository = new InMemoryExpenseRepository();
-const inMemoryUserRepository = new InMemoryUserRepository();
+const mongoUserRepository = new MongoUserRepository();
 
 const errorLogger = new ErrorLoggerProviderImpl();
 const jwtTokenAdapter = new JwtTokenAdapterImpl();
@@ -27,7 +27,7 @@ const ctx: IContext = {
 	repo: {
 		category: inMemoryCategoryRepository,
 		expense: inMemoryExpenseRepository,
-		user: inMemoryUserRepository,
+		user: mongoUserRepository,
 	},
 	prov: {
 		errorLogger: errorLogger,
