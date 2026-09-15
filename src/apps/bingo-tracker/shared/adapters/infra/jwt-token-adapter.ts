@@ -2,7 +2,7 @@ import { sign, verify } from "jsonwebtoken";
 import type {
 	TokenAdapter,
 	TokenAdapterPayload,
-} from "@/apps/bingo-tracker/shared/providers/domain";
+} from "@/apps/bingo-tracker/shared/adapters/domain";
 import { CoreConfig } from "@/shared/config";
 
 const SECRET = CoreConfig.MONEXO_JWT_SECRET;
