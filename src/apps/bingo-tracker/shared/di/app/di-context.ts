@@ -1,3 +1,4 @@
+import type { UserRepository } from "@/apps/bingo-tracker/features/user/domain";
 import type {
 	ErrorLogger,
 	IdGenerator,
@@ -11,5 +12,8 @@ export interface Context {
 		idGen: IdGenerator;
 		pwHasher: PasswordHasher;
 		token: TokenAdapter;
+	};
+	repo: {
+		user: UserRepository;
 	};
 }

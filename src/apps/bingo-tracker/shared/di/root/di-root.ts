@@ -1,3 +1,4 @@
+import { MemoryUserRepository } from "@/apps/bingo-tracker/features/user/infra";
 import {
 	BcryptPasswordHasher,
 	JwtTokenAdapter,
@@ -11,11 +12,16 @@ const jwtTokenAdapter = new JwtTokenAdapter();
 const passwordHasherAdapter = new BcryptPasswordHasher();
 const uuidGenIdAdapter = new UuidGenerator();
 
+const userRepository = new MemoryUserRepository();
+
 const _ctx: Context = {
 	adapter: {
 		errorLogger: errorLogger,
 		idGen: uuidGenIdAdapter,
 		token: jwtTokenAdapter,
 		pwHasher: passwordHasherAdapter,
+	},
+	repo: {
+		user: userRepository,
 	},
 };

@@ -19,5 +19,13 @@ export function mockDiContext() {
 				validateToken: vi.fn(),
 			},
 		},
+		repo: {
+			user: {
+				create: vi.fn(),
+				getById: vi.fn(),
+				getUserWithHashByUsername: vi.fn(),
+				filterByUsername: vi.fn(),
+			},
+		},
 	} satisfies Context;
 }
