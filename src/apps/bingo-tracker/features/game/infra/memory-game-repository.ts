@@ -19,4 +19,10 @@ export class MemoryGameRepository implements GameRepository {
 	async getAllByUserId(userId: string): Promise<Game[]> {
 		return this.games.filter((g) => g.userId === userId);
 	}
+
+	async getById(id: string): Promise<Game | null> {
+		const game = this.games.find((g) => g.id === id);
+
+		return game ?? null;
+	}
 }
