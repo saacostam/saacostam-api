@@ -4,6 +4,9 @@ import type { Context } from "@/apps/bingo-tracker/shared/di/app";
 export function mockDiContext() {
 	return {
 		adapter: {
+			date: {
+				now: vi.fn(),
+			},
 			errorLogger: {
 				log: vi.fn(),
 			},

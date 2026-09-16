@@ -7,10 +7,12 @@ import {
 	JwtTokenAdapter,
 	MockErrorLogger,
 	UuidGenerator,
+	VanillaDateAdapter,
 } from "@/apps/bingo-tracker/shared/adapters/infra";
 import type { Context } from "@/apps/bingo-tracker/shared/di/app";
 import { createWithAuth } from "@/apps/bingo-tracker/shared/middleware";
 
+const dateAdapter = new VanillaDateAdapter();
 const errorLogger = new MockErrorLogger();
 const jwtTokenAdapter = new JwtTokenAdapter();
 const passwordHasherAdapter = new BcryptPasswordHasher();
@@ -21,6 +23,7 @@ const userRepository = new MemoryUserRepository();
 
 const ctx: Context = {
 	adapter: {
+		date: dateAdapter,
 		errorLogger: errorLogger,
 		idGen: uuidGenIdAdapter,
 		token: jwtTokenAdapter,

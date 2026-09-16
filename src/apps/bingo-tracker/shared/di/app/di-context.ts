@@ -1,6 +1,7 @@
 import type { GameRepository } from "@/apps/bingo-tracker/features/game/domain";
 import type { UserRepository } from "@/apps/bingo-tracker/features/user/domain";
 import type {
+	DateAdapter,
 	ErrorLogger,
 	IdGenerator,
 	PasswordHasher,
@@ -9,6 +10,7 @@ import type {
 
 export interface Context {
 	adapter: {
+		date: DateAdapter;
 		errorLogger: ErrorLogger;
 		idGen: IdGenerator;
 		pwHasher: PasswordHasher;
