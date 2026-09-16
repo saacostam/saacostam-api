@@ -1,4 +1,5 @@
 import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
+import { UserUseCases } from "@/apps/bingo-tracker/features/user/app";
 import { MemoryUserRepository } from "@/apps/bingo-tracker/features/user/infra";
 import {
 	BcryptPasswordHasher,
@@ -29,5 +30,6 @@ const ctx: Context = {
 };
 
 export const authUseCases = new AuthUseCases(ctx);
+export const userUseCases = new UserUseCases(ctx);
 
 export const withAuth = createWithAuth(ctx.adapter.token);
