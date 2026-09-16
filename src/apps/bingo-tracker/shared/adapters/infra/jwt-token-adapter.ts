@@ -5,7 +5,7 @@ import type {
 } from "@/apps/bingo-tracker/shared/adapters/domain";
 import { CoreConfig } from "@/shared/config";
 
-const SECRET = CoreConfig.MONEXO_JWT_SECRET;
+const SECRET = CoreConfig.BINGO_TRACKER_JWT_SECRET;
 
 export class JwtTokenAdapter implements TokenAdapter {
 	getToken(tokenPayload: TokenAdapterPayload["getToken"]["args"]): string {
