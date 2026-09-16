@@ -23,6 +23,18 @@ class ErrorFactory {
 		);
 	}
 
+	gameByIdNotFound(args: {
+		id: string;
+		append?: string;
+		ctx: string;
+	}): BaseDomainError {
+		return new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Game not found",
+			message: `[${args.ctx}] Game with id ${args.id} was not found${args.append ? ` - ${args.append}` : ""}`,
+		});
+	}
+
 	userByIdNotFound(args: {
 		id: string;
 		append?: string;
