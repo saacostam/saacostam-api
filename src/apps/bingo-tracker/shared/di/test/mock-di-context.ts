@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { type Mock, vi } from "vitest";
 import type { Context } from "@/apps/bingo-tracker/shared/di/app";
 
 export function mockDiContext() {
@@ -20,6 +20,11 @@ export function mockDiContext() {
 			},
 		},
 		repo: {
+			game: {
+				create: vi.fn(),
+				delete: vi.fn(),
+				getAllByUserId: vi.fn(),
+			},
 			user: {
 				create: vi.fn(),
 				getById: vi.fn(),
@@ -27,5 +32,13 @@ export function mockDiContext() {
 				filterByUsername: vi.fn(),
 			},
 		},
-	} satisfies Context;
+	} satisfies Mocked<Context>;
 }
+
+type Mocked<T> = {
+	[K in keyof T]: T[K] extends (...args: infer A) => infer R
+		? Mock<(...args: A) => R>
+		: T[K] extends object
+			? Mocked<T[K]>
+			: T[K];
+};

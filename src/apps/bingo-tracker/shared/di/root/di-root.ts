@@ -1,4 +1,5 @@
 import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
+import { MemoryGameRepository } from "@/apps/bingo-tracker/features/game/infra";
 import { UserUseCases } from "@/apps/bingo-tracker/features/user/app";
 import { MemoryUserRepository } from "@/apps/bingo-tracker/features/user/infra";
 import {
@@ -15,6 +16,7 @@ const jwtTokenAdapter = new JwtTokenAdapter();
 const passwordHasherAdapter = new BcryptPasswordHasher();
 const uuidGenIdAdapter = new UuidGenerator();
 
+const gameRepository = new MemoryGameRepository();
 const userRepository = new MemoryUserRepository();
 
 const ctx: Context = {
@@ -25,6 +27,7 @@ const ctx: Context = {
 		pwHasher: passwordHasherAdapter,
 	},
 	repo: {
+		game: gameRepository,
 		user: userRepository,
 	},
 };

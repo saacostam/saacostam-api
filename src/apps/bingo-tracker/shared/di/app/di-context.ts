@@ -1,3 +1,4 @@
+import type { GameRepository } from "@/apps/bingo-tracker/features/game/domain";
 import type { UserRepository } from "@/apps/bingo-tracker/features/user/domain";
 import type {
 	ErrorLogger,
@@ -14,6 +15,7 @@ export interface Context {
 		token: TokenAdapter;
 	};
 	repo: {
+		game: GameRepository;
 		user: UserRepository;
 	};
 }
