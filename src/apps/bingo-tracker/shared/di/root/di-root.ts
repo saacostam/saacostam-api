@@ -7,6 +7,7 @@ import {
 	UuidGenerator,
 } from "@/apps/bingo-tracker/shared/adapters/infra";
 import type { Context } from "@/apps/bingo-tracker/shared/di/app";
+import { createWithAuth } from "@/apps/bingo-tracker/shared/middleware";
 
 const errorLogger = new MockErrorLogger();
 const jwtTokenAdapter = new JwtTokenAdapter();
@@ -28,3 +29,5 @@ const ctx: Context = {
 };
 
 export const authUseCases = new AuthUseCases(ctx);
+
+export const withAuth = createWithAuth(ctx.adapter.token);
