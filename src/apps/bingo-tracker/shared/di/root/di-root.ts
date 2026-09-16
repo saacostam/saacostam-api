@@ -1,3 +1,4 @@
+import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
 import { MemoryUserRepository } from "@/apps/bingo-tracker/features/user/infra";
 import {
 	BcryptPasswordHasher,
@@ -14,7 +15,7 @@ const uuidGenIdAdapter = new UuidGenerator();
 
 const userRepository = new MemoryUserRepository();
 
-const _ctx: Context = {
+const ctx: Context = {
 	adapter: {
 		errorLogger: errorLogger,
 		idGen: uuidGenIdAdapter,
@@ -25,3 +26,5 @@ const _ctx: Context = {
 		user: userRepository,
 	},
 };
+
+export const authUseCases = new AuthUseCases(ctx);

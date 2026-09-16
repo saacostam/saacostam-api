@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import expressWs from "express-ws";
 import { analyticsRouter } from "@/apps/analytics/presentation";
+import { bingoTrackerRouter } from "@/apps/bingo-tracker/shared/presentation";
 import { houseResourceManager } from "@/apps/hrm/presentation";
 import { monexoRouter } from "@/apps/monexo/shared/presentation";
 import { ticTacToeRouterFactory } from "@/apps/tic-tac-toe/shared/presentation";
@@ -21,6 +22,7 @@ app.use(
 const expressWsInstance = expressWs(app);
 
 app.use("/analytics", analyticsRouter);
+app.use("/bingo-tracker", bingoTrackerRouter);
 app.use("/monexo", monexoRouter);
 app.use("/hrm", houseResourceManager);
 
