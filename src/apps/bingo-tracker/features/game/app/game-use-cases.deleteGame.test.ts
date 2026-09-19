@@ -18,6 +18,7 @@ describe("GameUseCases.deleteGame (integration-style)", () => {
 			name: "My Game",
 			userId: "user-1",
 			createdAt: 1_757_000_000_000,
+			boardTemplateId: "board-template-1",
 		});
 
 		ctx.repo.game.delete.mockResolvedValue(undefined);
@@ -69,6 +70,7 @@ describe("GameUseCases.deleteGame (integration-style)", () => {
 			name: "My Game",
 			userId: "user-2",
 			createdAt: 1_757_000_000_000,
+			boardTemplateId: "board-template-1",
 		});
 
 		await expect(

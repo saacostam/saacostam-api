@@ -1,6 +1,11 @@
+import {
+	type BoardTemplate,
+	DEFAULT_BOARD_TEMPLATE,
+} from "@/apps/bingo-tracker/features/board-template/domain";
 import type { Game } from "@/apps/bingo-tracker/features/game/domain";
 import type { Context } from "@/apps/bingo-tracker/shared/di/app";
 import { errorFactory } from "@/apps/bingo-tracker/shared/errors";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
 export class GameUseCases {
 	constructor(private ctx: Context) {}
@@ -11,11 +16,29 @@ export class GameUseCases {
 	}): Promise<{ gameId: string }> {
 		const { name, userId } = args;
 
+		let boardTemplate: BoardTemplate;
+		try {
+			const createBoardTemplatePayload: BoardTemplate = {
+				...DEFAULT_BOARD_TEMPLATE,
+				id: this.ctx.adapter.idGen.gen(),
+			};
+			boardTemplate = await this.ctx.repo.boardTemplate.create(
+				createBoardTemplatePayload,
+			);
+		} catch {
+			throw new BaseDomainError({
+				type: DomainErrorType.SERVER_ERROR,
+				message: `[GameUseCases.createGame] Unable to create game's board template.`,
+				userMessage: "Unable to create game",
+			});
+		}
+
 		const game: Game = {
 			id: this.ctx.adapter.idGen.gen(),
 			name,
 			userId,
 			createdAt: this.ctx.adapter.date.now(),
+			boardTemplateId: boardTemplate.id,
 		};
 
 		const createdGame = await this.ctx.repo.game.create(game);
@@ -50,6 +73,7 @@ export class GameUseCases {
 			name: g.name,
 			createdAt: g.createdAt,
 			userId: g.userId,
+			boardTemplateId: g.boardTemplateId,
 		}));
 	}
 }

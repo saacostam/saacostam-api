@@ -19,12 +19,14 @@ describe("GameUseCases.getGames (integration-style)", () => {
 				name: "Game 1",
 				userId: "user-1",
 				createdAt: 1_757_000_000_000,
+				boardTemplateId: "board-template-id-1",
 			},
 			{
 				id: "game-2",
 				name: "Game 2",
 				userId: "user-1",
 				createdAt: 1_758_000_000_000,
+				boardTemplateId: "board-template-id-2",
 			},
 		]);
 
@@ -38,12 +40,14 @@ describe("GameUseCases.getGames (integration-style)", () => {
 				name: "Game 1",
 				userId: "user-1",
 				createdAt: 1_757_000_000_000,
+				boardTemplateId: "board-template-id-1",
 			},
 			{
 				id: "game-2",
 				name: "Game 2",
 				userId: "user-1",
 				createdAt: 1_758_000_000_000,
+				boardTemplateId: "board-template-id-2",
 			},
 		]);
 
@@ -71,6 +75,7 @@ describe("GameUseCases.getGames (integration-style)", () => {
 				name: "Game 1",
 				userId: "user-1",
 				createdAt: 1_757_000_000_000,
+				boardTemplateId: "board-template-id-1",
 				secretField: "should-not-leak",
 			} as Game,
 		]);
@@ -85,6 +90,7 @@ describe("GameUseCases.getGames (integration-style)", () => {
 				name: "Game 1",
 				userId: "user-1",
 				createdAt: 1_757_000_000_000,
+				boardTemplateId: "board-template-id-1",
 			},
 		]);
 
