@@ -1,8 +1,6 @@
+import type { Repository } from "@/apps/bingo-tracker/shared/repository";
 import type { Game } from "./game";
 
-export interface GameRepository {
-	create(game: Game): Promise<Game>;
-	delete(id: string): Promise<void>;
+export interface GameRepository extends Repository<Game> {
 	getAllByUserId(userId: string): Promise<Game[]>;
-	getById(id: string): Promise<Game | null>;
 }
