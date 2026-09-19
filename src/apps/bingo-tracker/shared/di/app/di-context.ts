@@ -1,3 +1,4 @@
+import type { BoardTemplateRepository } from "@/apps/bingo-tracker/features/board-template/domain";
 import type { GameRepository } from "@/apps/bingo-tracker/features/game/domain";
 import type { UserRepository } from "@/apps/bingo-tracker/features/user/domain";
 import type {
@@ -17,6 +18,7 @@ export interface Context {
 		token: TokenAdapter;
 	};
 	repo: {
+		boardTemplate: BoardTemplateRepository;
 		game: GameRepository;
 		user: UserRepository;
 	};

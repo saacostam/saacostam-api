@@ -23,6 +23,12 @@ export function mockDiContext() {
 			},
 		},
 		repo: {
+			boardTemplate: {
+				create: vi.fn(),
+				delete: vi.fn(),
+				getById: vi.fn(),
+				update: vi.fn(),
+			},
 			game: {
 				create: vi.fn(),
 				delete: vi.fn(),
