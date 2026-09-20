@@ -221,7 +221,7 @@ describe("BoardUseCases", () => {
 				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
 				expect(error.message).toContain("Board with id board-1 was not found");
 				expect(error.message).toContain("[BoardUseCases.delete]");
-				expect(error.message).toContain("Game not found");
+				expect(error.message).toContain("Board not found");
 				expect(error.userMessage).toBe("Board not found");
 			}
 		});
@@ -255,7 +255,7 @@ describe("BoardUseCases", () => {
 				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
 				expect(error.message).toContain("Board with id board-1 was not found");
 				expect(error.message).toContain("[BoardUseCases.delete]");
-				expect(error.message).toContain("Game not found");
+				expect(error.message).toContain("Board not found");
 				expect(error.userMessage).toBe("Board not found");
 			}
 		});
@@ -341,7 +341,7 @@ describe("BoardUseCases", () => {
 				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
 				expect(error.message).toContain("Board with id board-1 was not found");
 				expect(error.message).toContain("[BoardUseCases.getById]");
-				expect(error.message).toContain("Game not found");
+				expect(error.message).toContain("Board not found");
 				expect(error.userMessage).toBe("Board not found");
 			}
 		});
@@ -373,7 +373,7 @@ describe("BoardUseCases", () => {
 				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
 				expect(error.message).toContain("Board with id board-1 was not found");
 				expect(error.message).toContain("[BoardUseCases.getById]");
-				expect(error.message).toContain("Game not found");
+				expect(error.message).toContain("Board not found");
 				expect(error.userMessage).toBe("Board not found");
 			}
 		});
@@ -491,7 +491,7 @@ describe("BoardUseCases", () => {
 				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
 				expect(error.message).toContain("Board with id board-1 was not found");
 				expect(error.message).toContain("[BoardUseCases.update]");
-				expect(error.message).toContain("Game not found");
+				expect(error.message).toContain("Board not found");
 				expect(error.userMessage).toBe("Board not found");
 			}
 		});
@@ -533,7 +533,7 @@ describe("BoardUseCases", () => {
 				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
 				expect(error.message).toContain("Board with id board-1 was not found");
 				expect(error.message).toContain("[BoardUseCases.update]");
-				expect(error.message).toContain("Game not found");
+				expect(error.message).toContain("Board not found");
 				expect(error.userMessage).toBe("Board not found");
 			}
 		});

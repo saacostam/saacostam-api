@@ -106,7 +106,7 @@ export class BoardUseCases {
 			throw errorFactory.boardByIdNotFound({
 				id: boardId,
 				ctx,
-				append: "Game not found",
+				append: "Board not found",
 			});
 		}
 
