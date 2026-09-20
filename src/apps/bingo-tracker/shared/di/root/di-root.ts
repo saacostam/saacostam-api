@@ -1,4 +1,5 @@
 import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
+import { BoardUseCases } from "@/apps/bingo-tracker/features/board/app";
 import { MemoryBoardRepository } from "@/apps/bingo-tracker/features/board/infra";
 import { MemoryBoardTemplateRepository } from "@/apps/bingo-tracker/features/board-template/infra";
 import { GameUseCases } from "@/apps/bingo-tracker/features/game/app";
@@ -43,6 +44,7 @@ const ctx: Context = {
 };
 
 export const authUseCases = new AuthUseCases(ctx);
+export const boardUseCases = new BoardUseCases(ctx);
 export const gameUseCases = new GameUseCases(ctx);
 export const userUseCases = new UserUseCases(ctx);
 
