@@ -23,6 +23,13 @@ export function mockDiContext() {
 			},
 		},
 		repo: {
+			board: {
+				create: vi.fn(),
+				delete: vi.fn(),
+				getAllByIdList: vi.fn(),
+				getById: vi.fn(),
+				updateById: vi.fn(),
+			},
 			boardTemplate: {
 				create: vi.fn(),
 				delete: vi.fn(),
