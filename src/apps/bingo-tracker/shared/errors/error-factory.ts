@@ -1,6 +1,18 @@
 import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
 class ErrorFactory {
+	boardByIdNotFound(args: {
+		id: string;
+		append?: string;
+		ctx: string;
+	}): BaseDomainError {
+		return new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Board not found",
+			message: `[${args.ctx}] Board with id ${args.id} was not found${args.append ? ` - ${args.append}` : ""}`,
+		});
+	}
+
 	fieldMissing(args: {
 		ctx: string;
 		field: {
