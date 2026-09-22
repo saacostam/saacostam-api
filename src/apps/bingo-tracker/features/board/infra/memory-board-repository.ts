@@ -23,6 +23,10 @@ export class MemoryBoardRepository implements BoardRepository {
 		});
 	}
 
+	async getAllByGameId(gameId: string): Promise<Board[]> {
+		return this.boards.filter((b) => b.gameId === gameId);
+	}
+
 	async getById(id: string): Promise<Board | null> {
 		const board = this.boards.find((b) => b.id === id);
 
