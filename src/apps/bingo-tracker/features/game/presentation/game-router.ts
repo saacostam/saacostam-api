@@ -37,3 +37,21 @@ gameRouter.post(
 		res.status(201).json(response);
 	}),
 );
+
+gameRouter.patch(
+	"/:gameId/board-template",
+	withAuth(async (req, res) => {
+		const payload = GameValidator.setBoardTemplate.parse(req.body);
+
+		await gameUseCases.setBoardTemplate({
+			gameId: req.params.gameId,
+			userId: req.user.userId,
+			boardTemplate: {
+				grid: payload.grid,
+				boardRange: payload.boardRange,
+			},
+		});
+
+		res.status(204).send();
+	}),
+);

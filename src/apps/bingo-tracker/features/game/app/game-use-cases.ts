@@ -51,14 +51,11 @@ export class GameUseCases {
 	async deleteGame(args: { gameId: string; userId: string }): Promise<void> {
 		const { gameId, userId } = args;
 
-		const game = await this.ctx.repo.game.getById(gameId);
-
-		if (!game || game.userId !== userId) {
-			throw errorFactory.gameByIdNotFound({
-				id: gameId,
-				ctx: "GameUseCases.deleteGame",
-			});
-		}
+		const game = await this.getAuthorizedGame(
+			gameId,
+			userId,
+			"GameUseCases.deleteGame",
+		);
 
 		return this.ctx.repo.game.delete(game.id);
 	}
@@ -76,4 +73,63 @@ export class GameUseCases {
 			boardTemplateId: g.boardTemplateId,
 		}));
 	}
+
+	async setBoardTemplate({
+		boardTemplate,
+		gameId,
+		userId,
+	}: GameUseCasesPayload["setBoardTemplate"]["req"]): Promise<void> {
+		const existingGame = await this.getAuthorizedGame(
+			gameId,
+			userId,
+			"GameUseCases.setBoardTemplate",
+		);
+
+		const existingBoardTemplate = await this.ctx.repo.boardTemplate.getById(
+			existingGame.boardTemplateId,
+		);
+		if (existingBoardTemplate === null) {
+			throw errorFactory.gameByIdNotFound({
+				id: gameId,
+				ctx: "GameUseCases.setBoardTemplate",
+			});
+		}
+
+		const updateBoardTemplatePayload: BoardTemplate = {
+			...existingBoardTemplate,
+			...boardTemplate,
+		};
+
+		await this.ctx.repo.boardTemplate.update(
+			existingBoardTemplate.id,
+			updateBoardTemplatePayload,
+		);
+	}
+
+	private async getAuthorizedGame(
+		gameId: string,
+		userId: string,
+		ctx: string,
+	): Promise<Game> {
+		const game = await this.ctx.repo.game.getById(gameId);
+
+		if (!game || game.userId !== userId) {
+			throw errorFactory.gameByIdNotFound({
+				id: gameId,
+				ctx,
+			});
+		}
+
+		return game;
+	}
+}
+
+export interface GameUseCasesPayload {
+	setBoardTemplate: {
+		req: {
+			boardTemplate: Pick<BoardTemplate, "grid" | "boardRange">;
+			gameId: string;
+			userId: string;
+		};
+	};
 }
