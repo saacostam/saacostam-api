@@ -10,12 +10,12 @@ import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 export class GameUseCases {
 	constructor(private ctx: Context) {}
 
-	async createGame(args: {
-		name: string;
-		userId: string;
-	}): Promise<{ gameId: string }> {
-		const { name, userId } = args;
-
+	async createGame({
+		name,
+		userId,
+	}: GameUseCasesPayload["createGame"]["req"]): Promise<
+		GameUseCasesPayload["createGame"]["res"]
+	> {
 		let boardTemplate: BoardTemplate;
 		try {
 			const createBoardTemplatePayload: BoardTemplate = {
@@ -48,9 +48,10 @@ export class GameUseCases {
 		};
 	}
 
-	async deleteGame(args: { gameId: string; userId: string }): Promise<void> {
-		const { gameId, userId } = args;
-
+	async deleteGame({
+		gameId,
+		userId,
+	}: GameUseCasesPayload["deleteGame"]["req"]): Promise<void> {
 		const game = await this.getAuthorizedGame(
 			gameId,
 			userId,
@@ -60,9 +61,11 @@ export class GameUseCases {
 		return this.ctx.repo.game.delete(game.id);
 	}
 
-	async getGames(args: { userId: string }): Promise<Game[]> {
-		const { userId } = args;
-
+	async getGames({
+		userId,
+	}: GameUseCasesPayload["getGames"]["req"]): Promise<
+		GameUseCasesPayload["getGames"]["res"]
+	> {
 		const games = await this.ctx.repo.game.getAllByUserId(userId);
 
 		return games.map((g) => ({
@@ -125,6 +128,20 @@ export class GameUseCases {
 }
 
 export interface GameUseCasesPayload {
+	createGame: {
+		req: {
+			name: string;
+			userId: string;
+		};
+		res: { gameId: string };
+	};
+	deleteGame: {
+		req: { gameId: string; userId: string };
+	};
+	getGames: {
+		req: { userId: string };
+		res: Game[];
+	};
 	setBoardTemplate: {
 		req: {
 			boardTemplate: Pick<BoardTemplate, "grid" | "boardRange">;
