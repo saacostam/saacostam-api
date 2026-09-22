@@ -24,6 +24,18 @@ gameRouter.get(
 	}),
 );
 
+gameRouter.get(
+	"/:gameId",
+	withAuth(async (req, res) => {
+		const response = await gameUseCases.getById({
+			gameId: req.params.gameId,
+			userId: req.user.userId,
+		});
+
+		res.status(200).json(response);
+	}),
+);
+
 gameRouter.post(
 	"/",
 	withAuth(async (req, res) => {

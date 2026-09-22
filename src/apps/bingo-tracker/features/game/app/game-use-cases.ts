@@ -2,7 +2,11 @@ import {
 	type BoardTemplate,
 	DEFAULT_BOARD_TEMPLATE,
 } from "@/apps/bingo-tracker/features/board-template/domain";
-import type { Game } from "@/apps/bingo-tracker/features/game/domain";
+import type {
+	Game,
+	WithBoards,
+	WithBoardTemplate,
+} from "@/apps/bingo-tracker/features/game/domain";
 import type { Context } from "@/apps/bingo-tracker/shared/di/app";
 import { errorFactory } from "@/apps/bingo-tracker/shared/errors";
 import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
@@ -77,6 +81,40 @@ export class GameUseCases {
 		}));
 	}
 
+	async getById({
+		gameId,
+		userId,
+	}: GameUseCasesPayload["getById"]["req"]): Promise<
+		GameUseCasesPayload["getById"]["res"]
+	> {
+		const game = await this.getAuthorizedGame(
+			gameId,
+			userId,
+			"GameUseCases.getById",
+		);
+
+		const boardTemplate = await this.ctx.repo.boardTemplate.getById(
+			game.boardTemplateId,
+		);
+
+		if (!boardTemplate) {
+			throw errorFactory.boardTemplateByIdNotFound({
+				id: game.boardTemplateId,
+				ctx: "GameUseCases.getById",
+			});
+		}
+
+		const boards = await this.ctx.repo.board.getAllByGameId(game.id);
+
+		return {
+			game: {
+				...game,
+				boardTemplate,
+				boards,
+			},
+		};
+	}
+
 	async setBoardTemplate({
 		boardTemplate,
 		gameId,
@@ -137,6 +175,15 @@ export interface GameUseCasesPayload {
 	};
 	deleteGame: {
 		req: { gameId: string; userId: string };
+	};
+	getById: {
+		req: {
+			gameId: string;
+			userId: string;
+		};
+		res: {
+			game: WithBoardTemplate<WithBoards<Game>>;
+		};
 	};
 	getGames: {
 		req: { userId: string };
