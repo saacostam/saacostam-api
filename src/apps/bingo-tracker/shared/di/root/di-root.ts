@@ -4,6 +4,7 @@ import { MemoryBoardRepository } from "@/apps/bingo-tracker/features/board/infra
 import { MemoryBoardTemplateRepository } from "@/apps/bingo-tracker/features/board-template/infra";
 import { GameUseCases } from "@/apps/bingo-tracker/features/game/app";
 import { MemoryGameRepository } from "@/apps/bingo-tracker/features/game/infra";
+import { MemoryPlayRepository } from "@/apps/bingo-tracker/features/play/infra";
 import { UserUseCases } from "@/apps/bingo-tracker/features/user/app";
 import { MemoryUserRepository } from "@/apps/bingo-tracker/features/user/infra";
 import {
@@ -25,6 +26,7 @@ const uuidGenIdAdapter = new UuidGenerator();
 const boardRepository = new MemoryBoardRepository();
 const boardTemplateRepository = new MemoryBoardTemplateRepository();
 const gameRepository = new MemoryGameRepository();
+const playRepository = new MemoryPlayRepository();
 const userRepository = new MemoryUserRepository();
 
 const ctx: Context = {
@@ -39,6 +41,7 @@ const ctx: Context = {
 		board: boardRepository,
 		boardTemplate: boardTemplateRepository,
 		game: gameRepository,
+		play: playRepository,
 		user: userRepository,
 	},
 };

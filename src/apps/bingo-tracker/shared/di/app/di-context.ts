@@ -1,6 +1,7 @@
 import type { BoardRepository } from "@/apps/bingo-tracker/features/board/domain";
 import type { BoardTemplateRepository } from "@/apps/bingo-tracker/features/board-template/domain";
 import type { GameRepository } from "@/apps/bingo-tracker/features/game/domain";
+import type { PlayRepository } from "@/apps/bingo-tracker/features/play/domain";
 import type { UserRepository } from "@/apps/bingo-tracker/features/user/domain";
 import type {
 	DateAdapter,
@@ -22,6 +23,7 @@ export interface Context {
 		board: BoardRepository;
 		boardTemplate: BoardTemplateRepository;
 		game: GameRepository;
+		play: PlayRepository;
 		user: UserRepository;
 	};
 }

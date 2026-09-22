@@ -42,6 +42,13 @@ export function mockDiContext() {
 				getAllByUserId: vi.fn(),
 				getById: vi.fn(),
 			},
+			play: {
+				create: vi.fn(),
+				delete: vi.fn(),
+				getAllByGameIdList: vi.fn(),
+				getById: vi.fn(),
+				updateById: vi.fn(),
+			},
 			user: {
 				create: vi.fn(),
 				getById: vi.fn(),
