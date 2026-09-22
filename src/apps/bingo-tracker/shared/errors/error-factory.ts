@@ -13,6 +13,18 @@ class ErrorFactory {
 		});
 	}
 
+	boardTemplateByIdNotFound(args: {
+		id: string;
+		append?: string;
+		ctx: string;
+	}): BaseDomainError {
+		return new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Board template not found",
+			message: `[${args.ctx}] Board template with id ${args.id} was not found${args.append ? ` - ${args.append}` : ""}`,
+		});
+	}
+
 	fieldMissing(args: {
 		ctx: string;
 		field: {
@@ -44,6 +56,18 @@ class ErrorFactory {
 			type: DomainErrorType.NOT_FOUND,
 			userMessage: "Game not found",
 			message: `[${args.ctx}] Game with id ${args.id} was not found${args.append ? ` - ${args.append}` : ""}`,
+		});
+	}
+
+	playByIdNotFound(args: {
+		id: string;
+		append?: string;
+		ctx: string;
+	}): BaseDomainError {
+		return new BaseDomainError({
+			type: DomainErrorType.NOT_FOUND,
+			userMessage: "Play not found",
+			message: `[${args.ctx}] Play with id ${args.id} was not found${args.append ? ` - ${args.append}` : ""}`,
 		});
 	}
 
