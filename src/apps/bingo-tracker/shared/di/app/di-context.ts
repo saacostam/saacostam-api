@@ -9,6 +9,7 @@ import type {
 	IdGenerator,
 	PasswordHasher,
 	TokenAdapter,
+	VisionProvider,
 } from "@/apps/bingo-tracker/shared/adapters/domain";
 
 export interface Context {
@@ -18,6 +19,7 @@ export interface Context {
 		idGen: IdGenerator;
 		pwHasher: PasswordHasher;
 		token: TokenAdapter;
+		vision: VisionProvider;
 	};
 	repo: {
 		board: BoardRepository;

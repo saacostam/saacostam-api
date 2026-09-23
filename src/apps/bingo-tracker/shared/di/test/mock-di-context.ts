@@ -21,6 +21,9 @@ export function mockDiContext() {
 				getToken: vi.fn(),
 				validateToken: vi.fn(),
 			},
+			vision: {
+				extractBoard: vi.fn(),
+			},
 		},
 		repo: {
 			board: {

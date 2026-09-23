@@ -12,6 +12,7 @@ import {
 	BcryptPasswordHasher,
 	JwtTokenAdapter,
 	MockErrorLogger,
+	MockVisionProvider,
 	UuidGenerator,
 	VanillaDateAdapter,
 } from "@/apps/bingo-tracker/shared/adapters/infra";
@@ -23,6 +24,7 @@ const errorLogger = new MockErrorLogger();
 const jwtTokenAdapter = new JwtTokenAdapter();
 const passwordHasherAdapter = new BcryptPasswordHasher();
 const uuidGenIdAdapter = new UuidGenerator();
+const visionProvider = new MockVisionProvider();
 
 const boardRepository = new MemoryBoardRepository();
 const boardTemplateRepository = new MemoryBoardTemplateRepository();
@@ -37,6 +39,7 @@ const ctx: Context = {
 		idGen: uuidGenIdAdapter,
 		token: jwtTokenAdapter,
 		pwHasher: passwordHasherAdapter,
+		vision: visionProvider,
 	},
 	repo: {
 		board: boardRepository,
