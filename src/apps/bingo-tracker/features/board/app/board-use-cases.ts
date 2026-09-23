@@ -1,6 +1,8 @@
 import type { Board } from "@/apps/bingo-tracker/features/board/domain";
 import type { Context } from "@/apps/bingo-tracker/shared/di/app";
 import { errorFactory } from "@/apps/bingo-tracker/shared/errors";
+import type { ImageInput } from "@/apps/bingo-tracker/shared/types";
+import { BaseDomainError, DomainErrorType } from "@/shared/errors/domain";
 
 export class BoardUseCases {
 	constructor(private ctx: Context) {}
@@ -66,6 +68,46 @@ export class BoardUseCases {
 		};
 	}
 
+	async readFromFile({
+		boardTemplateId,
+		image,
+		userId,
+	}: BoardUseCasesPayload["readFromFile"]["req"]): Promise<
+		BoardUseCasesPayload["readFromFile"]["res"]
+	> {
+		const boardTemplate =
+			await this.ctx.repo.boardTemplate.getById(boardTemplateId);
+
+		if (!boardTemplate) {
+			throw errorFactory.boardTemplateByIdNotFound({
+				id: boardTemplateId,
+				ctx: "BoardUseCases.readFromFile",
+				append: "Board template not found",
+			});
+		}
+
+		const game = await this.ctx.repo.game.getByBoardTemplateId(
+			boardTemplate.id,
+		);
+
+		if (!game || game.userId !== userId) {
+			throw errorFactory.boardTemplateByIdNotFound({
+				id: boardTemplateId,
+				ctx: "BoardUseCases.readFromFile",
+				append: "User game not found",
+			});
+		}
+
+		this.validateImage(image);
+
+		const { board: values } = await this.ctx.adapter.vision.extractBoard({
+			image,
+			description: "",
+		});
+
+		return { values };
+	}
+
 	async update({
 		board,
 		boardId,
@@ -112,6 +154,18 @@ export class BoardUseCases {
 
 		return board;
 	}
+
+	private validateImage(image: ImageInput): void {
+		const supportedTypes = ["image/png", "image/jpeg"];
+
+		if (!supportedTypes.includes(image.mimeType)) {
+			throw new BaseDomainError({
+				type: DomainErrorType.BAD_REQUEST,
+				userMessage: "Unsupported image type",
+				message: `[BoardUseCases.readFromFile] Unsupported image type: ${image.mimeType}`,
+			});
+		}
+	}
 }
 
 export interface BoardUseCasesPayload {
@@ -139,6 +193,16 @@ export interface BoardUseCasesPayload {
 		};
 		res: {
 			board: Board;
+		};
+	};
+	readFromFile: {
+		req: {
+			boardTemplateId: string;
+			image: ImageInput;
+			userId: string;
+		};
+		res: {
+			values: Board["values"];
 		};
 	};
 	update: {

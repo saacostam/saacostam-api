@@ -379,6 +379,265 @@ describe("BoardUseCases", () => {
 		});
 	});
 
+	describe("readFromFile", () => {
+		beforeEach(() => {
+			ctx = mockDiContext();
+			useCases = new BoardUseCases(ctx);
+		});
+
+		it.each(["image/png", "image/jpeg"])(
+			"extracts board values from a %s image",
+			async (mimeType) => {
+				const image = {
+					name: "board",
+					mimeType,
+					size: 100,
+					data: Buffer.from("image"),
+				};
+
+				const values: Board["values"] = [
+					[1, 2, 3],
+					[4, undefined, 6],
+					[7, 8, 9],
+				];
+
+				ctx.repo.boardTemplate.getById.mockResolvedValue({
+					id: "board-template-1",
+					grid: [],
+					boardRange: {
+						min: 1,
+						max: 75,
+					},
+				});
+
+				ctx.repo.game.getByBoardTemplateId.mockResolvedValue(game);
+
+				ctx.adapter.vision.extractBoard.mockResolvedValue({
+					board: values,
+				});
+
+				const result = await useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				});
+
+				expect(result).toEqual({
+					values,
+				});
+
+				expect(ctx.repo.boardTemplate.getById).toHaveBeenCalledTimes(1);
+				expect(ctx.repo.boardTemplate.getById).toHaveBeenCalledWith(
+					"board-template-1",
+				);
+
+				expect(ctx.repo.game.getByBoardTemplateId).toHaveBeenCalledTimes(1);
+				expect(ctx.repo.game.getByBoardTemplateId).toHaveBeenCalledWith(
+					"board-template-1",
+				);
+
+				expect(ctx.adapter.vision.extractBoard).toHaveBeenCalledTimes(1);
+				expect(ctx.adapter.vision.extractBoard).toHaveBeenCalledWith({
+					image,
+					description: "",
+				});
+			},
+		);
+
+		it("throws domain error when the board template is not found", async () => {
+			const image = {
+				name: "board.png",
+				mimeType: "image/png",
+				size: 100,
+				data: Buffer.from("image"),
+			};
+
+			ctx.repo.boardTemplate.getById.mockResolvedValue(null);
+
+			await expect(
+				useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				}),
+			).rejects.toBeInstanceOf(BaseDomainError);
+
+			expect(ctx.repo.game.getByBoardTemplateId).not.toHaveBeenCalled();
+			expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
+
+			try {
+				await useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				});
+			} catch (err) {
+				expect(err).toBeInstanceOf(BaseDomainError);
+
+				const error = err as BaseDomainError;
+
+				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
+				expect(error.message).toContain(
+					"Board template with id board-template-1 was not found",
+				);
+				expect(error.message).toContain("[BoardUseCases.readFromFile]");
+				expect(error.userMessage).toBe("Board template not found");
+			}
+		});
+
+		it("throws domain error when the board template's game is not found", async () => {
+			const image = {
+				name: "board.png",
+				mimeType: "image/png",
+				size: 100,
+				data: Buffer.from("image"),
+			};
+
+			ctx.repo.boardTemplate.getById.mockResolvedValue({
+				id: "board-template-1",
+				grid: [],
+				boardRange: {
+					min: 1,
+					max: 75,
+				},
+			});
+			ctx.repo.game.getByBoardTemplateId.mockResolvedValue(null);
+
+			await expect(
+				useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				}),
+			).rejects.toBeInstanceOf(BaseDomainError);
+
+			expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
+
+			try {
+				await useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				});
+			} catch (err) {
+				expect(err).toBeInstanceOf(BaseDomainError);
+
+				const error = err as BaseDomainError;
+
+				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
+				expect(error.message).toContain(
+					"Board template with id board-template-1 was not found",
+				);
+				expect(error.message).toContain("[BoardUseCases.readFromFile]");
+				expect(error.message).toContain("User game not found");
+				expect(error.userMessage).toBe("Board template not found");
+			}
+		});
+
+		it("throws domain error when the board template's game belongs to another user", async () => {
+			const image = {
+				name: "board.png",
+				mimeType: "image/png",
+				size: 100,
+				data: Buffer.from("image"),
+			};
+
+			ctx.repo.boardTemplate.getById.mockResolvedValue({
+				id: "board-template-1",
+				grid: [],
+				boardRange: {
+					min: 1,
+					max: 75,
+				},
+			});
+			ctx.repo.game.getByBoardTemplateId.mockResolvedValue({
+				...game,
+				userId: "user-2",
+			});
+
+			await expect(
+				useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				}),
+			).rejects.toBeInstanceOf(BaseDomainError);
+
+			expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
+
+			try {
+				await useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				});
+			} catch (err) {
+				expect(err).toBeInstanceOf(BaseDomainError);
+
+				const error = err as BaseDomainError;
+
+				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
+				expect(error.message).toContain(
+					"Board template with id board-template-1 was not found",
+				);
+				expect(error.message).toContain("[BoardUseCases.readFromFile]");
+				expect(error.message).toContain("User game not found");
+				expect(error.userMessage).toBe("Board template not found");
+			}
+		});
+
+		it.each([["application/pdf"], ["text/plain"], ["image/webp"]])(
+			"throws domain error when the image type is not supported: %s",
+			async (mimeType) => {
+				const image = {
+					name: "board.file",
+					mimeType,
+					size: 100,
+					data: Buffer.from("file"),
+				};
+
+				ctx.repo.boardTemplate.getById.mockResolvedValue({
+					id: "board-template-1",
+					grid: [],
+					boardRange: {
+						min: 1,
+						max: 75,
+					},
+				});
+				ctx.repo.game.getByBoardTemplateId.mockResolvedValue(game);
+
+				await expect(
+					useCases.readFromFile({
+						boardTemplateId: "board-template-1",
+						image,
+						userId: "user-1",
+					}),
+				).rejects.toBeInstanceOf(BaseDomainError);
+
+				expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
+
+				try {
+					await useCases.readFromFile({
+						boardTemplateId: "board-template-1",
+						image,
+						userId: "user-1",
+					});
+				} catch (err) {
+					expect(err).toBeInstanceOf(BaseDomainError);
+
+					const error = err as BaseDomainError;
+
+					expect(error.type).toBe(DomainErrorType.BAD_REQUEST);
+					expect(error.message).toContain("[BoardUseCases.readFromFile]");
+					expect(error.message).toContain(
+						`Unsupported image type: ${mimeType}`,
+					);
+					expect(error.userMessage).toBe("Unsupported image type");
+				}
+			},
+		);
+	});
+
 	describe("update", () => {
 		beforeEach(() => {
 			ctx = mockDiContext();
