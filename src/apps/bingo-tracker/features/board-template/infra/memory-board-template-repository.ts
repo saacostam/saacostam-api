@@ -37,7 +37,9 @@ export class MemoryBoardTemplateRepository implements BoardTemplateRepository {
 			});
 		}
 
-		this.boardTemplates.map((bt) => (bt.id === id ? boardTemplate : bt));
+		this.boardTemplates = this.boardTemplates.map((bt) =>
+			bt.id === id ? boardTemplate : bt,
+		);
 
 		return exists;
 	}
