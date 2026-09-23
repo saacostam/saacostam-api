@@ -54,7 +54,9 @@ playRouter.patch(
 			takenNumbers: payload.takenNumbers,
 		});
 
-		res.status(204).send();
+		res.status(200).json({
+			status: "done",
+		});
 	}),
 );
 
@@ -69,6 +71,8 @@ playRouter.patch(
 			patterns: payload.patterns,
 		});
 
-		res.status(204).send();
+		res.status(200).json({
+			status: "done",
+		});
 	}),
 );

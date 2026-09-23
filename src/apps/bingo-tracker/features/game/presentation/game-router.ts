@@ -12,7 +12,9 @@ gameRouter.delete(
 			userId: req.user.userId,
 		});
 
-		res.status(204).send();
+		res.status(200).json({
+			status: "done",
+		});
 	}),
 );
 
@@ -64,6 +66,8 @@ gameRouter.patch(
 			},
 		});
 
-		res.status(204).send();
+		res.status(200).json({
+			status: "done",
+		});
 	}),
 );
