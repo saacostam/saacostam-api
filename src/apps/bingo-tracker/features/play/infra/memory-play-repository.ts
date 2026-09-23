@@ -18,9 +18,7 @@ export class MemoryPlayRepository implements PlayRepository {
 	}
 
 	async getAllByGameIdList(gameIdList: string[]): Promise<Play[]> {
-		return this.plays.filter((b) => {
-			gameIdList.includes(b.gameId);
-		});
+		return this.plays.filter((b) => gameIdList.includes(b.gameId));
 	}
 
 	async getById(id: string): Promise<Play | null> {
