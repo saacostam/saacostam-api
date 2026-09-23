@@ -25,4 +25,10 @@ export class MemoryGameRepository implements GameRepository {
 
 		return game ?? null;
 	}
+
+	async getByBoardTemplateId(boardTemplateId: string): Promise<Game | null> {
+		const game = this.games.find((g) => g.boardTemplateId === boardTemplateId);
+
+		return game ?? null;
+	}
 }

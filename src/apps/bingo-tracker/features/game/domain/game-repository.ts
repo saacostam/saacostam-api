@@ -3,4 +3,5 @@ import type { Game } from "./game";
 
 export interface GameRepository extends Repository<Game> {
 	getAllByUserId(userId: string): Promise<Game[]>;
+	getByBoardTemplateId(templateId: string): Promise<Game | null>;
 }

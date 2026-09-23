@@ -44,6 +44,7 @@ export function mockDiContext() {
 				create: vi.fn(),
 				delete: vi.fn(),
 				getAllByUserId: vi.fn(),
+				getByBoardTemplateId: vi.fn(),
 				getById: vi.fn(),
 			},
 			play: {

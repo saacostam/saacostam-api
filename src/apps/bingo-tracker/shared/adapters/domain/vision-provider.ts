@@ -1,4 +1,5 @@
 import type { Board } from "@/apps/bingo-tracker/features/board/domain";
+import type { ImageInput } from "@/apps/bingo-tracker/shared/types";
 
 export interface VisionProvider {
 	extractBoard(
@@ -9,7 +10,7 @@ export interface VisionProvider {
 export interface VisionProviderPayload {
 	extractBoard: {
 		req: {
-			image: File;
+			image: ImageInput;
 			description: string;
 		};
 		res: {
