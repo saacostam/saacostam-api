@@ -1,3 +1,4 @@
+import { AllowListUseCases } from "@/apps/bingo-tracker/features/allow-list/app";
 import { MongoAllowListRepository } from "@/apps/bingo-tracker/features/allow-list/infra";
 import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
 import { BoardUseCases } from "@/apps/bingo-tracker/features/board/app";
@@ -53,6 +54,7 @@ const ctx: Context = {
 	},
 };
 
+export const allowListUseCases = new AllowListUseCases(ctx);
 export const authUseCases = new AuthUseCases(ctx);
 export const boardUseCases = new BoardUseCases(ctx);
 export const gameUseCases = new GameUseCases(ctx);
