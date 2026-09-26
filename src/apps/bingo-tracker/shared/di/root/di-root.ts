@@ -1,3 +1,4 @@
+import { MongoAllowListRepository } from "@/apps/bingo-tracker/features/allow-list/infra";
 import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
 import { BoardUseCases } from "@/apps/bingo-tracker/features/board/app";
 import { MongoBoardRepository } from "@/apps/bingo-tracker/features/board/infra";
@@ -26,6 +27,7 @@ const passwordHasherAdapter = new BcryptPasswordHasher();
 const uuidGenIdAdapter = new UuidGenerator();
 const visionProvider = new MockVisionProvider();
 
+const allowListRepository = new MongoAllowListRepository();
 const boardRepository = new MongoBoardRepository();
 const boardTemplateRepository = new MongoBoardTemplateRepository();
 const gameRepository = new MongoGameRepository();
@@ -42,6 +44,7 @@ const ctx: Context = {
 		vision: visionProvider,
 	},
 	repo: {
+		allowList: allowListRepository,
 		board: boardRepository,
 		boardTemplate: boardTemplateRepository,
 		game: gameRepository,

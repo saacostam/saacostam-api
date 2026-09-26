@@ -1,3 +1,4 @@
+import type { AllowListRepository } from "@/apps/bingo-tracker/features/allow-list/domain";
 import type { BoardRepository } from "@/apps/bingo-tracker/features/board/domain";
 import type { BoardTemplateRepository } from "@/apps/bingo-tracker/features/board-template/domain";
 import type { GameRepository } from "@/apps/bingo-tracker/features/game/domain";
@@ -22,6 +23,7 @@ export interface Context {
 		vision: VisionProvider;
 	};
 	repo: {
+		allowList: AllowListRepository;
 		board: BoardRepository;
 		boardTemplate: BoardTemplateRepository;
 		game: GameRepository;

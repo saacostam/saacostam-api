@@ -26,6 +26,9 @@ export function mockDiContext() {
 			},
 		},
 		repo: {
+			allowList: {
+				isAllowedToUseVision: vi.fn(),
+			},
 			board: {
 				create: vi.fn(),
 				delete: vi.fn(),
