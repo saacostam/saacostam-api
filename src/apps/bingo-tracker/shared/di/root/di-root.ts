@@ -1,13 +1,13 @@
 import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
 import { BoardUseCases } from "@/apps/bingo-tracker/features/board/app";
-import { MemoryBoardRepository } from "@/apps/bingo-tracker/features/board/infra";
-import { MemoryBoardTemplateRepository } from "@/apps/bingo-tracker/features/board-template/infra";
+import { MongoBoardRepository } from "@/apps/bingo-tracker/features/board/infra";
+import { MongoBoardTemplateRepository } from "@/apps/bingo-tracker/features/board-template/infra";
 import { GameUseCases } from "@/apps/bingo-tracker/features/game/app";
-import { MemoryGameRepository } from "@/apps/bingo-tracker/features/game/infra";
+import { MongoGameRepository } from "@/apps/bingo-tracker/features/game/infra";
 import { PlayUseCases } from "@/apps/bingo-tracker/features/play/app";
-import { MemoryPlayRepository } from "@/apps/bingo-tracker/features/play/infra";
+import { MongoPlayRepository } from "@/apps/bingo-tracker/features/play/infra";
 import { UserUseCases } from "@/apps/bingo-tracker/features/user/app";
-import { MemoryUserRepository } from "@/apps/bingo-tracker/features/user/infra";
+import { MongoUserRepository } from "@/apps/bingo-tracker/features/user/infra";
 import {
 	BcryptPasswordHasher,
 	JwtTokenAdapter,
@@ -26,11 +26,11 @@ const passwordHasherAdapter = new BcryptPasswordHasher();
 const uuidGenIdAdapter = new UuidGenerator();
 const visionProvider = new MockVisionProvider();
 
-const boardRepository = new MemoryBoardRepository();
-const boardTemplateRepository = new MemoryBoardTemplateRepository();
-const gameRepository = new MemoryGameRepository();
-const playRepository = new MemoryPlayRepository();
-const userRepository = new MemoryUserRepository();
+const boardRepository = new MongoBoardRepository();
+const boardTemplateRepository = new MongoBoardTemplateRepository();
+const gameRepository = new MongoGameRepository();
+const playRepository = new MongoPlayRepository();
+const userRepository = new MongoUserRepository();
 
 const ctx: Context = {
 	adapter: {
