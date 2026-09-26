@@ -383,6 +383,58 @@ describe("BoardUseCases", () => {
 		beforeEach(() => {
 			ctx = mockDiContext();
 			useCases = new BoardUseCases(ctx);
+
+			ctx.repo.allowList.isAllowedToUseVision.mockResolvedValue(true);
+		});
+
+		it("throws forbidden domain error when the user is not allowed to use the vision provider", async () => {
+			const image = {
+				name: "board.png",
+				mimeType: "image/png",
+				size: 100,
+				data: Buffer.from("image"),
+			};
+
+			ctx.repo.allowList.isAllowedToUseVision.mockResolvedValue(false);
+
+			await expect(
+				useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				}),
+			).rejects.toBeInstanceOf(BaseDomainError);
+
+			expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledTimes(1);
+
+			expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledWith(
+				"user-1",
+			);
+
+			expect(ctx.repo.boardTemplate.getById).not.toHaveBeenCalled();
+			expect(ctx.repo.game.getByBoardTemplateId).not.toHaveBeenCalled();
+			expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
+
+			try {
+				await useCases.readFromFile({
+					boardTemplateId: "board-template-1",
+					image,
+					userId: "user-1",
+				});
+			} catch (err) {
+				expect(err).toBeInstanceOf(BaseDomainError);
+
+				const error = err as BaseDomainError;
+
+				expect(error.type).toBe(DomainErrorType.FORBIDDEN);
+				expect(error.message).toContain("[BoardUseCases.readFromFile]");
+				expect(error.message).toContain(
+					"User is not allowed to use the vision provider",
+				);
+				expect(error.userMessage).toBe(
+					"You are not allowed to use the vision provider",
+				);
+			}
 		});
 
 		it.each(["image/png", "image/jpeg"])(
@@ -426,6 +478,14 @@ describe("BoardUseCases", () => {
 					values,
 				});
 
+				expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledTimes(
+					1,
+				);
+
+				expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledWith(
+					"user-1",
+				);
+
 				expect(ctx.repo.boardTemplate.getById).toHaveBeenCalledTimes(1);
 				expect(ctx.repo.boardTemplate.getById).toHaveBeenCalledWith(
 					"board-template-1",
@@ -462,6 +522,9 @@ describe("BoardUseCases", () => {
 				}),
 			).rejects.toBeInstanceOf(BaseDomainError);
 
+			expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledWith(
+				"user-1",
+			);
 			expect(ctx.repo.game.getByBoardTemplateId).not.toHaveBeenCalled();
 			expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
 
@@ -501,6 +564,7 @@ describe("BoardUseCases", () => {
 					max: 75,
 				},
 			});
+
 			ctx.repo.game.getByBoardTemplateId.mockResolvedValue(null);
 
 			await expect(
@@ -511,6 +575,9 @@ describe("BoardUseCases", () => {
 				}),
 			).rejects.toBeInstanceOf(BaseDomainError);
 
+			expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledWith(
+				"user-1",
+			);
 			expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
 
 			try {
@@ -550,6 +617,7 @@ describe("BoardUseCases", () => {
 					max: 75,
 				},
 			});
+
 			ctx.repo.game.getByBoardTemplateId.mockResolvedValue({
 				...game,
 				userId: "user-2",
@@ -563,6 +631,9 @@ describe("BoardUseCases", () => {
 				}),
 			).rejects.toBeInstanceOf(BaseDomainError);
 
+			expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledWith(
+				"user-1",
+			);
 			expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
 
 			try {
@@ -586,7 +657,7 @@ describe("BoardUseCases", () => {
 			}
 		});
 
-		it.each([["application/pdf"], ["text/plain"], ["image/webp"]])(
+		it.each(["application/pdf", "text/plain", "image/webp"])(
 			"throws domain error when the image type is not supported: %s",
 			async (mimeType) => {
 				const image = {
@@ -604,6 +675,7 @@ describe("BoardUseCases", () => {
 						max: 75,
 					},
 				});
+
 				ctx.repo.game.getByBoardTemplateId.mockResolvedValue(game);
 
 				await expect(
@@ -614,6 +686,9 @@ describe("BoardUseCases", () => {
 					}),
 				).rejects.toBeInstanceOf(BaseDomainError);
 
+				expect(ctx.repo.allowList.isAllowedToUseVision).toHaveBeenCalledWith(
+					"user-1",
+				);
 				expect(ctx.adapter.vision.extractBoard).not.toHaveBeenCalled();
 
 				try {

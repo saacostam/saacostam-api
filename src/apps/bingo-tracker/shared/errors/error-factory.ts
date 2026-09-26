@@ -59,6 +59,18 @@ class ErrorFactory {
 		});
 	}
 
+	notAllowed(args: {
+		ctx: string;
+		action: string;
+		append?: string;
+	}): BaseDomainError {
+		return new BaseDomainError({
+			type: DomainErrorType.FORBIDDEN,
+			userMessage: `You are not allowed to ${args.action}`,
+			message: `[${args.ctx}] User is not allowed to ${args.action}${args.append ? ` - ${args.append}` : ""}`,
+		});
+	}
+
 	playByIdNotFound(args: {
 		id: string;
 		append?: string;

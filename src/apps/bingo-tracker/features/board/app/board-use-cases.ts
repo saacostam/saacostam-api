@@ -75,6 +75,16 @@ export class BoardUseCases {
 	}: BoardUseCasesPayload["readFromFile"]["req"]): Promise<
 		BoardUseCasesPayload["readFromFile"]["res"]
 	> {
+		const isAllowed =
+			await this.ctx.repo.allowList.isAllowedToUseVision(userId);
+
+		if (!isAllowed) {
+			throw errorFactory.notAllowed({
+				action: "use the vision provider",
+				ctx: "BoardUseCases.readFromFile",
+			});
+		}
+
 		const boardTemplate =
 			await this.ctx.repo.boardTemplate.getById(boardTemplateId);
 
