@@ -112,7 +112,7 @@ export class BoardUseCases {
 
 		const { board: values } = await this.ctx.adapter.vision.extractBoard({
 			image,
-			description: "",
+			boardTemplate,
 		});
 
 		return { values };

@@ -1,3 +1,4 @@
+import OpenAI from "openai";
 import { AllowListUseCases } from "@/apps/bingo-tracker/features/allow-list/app";
 import { MongoAllowListRepository } from "@/apps/bingo-tracker/features/allow-list/infra";
 import { AuthUseCases } from "@/apps/bingo-tracker/features/auth/app";
@@ -14,19 +15,24 @@ import {
 	BcryptPasswordHasher,
 	JwtTokenAdapter,
 	MockErrorLogger,
-	MockVisionProvider,
+	OpenAiVisionProvider,
 	UuidGenerator,
 	VanillaDateAdapter,
 } from "@/apps/bingo-tracker/shared/adapters/infra";
 import type { Context } from "@/apps/bingo-tracker/shared/di/app";
 import { createWithAuth } from "@/apps/bingo-tracker/shared/middleware";
+import { CoreConfig } from "@/shared/config";
+
+const openAi: OpenAI = new OpenAI({
+	apiKey: CoreConfig.OPENAI_API_KEY,
+});
 
 const dateAdapter = new VanillaDateAdapter();
 const errorLogger = new MockErrorLogger();
 const jwtTokenAdapter = new JwtTokenAdapter();
 const passwordHasherAdapter = new BcryptPasswordHasher();
 const uuidGenIdAdapter = new UuidGenerator();
-const visionProvider = new MockVisionProvider();
+const visionProvider = new OpenAiVisionProvider(openAi);
 
 const allowListRepository = new MongoAllowListRepository();
 const boardRepository = new MongoBoardRepository();

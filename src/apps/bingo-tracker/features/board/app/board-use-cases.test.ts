@@ -453,14 +453,15 @@ describe("BoardUseCases", () => {
 					[7, 8, 9],
 				];
 
-				ctx.repo.boardTemplate.getById.mockResolvedValue({
+				const boardTemplate = {
 					id: "board-template-1",
 					grid: [],
 					boardRange: {
 						min: 1,
 						max: 75,
 					},
-				});
+				};
+				ctx.repo.boardTemplate.getById.mockResolvedValue(boardTemplate);
 
 				ctx.repo.game.getByBoardTemplateId.mockResolvedValue(game);
 
@@ -499,7 +500,7 @@ describe("BoardUseCases", () => {
 				expect(ctx.adapter.vision.extractBoard).toHaveBeenCalledTimes(1);
 				expect(ctx.adapter.vision.extractBoard).toHaveBeenCalledWith({
 					image,
-					description: "",
+					boardTemplate,
 				});
 			},
 		);
