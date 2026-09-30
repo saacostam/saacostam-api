@@ -208,6 +208,122 @@ describe("PlayUseCases", () => {
 		});
 	});
 
+	describe("delete", () => {
+		it("returns the play when found and owned by the user", async () => {
+			ctx.repo.play.getById.mockResolvedValue(play);
+			ctx.repo.game.getById.mockResolvedValue(game);
+
+			await useCases.delete({
+				playId: "play-1",
+				userId: "user-1",
+			});
+
+			expect(ctx.repo.play.getById).toHaveBeenCalledTimes(1);
+			expect(ctx.repo.play.getById).toHaveBeenCalledWith("play-1");
+
+			expect(ctx.repo.game.getById).toHaveBeenCalledTimes(1);
+			expect(ctx.repo.game.getById).toHaveBeenCalledWith("game-1");
+
+			expect(ctx.repo.play.delete).toHaveBeenCalledExactlyOnceWith(play.id);
+		});
+
+		it("throws domain error when the play is not found", async () => {
+			ctx.repo.play.getById.mockResolvedValue(null);
+
+			await expect(
+				useCases.delete({
+					playId: "play-1",
+					userId: "user-1",
+				}),
+			).rejects.toBeInstanceOf(BaseDomainError);
+
+			expect(ctx.repo.game.getById).not.toHaveBeenCalled();
+			expect(ctx.repo.play.delete).not.toHaveBeenCalled();
+
+			try {
+				await useCases.delete({
+					playId: "play-1",
+					userId: "user-1",
+				});
+			} catch (err) {
+				expect(err).toBeInstanceOf(BaseDomainError);
+
+				const error = err as BaseDomainError;
+
+				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
+				expect(error.message).toContain("Play with id play-1 was not found");
+				expect(error.message).toContain("[PlayUseCases.delete]");
+				expect(error.message).toContain("Play not found");
+				expect(error.userMessage).toBe("Play not found");
+			}
+		});
+
+		it("throws domain error when the play's game is not found", async () => {
+			ctx.repo.play.getById.mockResolvedValue(play);
+			ctx.repo.game.getById.mockResolvedValue(null);
+
+			await expect(
+				useCases.delete({
+					playId: "play-1",
+					userId: "user-1",
+				}),
+			).rejects.toBeInstanceOf(BaseDomainError);
+
+			expect(ctx.repo.play.delete).not.toHaveBeenCalled();
+
+			try {
+				await useCases.delete({
+					playId: "play-1",
+					userId: "user-1",
+				});
+			} catch (err) {
+				expect(err).toBeInstanceOf(BaseDomainError);
+
+				const error = err as BaseDomainError;
+
+				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
+				expect(error.message).toContain("Play with id play-1 was not found");
+				expect(error.message).toContain("[PlayUseCases.delete]");
+				expect(error.message).toContain("Play not found");
+				expect(error.userMessage).toBe("Play not found");
+			}
+		});
+
+		it("throws domain error when the play belongs to another user", async () => {
+			ctx.repo.play.getById.mockResolvedValue(play);
+			ctx.repo.game.getById.mockResolvedValue({
+				...game,
+				userId: "user-2",
+			});
+
+			await expect(
+				useCases.delete({
+					playId: "play-1",
+					userId: "user-1",
+				}),
+			).rejects.toBeInstanceOf(BaseDomainError);
+
+			expect(ctx.repo.play.delete).not.toHaveBeenCalled();
+
+			try {
+				await useCases.delete({
+					playId: "play-1",
+					userId: "user-1",
+				});
+			} catch (err) {
+				expect(err).toBeInstanceOf(BaseDomainError);
+
+				const error = err as BaseDomainError;
+
+				expect(error.type).toBe(DomainErrorType.NOT_FOUND);
+				expect(error.message).toContain("Play with id play-1 was not found");
+				expect(error.message).toContain("[PlayUseCases.delete]");
+				expect(error.message).toContain("Play not found");
+				expect(error.userMessage).toBe("Play not found");
+			}
+		});
+	});
+
 	describe("getAllByGameId", () => {
 		it("returns all plays for the user's game", async () => {
 			ctx.repo.game.getById.mockResolvedValue(game);

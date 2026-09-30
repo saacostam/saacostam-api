@@ -4,6 +4,20 @@ import { PlayValidator } from "./validators";
 
 export const playRouter = Router();
 
+playRouter.delete(
+	"/:playId",
+	withAuth(async (req, res) => {
+		await playUseCases.delete({
+			playId: req.params.playId,
+			userId: req.user.userId,
+		});
+
+		res.status(200).json({
+			status: "done",
+		});
+	}),
+);
+
 playRouter.post(
 	"/:gameId",
 	withAuth(async (req, res) => {

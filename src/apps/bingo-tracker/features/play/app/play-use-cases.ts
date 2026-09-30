@@ -54,6 +54,19 @@ export class PlayUseCases {
 		};
 	}
 
+	async delete({
+		playId,
+		userId,
+	}: PlayUseCasesPayload["delete"]["req"]): Promise<void> {
+		const play = await this.getAuthorizedPlay(
+			playId,
+			userId,
+			"PlayUseCases.delete",
+		);
+
+		await this.ctx.repo.play.delete(play.id);
+	}
+
 	async getAllByGameId({
 		gameId,
 		userId,
@@ -172,6 +185,12 @@ export interface PlayUseCasesPayload {
 		};
 		res: {
 			id: string;
+		};
+	};
+	delete: {
+		req: {
+			playId: string;
+			userId: string;
 		};
 	};
 	getAllByGameId: {
